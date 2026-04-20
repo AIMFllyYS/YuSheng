@@ -1,0 +1,2045 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第九节 · 定积分与无穷级数 - 数学笔记</title>
+    
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=ZCOOL+XiaoWei&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<style>
+/* ========== SCOPED STYLES - INDIGO/VIOLET THEME ========== */
+.math-notes-app {
+    --mn-bg-primary: #eef2ff;
+    --mn-bg-secondary: #ffffff;
+    --mn-bg-tertiary: #e0e7ff;
+    --mn-bg-glass: rgba(255, 255, 255, 0.95);
+    --mn-text-primary: #1e1b4b;
+    --mn-text-secondary: #3730a3;
+    --mn-text-muted: #6366f1;
+    --mn-accent-primary: #4f46e5;
+    --mn-accent-secondary: #6366f1;
+    --mn-accent-tertiary: #f59e0b;
+    --mn-accent-rose: #e11d48;
+    --mn-accent-teal: #14b8a6;
+    --mn-border-color: rgba(79, 70, 229, 0.12);
+    --mn-shadow-soft: 0 4px 24px rgba(79, 70, 229, 0.08);
+    --mn-shadow-medium: 0 12px 48px rgba(79, 70, 229, 0.15);
+    --mn-nav-bg: rgba(255, 255, 255, 0.98);
+    --mn-svg-curve: #4f46e5;
+    --mn-svg-curve2: #f59e0b;
+    --mn-svg-fill: rgba(79, 70, 229, 0.25);
+    --mn-svg-fill2: rgba(245, 158, 11, 0.25);
+    --mn-svg-grid: #e0e7ff;
+    --mn-svg-axis: #3730a3;
+    --mn-svg-bar: #14b8a6;
+    --mn-svg-bar2: #f472b6;
+}
+
+.math-notes-app[data-theme="dark"] {
+    --mn-bg-primary: #0f0d1a;
+    --mn-bg-secondary: #1a1625;
+    --mn-bg-tertiary: #252136;
+    --mn-bg-glass: rgba(26, 22, 37, 0.98);
+    --mn-text-primary: #e0e7ff;
+    --mn-text-secondary: #a5b4fc;
+    --mn-text-muted: #818cf8;
+    --mn-accent-primary: #818cf8;
+    --mn-accent-secondary: #a5b4fc;
+    --mn-accent-tertiary: #fbbf24;
+    --mn-accent-rose: #fb7185;
+    --mn-accent-teal: #2dd4bf;
+    --mn-border-color: rgba(129, 140, 248, 0.15);
+    --mn-shadow-soft: 0 4px 24px rgba(0,0,0,0.4);
+    --mn-shadow-medium: 0 12px 48px rgba(0,0,0,0.5);
+    --mn-nav-bg: rgba(15, 13, 26, 0.98);
+    --mn-svg-curve: #818cf8;
+    --mn-svg-curve2: #fbbf24;
+    --mn-svg-fill: rgba(129, 140, 248, 0.3);
+    --mn-svg-fill2: rgba(251, 191, 36, 0.3);
+    --mn-svg-grid: #252136;
+    --mn-svg-axis: #a5b4fc;
+    --mn-svg-bar: #2dd4bf;
+    --mn-svg-bar2: #f472b6;
+}
+
+.math-notes-app,
+.math-notes-app * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box !important;
+}
+
+.math-notes-app {
+    font-family: 'Noto Serif SC', 'SimSun', serif !important;
+    background: var(--mn-bg-primary) !important;
+    color: var(--mn-text-primary) !important;
+    line-height: 1.9 !important;
+    font-size: 17px !important;
+    position: relative !important;
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* ========== BACKGROUND ========== */
+.math-notes-app .mn-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.math-notes-app .mn-bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.3;
+    animation: mnFloat 24s ease-in-out infinite;
+}
+
+.math-notes-app .mn-bg-orb:nth-child(1) {
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, var(--mn-accent-primary) 0%, transparent 70%);
+    top: -130px;
+    right: -50px;
+}
+
+.math-notes-app .mn-bg-orb:nth-child(2) {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--mn-accent-secondary) 0%, transparent 70%);
+    bottom: -150px;
+    left: -70px;
+    animation-delay: -7s;
+}
+
+.math-notes-app .mn-bg-orb:nth-child(3) {
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, var(--mn-accent-tertiary) 0%, transparent 70%);
+    top: 50%;
+    left: 55%;
+    animation-delay: -15s;
+    opacity: 0.2;
+}
+
+@keyframes mnFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(20px, -25px) scale(1.03); }
+    66% { transform: translate(-15px, 15px) scale(0.97); }
+}
+
+.math-notes-app .mn-bg-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(var(--mn-border-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--mn-border-color) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.5;
+}
+
+/* ========== LAYOUT ========== */
+.math-notes-app .mn-layout {
+    display: flex;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+}
+
+/* ========== FIXED SIDEBAR ========== */
+.math-notes-app .mn-sidebar {
+    width: 280px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    background: var(--mn-nav-bg);
+    border-right: 1px solid var(--mn-border-color);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    box-shadow: var(--mn-shadow-soft);
+}
+
+.math-notes-app .mn-sidebar.collapsed {
+    transform: translateX(-280px);
+}
+
+.math-notes-app .mn-sidebar-toggle {
+    position: fixed;
+    left: 280px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 60px;
+    background: var(--mn-nav-bg);
+    border: 1px solid var(--mn-border-color);
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    transition: all 0.3s ease;
+}
+
+.math-notes-app .mn-sidebar.collapsed + .mn-sidebar-toggle {
+    left: 0;
+}
+
+.math-notes-app .mn-sidebar-toggle:hover {
+    width: 32px;
+    background: var(--mn-bg-tertiary);
+}
+
+.math-notes-app .mn-sidebar-toggle span {
+    font-size: 14px;
+    color: var(--mn-text-muted);
+    transition: transform 0.3s ease;
+}
+
+.math-notes-app .mn-sidebar.collapsed + .mn-sidebar-toggle span {
+    transform: rotate(180deg);
+}
+
+.math-notes-app .mn-sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 90px;
+}
+
+.math-notes-app .mn-sidebar-content::-webkit-scrollbar { width: 4px; }
+.math-notes-app .mn-sidebar-content::-webkit-scrollbar-thumb { background: var(--mn-border-color); border-radius: 2px; }
+
+/* Back & Directory */
+.math-notes-app .mn-back {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 20px;
+    color: var(--mn-text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 15px;
+    border-bottom: 1px solid var(--mn-border-color);
+    transition: all 0.2s ease;
+}
+
+.math-notes-app .mn-back:hover {
+    background: var(--mn-bg-tertiary);
+    color: var(--mn-accent-primary) !important;
+}
+
+.math-notes-app .mn-directory {
+    border-bottom: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-directory-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    user-select: none;
+}
+
+.math-notes-app .mn-directory-header:hover {
+    background: var(--mn-bg-tertiary);
+}
+
+.math-notes-app .mn-directory-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--mn-text-primary);
+}
+
+.math-notes-app .mn-directory-arrow {
+    font-size: 12px;
+    color: var(--mn-text-muted);
+    transition: transform 0.3s ease;
+}
+
+.math-notes-app .mn-directory.open .mn-directory-arrow {
+    transform: rotate(180deg);
+}
+
+.math-notes-app .mn-directory-list {
+    max-height: 0;
+    overflow: hidden;
+    background: var(--mn-bg-tertiary);
+    transition: max-height 0.3s ease;
+}
+
+.math-notes-app .mn-directory.open .mn-directory-list {
+    max-height: 400px;
+}
+
+.math-notes-app .mn-directory-link {
+    display: block !important;
+    padding: 10px 20px 10px 44px;
+    color: var(--mn-text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 14px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.math-notes-app .mn-directory-link::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--mn-border-color);
+    transition: background 0.2s ease;
+}
+
+.math-notes-app .mn-directory-link:hover {
+    background: rgba(79, 70, 229, 0.05);
+    color: var(--mn-text-primary) !important;
+}
+
+.math-notes-app .mn-directory-link:hover::before {
+    background: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-directory-link.active {
+    color: var(--mn-accent-primary) !important;
+    font-weight: 500;
+    background: rgba(79, 70, 229, 0.08);
+}
+
+.math-notes-app .mn-directory-link.active::before {
+    background: var(--mn-accent-primary);
+}
+
+/* Section Nav */
+.math-notes-app .mn-section-nav {
+    padding: 16px 0;
+}
+
+.math-notes-app .mn-section-header {
+    padding: 0 20px 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--mn-text-muted);
+    font-weight: 600;
+}
+
+.math-notes-app .mn-nav-link {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: var(--mn-text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.math-notes-app .mn-nav-link:hover {
+    background: var(--mn-bg-tertiary);
+    color: var(--mn-text-primary) !important;
+}
+
+.math-notes-app .mn-nav-link.active {
+    background: rgba(79, 70, 229, 0.1);
+    color: var(--mn-accent-primary) !important;
+    font-weight: 500;
+    border-left-color: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-nav-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--mn-text-muted);
+    width: 22px;
+}
+
+/* Sidebar Footer */
+.math-notes-app .mn-sidebar-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 20px;
+    background: var(--mn-nav-bg);
+    border-top: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--mn-bg-tertiary);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.math-notes-app .mn-theme-toggle:hover {
+    border-color: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-theme-toggle span { font-size: 14px; color: var(--mn-text-secondary); }
+.math-notes-app .mn-theme-icon { font-size: 18px; }
+
+/* ========== MAIN CONTENT ========== */
+.math-notes-app .mn-main {
+    flex: 1;
+    margin-left: 280px;
+    padding: 50px 60px 100px;
+    max-width: calc(280px + 880px);
+    min-width: 0;
+    transition: margin-left 0.3s ease;
+}
+
+.math-notes-app .mn-sidebar.collapsed ~ .mn-main {
+    margin-left: 0;
+}
+
+/* ========== PAGE HEADER ========== */
+.math-notes-app .mn-page-header {
+    margin-bottom: 50px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    color: white !important;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-page-title {
+    font-family: 'ZCOOL XiaoWei', serif !important;
+    font-size: 34px !important;
+    font-weight: 400 !important;
+    color: var(--mn-text-primary) !important;
+    margin: 0 0 14px 0 !important;
+    padding: 0 !important;
+    line-height: 1.3 !important;
+    border: none !important;
+}
+
+.math-notes-app .mn-page-subtitle {
+    font-size: 16px;
+    color: var(--mn-text-secondary);
+    margin: 0;
+    max-width: 600px;
+}
+
+/* ========== SECTIONS ========== */
+.math-notes-app .mn-section {
+    margin-bottom: 56px;
+}
+
+.math-notes-app .mn-section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--mn-accent-primary);
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.math-notes-app .mn-section-title {
+    font-family: 'ZCOOL XiaoWei', serif !important;
+    font-size: 24px !important;
+    font-weight: 400 !important;
+    color: var(--mn-text-primary) !important;
+    margin: 0 0 20px 0 !important;
+    padding: 0 0 10px 0 !important;
+    border-bottom: 2px solid var(--mn-border-color) !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    position: relative;
+}
+
+.math-notes-app .mn-section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+}
+
+.math-notes-app p {
+    margin: 0 0 18px 0 !important;
+    padding: 0 !important;
+    text-align: justify;
+    color: var(--mn-text-primary);
+}
+
+/* ========== SPECIAL BLOCKS ========== */
+.math-notes-app .mn-highlight {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+    border-left: 4px solid var(--mn-accent-primary);
+    padding: 18px 22px;
+    margin: 22px 0;
+    border-radius: 0 14px 14px 0;
+    position: relative;
+}
+
+.math-notes-app .mn-highlight::before {
+    content: '💡';
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 22px;
+    opacity: 0.3;
+}
+
+.math-notes-app .mn-theorem {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(99, 102, 241, 0.04) 100%);
+    border: 1px solid rgba(79, 70, 229, 0.2);
+    border-left: 4px solid var(--mn-accent-primary);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-theorem-title {
+    font-weight: 600;
+    color: var(--mn-accent-primary);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-definition {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.04) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-left: 4px solid var(--mn-accent-tertiary);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-definition-title {
+    font-weight: 600;
+    color: var(--mn-accent-tertiary);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-example {
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.08) 0%, rgba(20, 184, 166, 0.04) 100%);
+    border: 1px solid rgba(20, 184, 166, 0.2);
+    border-left: 4px solid var(--mn-accent-teal);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-example-title {
+    font-weight: 600;
+    color: var(--mn-accent-teal);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-warning {
+    background: linear-gradient(135deg, rgba(225, 29, 72, 0.08) 0%, rgba(225, 29, 72, 0.04) 100%);
+    border: 1px solid rgba(225, 29, 72, 0.2);
+    border-left: 4px solid var(--mn-accent-rose);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-warning-title {
+    font-weight: 600;
+    color: var(--mn-accent-rose);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-list {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 18px 0 !important;
+}
+
+.math-notes-app .mn-list li {
+    padding: 10px 0 10px 32px !important;
+    position: relative;
+    border-bottom: 1px dashed var(--mn-border-color);
+    margin: 0 !important;
+}
+
+.math-notes-app .mn-list li:last-child { border-bottom: none; }
+
+.math-notes-app .mn-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--mn-accent-primary);
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* ========== MATH DISPLAY ========== */
+.math-notes-app .mn-math {
+    background: var(--mn-bg-secondary);
+    border: 1px solid var(--mn-border-color);
+    border-radius: 14px;
+    padding: 22px 28px;
+    margin: 22px 0;
+    overflow-x: auto;
+    text-align: center;
+    position: relative;
+}
+
+.math-notes-app .mn-math::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    border-radius: 14px 14px 0 0;
+}
+
+.math-notes-app .katex-display { margin: 0 !important; }
+
+/* ========== VISUALIZATION ========== */
+.math-notes-app .mn-viz {
+    background: var(--mn-bg-glass);
+    border: 1px solid var(--mn-border-color);
+    border-radius: 18px;
+    padding: 28px;
+    margin: 36px 0;
+    box-shadow: var(--mn-shadow-soft);
+    position: relative;
+}
+
+.math-notes-app .mn-viz::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    border-radius: 18px 18px 0 0;
+}
+
+.math-notes-app .mn-viz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.math-notes-app .mn-viz-title {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 18px;
+    color: var(--mn-text-primary);
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+.math-notes-app .mn-viz-controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.math-notes-app .mn-control-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--mn-bg-tertiary);
+    padding: 8px 14px;
+    border-radius: 10px;
+}
+
+.math-notes-app .mn-control-label {
+    font-size: 14px;
+    color: var(--mn-text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.math-notes-app input[type="range"] {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: 120px;
+    height: 6px;
+    background: var(--mn-border-color) !important;
+    border-radius: 3px;
+    outline: none !important;
+    cursor: pointer;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.math-notes-app input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none !important;
+}
+
+.math-notes-app .mn-slider-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--mn-accent-primary);
+    min-width: 40px;
+    text-align: center;
+}
+
+.math-notes-app .mn-svg-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
+    padding: 16px;
+    background: var(--mn-bg-secondary);
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
+.math-notes-app .mn-svg-container svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.math-notes-app .mn-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 14px 0;
+    flex-wrap: wrap;
+}
+
+.math-notes-app .mn-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--mn-text-secondary);
+}
+
+.math-notes-app .mn-legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+}
+
+.math-notes-app .mn-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-stat {
+    background: var(--mn-bg-tertiary);
+    padding: 14px 16px;
+    border-radius: 12px;
+    text-align: center;
+    border-top: 3px solid var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-stat-label {
+    font-size: 11px;
+    color: var(--mn-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.math-notes-app .mn-stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--mn-accent-primary);
+}
+
+/* ========== KNOWLEDGE MAP ========== */
+.math-notes-app .mn-roadmap {
+    background: var(--mn-bg-glass);
+    border: 1px solid var(--mn-border-color);
+    border-radius: 18px;
+    padding: 28px;
+    margin: 36px 0;
+}
+
+.math-notes-app .mn-roadmap-title {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 20px;
+    color: var(--mn-accent-primary);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.math-notes-app .mn-roadmap-item {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px dashed var(--mn-border-color);
+    position: relative;
+}
+
+.math-notes-app .mn-roadmap-item:last-child {
+    border-bottom: none;
+}
+
+.math-notes-app .mn-roadmap-num {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--mn-accent-primary), var(--mn-accent-secondary));
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.math-notes-app .mn-roadmap-content {
+    flex: 1;
+}
+
+.math-notes-app .mn-roadmap-label {
+    font-weight: 600;
+    color: var(--mn-text-primary);
+    margin-bottom: 6px;
+}
+
+.math-notes-app .mn-roadmap-desc {
+    font-size: 14px;
+    color: var(--mn-text-secondary);
+    line-height: 1.6;
+}
+
+.math-notes-app .mn-roadmap-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.math-notes-app .mn-keyword {
+    background: var(--mn-bg-tertiary);
+    color: var(--mn-accent-primary);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* ========== SUMMARY ========== */
+.math-notes-app .mn-summary {
+    background: linear-gradient(135deg, var(--mn-bg-secondary) 0%, var(--mn-bg-tertiary) 100%);
+    border: 2px solid var(--mn-accent-primary);
+    border-radius: 18px;
+    padding: 32px;
+    margin: 40px 0;
+}
+
+.math-notes-app .mn-summary-title {
+    font-family: 'ZCOOL XiaoWei', serif !important;
+    font-size: 22px !important;
+    color: var(--mn-accent-primary) !important;
+    margin: 0 0 20px 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.math-notes-app .mn-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+.math-notes-app .mn-summary-item {
+    padding: 14px 18px;
+    background: var(--mn-bg-primary);
+    border-radius: 10px;
+    border-left: 3px solid var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-summary-item strong {
+    color: var(--mn-accent-primary);
+}
+
+/* ========== END ========== */
+.math-notes-app .mn-end {
+    text-align: center;
+    padding: 36px 0;
+    color: var(--mn-text-muted);
+}
+
+.math-notes-app .mn-end-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.math-notes-app .mn-end-divider::before,
+.math-notes-app .mn-end-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--mn-border-color), transparent);
+}
+
+.math-notes-app .mn-end-icon { font-size: 22px; }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 900px) {
+    .math-notes-app .mn-main { padding: 40px 30px 80px; }
+    .math-notes-app .mn-page-title { font-size: 28px !important; }
+    .math-notes-app .mn-section-title { font-size: 22px !important; }
+}
+
+@media (max-width: 768px) {
+    .math-notes-app .mn-sidebar {
+        transform: translateX(-280px);
+    }
+    .math-notes-app .mn-sidebar.open {
+        transform: translateX(0);
+    }
+    .math-notes-app .mn-sidebar-toggle {
+        left: 0;
+    }
+    .math-notes-app .mn-sidebar.open + .mn-sidebar-toggle {
+        left: 280px;
+    }
+    .math-notes-app .mn-main {
+        margin-left: 0;
+        padding: 30px 20px 60px;
+    }
+    .math-notes-app .mn-viz-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .math-notes-app input[type="range"] { width: 100%; }
+}
+
+.math-notes-app .katex { font-size: 1.1em; }
+.math-notes-app .katex-display > .katex { font-size: 1.15em; }
+
+/* Connection line for roadmap */
+.math-notes-app .mn-roadmap-item::before {
+    content: '';
+    position: absolute;
+    left: 17px;
+    top: 52px;
+    bottom: -16px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--mn-accent-primary), var(--mn-accent-secondary));
+    opacity: 0.3;
+}
+
+.math-notes-app .mn-roadmap-item:last-child::before {
+    display: none;
+}
+</style>
+
+<div class="math-notes-app" id="mathNotesApp">
+    <!-- Background -->
+    <div class="mn-bg">
+        <div class="mn-bg-orb"></div>
+        <div class="mn-bg-orb"></div>
+        <div class="mn-bg-orb"></div>
+        <div class="mn-bg-grid"></div>
+    </div>
+
+    <div class="mn-layout">
+        <!-- Fixed Sidebar -->
+        <nav class="mn-sidebar" id="mnSidebar">
+            <div class="mn-sidebar-content">
+                <a href="https://husteread.com/index.php/tp/" class="mn-back">
+                    <span>←</span>
+                    <span>返回</span>
+                </a>
+
+                <div class="mn-directory" id="mnDirectory">
+                    <div class="mn-directory-header">
+                        <div class="mn-directory-title">
+                            <span>📁</span>
+                            <span>上级目录</span>
+                        </div>
+                        <span class="mn-directory-arrow">▼</span>
+                    </div>
+                    <div class="mn-directory-list">
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-1/" class="mn-directory-link">第一节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-2/" class="mn-directory-link">第二节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-3/" class="mn-directory-link">第三节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-4/" class="mn-directory-link">第四节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-5/" class="mn-directory-link">第五节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-6/" class="mn-directory-link">第六节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-7/" class="mn-directory-link">第七节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-8/" class="mn-directory-link">第八节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-9/" class="mn-directory-link active">第九节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-10/" class="mn-directory-link">总复习</a>
+                    </div>
+                </div>
+
+                <div class="mn-section-nav">
+                    <div class="mn-section-header">本节目录</div>
+                    <a href="#sec-1" class="mn-nav-link active"><span class="mn-nav-num">01</span>为什么要串联</a>
+                    <a href="#sec-2" class="mn-nav-link"><span class="mn-nav-num">02</span>积分判别法</a>
+                    <a href="#sec-3" class="mn-nav-link"><span class="mn-nav-num">03</span>几何理解</a>
+                    <a href="#sec-4" class="mn-nav-link"><span class="mn-nav-num">04</span>p-级数敛散性</a>
+                    <a href="#sec-5" class="mn-nav-link"><span class="mn-nav-num">05</span>进阶例题</a>
+                    <a href="#sec-6" class="mn-nav-link"><span class="mn-nav-num">06</span>知识地图</a>
+                    <a href="#sec-7" class="mn-nav-link"><span class="mn-nav-num">07</span>本节小结</a>
+                </div>
+            </div>
+
+            <div class="mn-sidebar-footer">
+                <div class="mn-theme-toggle" id="mnThemeToggle">
+                    <span>主题模式</span>
+                    <span class="mn-theme-icon" id="mnThemeIcon">🌙</span>
+                </div>
+            </div>
+        </nav>
+
+        <button class="mn-sidebar-toggle" id="mnSidebarToggle">
+            <span>◀</span>
+        </button>
+
+        <!-- Main Content -->
+        <main class="mn-main">
+            <header class="mn-page-header">
+                <div class="mn-badge">📘 第九节</div>
+                <h1 class="mn-page-title">定积分与无穷级数的联系</h1>
+                <p class="mn-page-subtitle">连续版"无限加法"与离散版"无限加法"——用积分判别级数的敛散性</p>
+            </header>
+
+            <!-- Section 1: 为什么要串联 -->
+            <section class="mn-section" id="sec-1">
+                <span class="mn-section-num">SECTION 01</span>
+                <h2 class="mn-section-title">为什么要把定积分和无穷级数扯到一起？</h2>
+                
+                <p>先把问题说清楚——定积分和无穷级数各自在解决什么问题？</p>
+
+                <div class="mn-highlight">
+                    <strong>🔗 两种"无限加法"</strong>
+                    <ul class="mn-list">
+                        <li><strong>定积分</strong>：$\displaystyle\int_a^b f(x)\,dx$，$\displaystyle\int_a^{+\infty}f(x)\,dx$ —— <strong>连续</strong>积累：无数小面积加起来</li>
+                        <li><strong>无穷级数</strong>：$\displaystyle\sum_{n=1}^{\infty}a_n = a_1 + a_2 + \cdots$ —— <strong>离散</strong>相加：无数项的极限</li>
+                    </ul>
+                </div>
+
+                <p>从哲学上看，它俩是一对孪生兄弟：</p>
+
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 本质联系</div>
+                    <table style="width:100%;border-collapse:collapse;margin-top:10px;">
+                        <tr style="background:var(--mn-bg-tertiary);">
+                            <td style="padding:12px;border:1px solid var(--mn-border-color);font-weight:600;text-align:center;">定积分</td>
+                            <td style="padding:12px;border:1px solid var(--mn-border-color);font-weight:600;text-align:center;">无穷级数</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:12px;border:1px solid var(--mn-border-color);text-align:center;">连续版"无限加法"</td>
+                            <td style="padding:12px;border:1px solid var(--mn-border-color);text-align:center;">离散版"无限加法"</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:12px;border:1px solid var(--mn-border-color);text-align:center;">$\int f(x)\,dx$</td>
+                            <td style="padding:12px;border:1px solid var(--mn-border-color);text-align:center;">$\sum a_n$</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:12px;border:1px solid var(--mn-border-color);text-align:center;">曲线下面积</td>
+                            <td style="padding:12px;border:1px solid var(--mn-border-color);text-align:center;">柱子高度之和</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p>既然我们已经搞定了广义定积分的收敛性，自然就想：</p>
+                <p style="text-align:center;font-size:20px;font-weight:600;color:var(--mn-accent-primary);margin:20px 0;">
+                    能不能借助积分来判断级数 $\sum a_n$ 收不收敛？
+                </p>
+                <p>答案是：<strong>能！</strong>这就是本节的主角——<strong>积分判别法（Integral Test）</strong>。</p>
+            </section>
+
+            <!-- Section 2: 积分判别法 -->
+            <section class="mn-section" id="sec-2">
+                <span class="mn-section-num">SECTION 02</span>
+                <h2 class="mn-section-title">积分判别法（Integral Test）</h2>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 积分判别法定理</div>
+                    <p>设 $f:[1,+\infty) \to \mathbb{R}$ 满足：</p>
+                    <ul class="mn-list">
+                        <li>$f(x) \geq 0$（非负）</li>
+                        <li>在 $[1,+\infty)$ 上<strong>连续</strong></li>
+                        <li>在 $[1,+\infty)$ 上<strong>单调递减</strong></li>
+                        <li>$a_n = f(n)$（级数项由 $f$ 在整数点取值给出）</li>
+                    </ul>
+                    <p>则无穷级数 $\displaystyle\sum_{n=1}^{\infty}a_n = \sum_{n=1}^{\infty}f(n)$ 与广义积分 $\displaystyle\int_1^{+\infty}f(x)\,dx$ <strong>同敛散</strong>：</p>
+                    <div class="mn-math">$$\sum_{n=1}^{\infty}f(n) \text{ 收敛} \iff \int_1^{+\infty}f(x)\,dx \text{ 收敛}$$</div>
+                </div>
+
+                <div class="mn-highlight">
+                    <strong>翻译成人话：</strong>
+                    <ul class="mn-list">
+                        <li>把 $a_n$ 看成在整数点上的"<strong>柱子高度</strong>"</li>
+                        <li>把连续曲线 $y=f(x)$ 看作光滑版"柱子顶边"</li>
+                        <li>"柱子高度的和"和"曲线下面积"差不多——<strong>一个积不完，另一个也跑不掉</strong></li>
+                    </ul>
+                </div>
+
+                <div class="mn-warning">
+                    <div class="mn-warning-title">⚠️ 使用条件</div>
+                    <p>积分判别法要求函数满足三个条件：<strong>非负、连续、单调递减</strong>。</p>
+                    <p>如果函数不满足这些条件（比如会变号），就不能直接使用这个方法！</p>
+                </div>
+            </section>
+
+            <!-- Section 3: 几何理解 -->
+            <section class="mn-section" id="sec-3">
+                <span class="mn-section-num">SECTION 03</span>
+                <h2 class="mn-section-title">用几何画面理解积分判别法</h2>
+
+                <p>让我们用调和级数 $\sum\frac{1}{n}$ 和 $y=\frac{1}{x}$ 来理解这个定理。</p>
+
+                <!-- 交互：积分判别法几何示意 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 柱子 vs 曲线面积：$y = 1/x$</h3>
+                        <div class="mn-viz-controls">
+                            <div class="mn-control-group">
+                                <span class="mn-control-label">项数 N =</span>
+                                <input type="range" id="nSlider" min="3" max="15" value="6">
+                                <span class="mn-slider-value" id="nVal">6</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-legend">
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-curve);"></div><span>y = 1/x</span></div>
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-bar);opacity:0.6;"></div><span>柱子面积 Σf(n)</span></div>
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-fill);"></div><span>曲线下面积 ∫f(x)dx</span></div>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="integralTestSvg" viewBox="0 0 700 320" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats">
+                        <div class="mn-stat"><div class="mn-stat-label">柱子面积和</div><div class="mn-stat-value" id="barSum">2.450</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-secondary);"><div class="mn-stat-label">曲线下面积</div><div class="mn-stat-value" style="color:var(--mn-accent-secondary);" id="intArea">1.792</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-tertiary);"><div class="mn-stat-label">夹逼关系</div><div class="mn-stat-value" style="color:var(--mn-accent-tertiary);">∫ ≤ Σ</div></div>
+                    </div>
+                    <p style="text-align:center;font-size:14px;color:var(--mn-text-muted);margin-top:12px;">🎯 观察：柱子面积总是 ≥ 曲线面积（因为 f 单调递减，右端点画柱子）</p>
+                </div>
+
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 夹逼不等式的来源</div>
+                    <p>因为 $f$ 单调递减，在每个区间 $[n, n+1]$ 上：</p>
+                    <div class="mn-math">$$f(x) \leq f(n) \quad (\forall x \in [n, n+1])$$</div>
+                    <p>所以柱子面积 ≥ 曲线面积：</p>
+                    <div class="mn-math">$$f(n) \cdot 1 \geq \int_n^{n+1}f(x)\,dx$$</div>
+                    <p>把 $n=1$ 到 $N$ 的所有不等式加起来：</p>
+                    <div class="mn-math">$$\sum_{n=1}^{N}f(n) \geq \int_1^{N+1}f(x)\,dx$$</div>
+                    <p>反向用"左端点"画柱子可以得到上界，从而形成<strong>一对夹逼不等式</strong>，最后推到：级数和与积分<strong>同敛散</strong>。</p>
+                </div>
+            </section>
+
+            <!-- Section 4: p-级数 -->
+            <section class="mn-section" id="sec-4">
+                <span class="mn-section-num">SECTION 04</span>
+                <h2 class="mn-section-title">经典应用：p-级数的敛散性</h2>
+
+                <p>上一节我们已经分析过 p-型广义积分，现在立即得到 p-级数的敛散性！</p>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 p-级数（p-series）敛散性</div>
+                    <div class="mn-math">$$\sum_{n=1}^{\infty}\frac{1}{n^p} = \begin{cases} \text{收敛} & \text{若 } p > 1 \\[8pt] \text{发散} & \text{若 } p \leq 1 \end{cases}$$</div>
+                </div>
+
+                <div class="mn-example">
+                    <div class="mn-example-title">📝 推导过程</div>
+                    <p>取 $f(x) = \frac{1}{x^p}$，$a_n = f(n) = \frac{1}{n^p}$。</p>
+                    <p>检验积分判别法条件：</p>
+                    <ul class="mn-list">
+                        <li>$f(x) = x^{-p} \geq 0$ ✓</li>
+                        <li>在 $[1,+\infty)$ 上连续 ✓</li>
+                        <li>当 $p > 0$ 时，$f(x)$ 单调递减 ✓</li>
+                    </ul>
+                    <p>由积分判别法，$\sum\frac{1}{n^p}$ 与 $\int_1^{+\infty}\frac{1}{x^p}dx$ 同敛散。</p>
+                    <p>而我们已知：$\int_1^{+\infty}\frac{1}{x^p}dx$ 当 $p>1$ 收敛，$p\leq 1$ 发散。</p>
+                    <p><strong>结论</strong>：p-级数的敛散性与 p-积分完全一致！</p>
+                </div>
+
+                <!-- 交互：p-级数可视化 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 p-级数部分和增长：$S_N = \sum_{n=1}^{N}\frac{1}{n^p}$</h3>
+                        <div class="mn-viz-controls">
+                            <div class="mn-control-group">
+                                <span class="mn-control-label">p =</span>
+                                <input type="range" id="pSeriesSlider" min="5" max="25" value="10">
+                                <span class="mn-slider-value" id="pSeriesVal">1.0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-legend">
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-curve);"></div><span>部分和 S_N</span></div>
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-curve2);opacity:0.5;"></div><span>p=1 (调和级数)</span></div>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="pSeriesSvg" viewBox="0 0 700 280" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats">
+                        <div class="mn-stat"><div class="mn-stat-label">当前 p</div><div class="mn-stat-value" id="pDisplay">1.0</div></div>
+                        <div class="mn-stat" id="seriesStatusStat"><div class="mn-stat-label">敛散性</div><div class="mn-stat-value" id="seriesStatus">发散</div></div>
+                        <div class="mn-stat"><div class="mn-stat-label">S₅₀ 值</div><div class="mn-stat-value" id="s50Val">4.499</div></div>
+                    </div>
+                    <p style="text-align:center;font-size:14px;color:var(--mn-text-muted);margin-top:12px;">🎯 p > 1 时曲线趋于平稳（收敛），p ≤ 1 时持续上升（发散）</p>
+                </div>
+
+                <div class="mn-highlight">
+                    <strong>特别重要：调和级数</strong>
+                    <p>当 $p=1$ 时，就是著名的<strong>调和级数</strong>（Harmonic Series）：</p>
+                    <div class="mn-math">$$\sum_{n=1}^{\infty}\frac{1}{n} = 1 + \frac{1}{2} + \frac{1}{3} + \frac{1}{4} + \cdots = +\infty$$</div>
+                    <p>虽然增长得<strong>极其缓慢</strong>，但最终还是发散！这与 $\int_1^{\infty}\frac{1}{x}dx = \ln x \to \infty$ 完美对应。</p>
+                </div>
+
+                <!-- 调和级数发散可视化 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 调和级数的缓慢发散</h3>
+                        <div class="mn-viz-controls">
+                            <div class="mn-control-group">
+                                <span class="mn-control-label">项数 N =</span>
+                                <input type="range" id="harmonicSlider" min="10" max="1000" value="100" step="10">
+                                <span class="mn-slider-value" id="harmonicN">100</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="harmonicSvg" viewBox="0 0 700 260" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats">
+                        <div class="mn-stat"><div class="mn-stat-label">调和级数 H_N</div><div class="mn-stat-value" id="harmonicSum">5.187</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-secondary);"><div class="mn-stat-label">ln(N)</div><div class="mn-stat-value" style="color:var(--mn-accent-secondary);" id="lnN">4.605</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-tertiary);"><div class="mn-stat-label">H_N - ln(N)</div><div class="mn-stat-value" style="color:var(--mn-accent-tertiary);" id="euler">0.582</div></div>
+                    </div>
+                    <p style="text-align:center;font-size:14px;color:var(--mn-text-muted);margin-top:12px;">💡 H_N ≈ ln(N) + γ，其中 γ ≈ 0.5772 是欧拉常数</p>
+                </div>
+            </section>
+
+            <!-- Section 5: 进阶例题 -->
+            <section class="mn-section" id="sec-5">
+                <span class="mn-section-num">SECTION 05</span>
+                <h2 class="mn-section-title">进阶例题：$\sum\frac{1}{n(\ln n)^p}$</h2>
+
+                <p>这是一个经常出现在习题里的"积分判别 + 换元"联合出演的例子：</p>
+
+                <div class="mn-example">
+                    <div class="mn-example-title">📝 讨论级数 $\displaystyle\sum_{n=2}^{\infty}\frac{1}{n(\ln n)^p}$ 的敛散性</div>
+                    
+                    <p><strong>Step 1：构造对应的广义积分</strong></p>
+                    <p>取 $f(x) = \frac{1}{x(\ln x)^p}$，$x \geq 2$。考虑积分：</p>
+                    <div class="mn-math">$$\int_2^{+\infty}\frac{1}{x(\ln x)^p}\,dx$$</div>
+                    
+                    <p><strong>Step 2：换元——把 $\ln x$ 当整体</strong></p>
+                    <p>令 $t = \ln x$，则 $dt = \frac{1}{x}dx$，即 $\frac{1}{x}dx = dt$。</p>
+                    <p>区间变换：$x=2 \Rightarrow t=\ln 2$；$x\to+\infty \Rightarrow t\to+\infty$。</p>
+                    <div class="mn-math">$$\int_2^{+\infty}\frac{1}{x(\ln x)^p}\,dx = \int_{\ln 2}^{+\infty}\frac{1}{t^p}\,dt$$</div>
+                    
+                    <p><strong>Step 3：这又变回熟悉的 p-型积分！</strong></p>
+                    <ul class="mn-list">
+                        <li>若 $p > 1$：$\int_{\ln 2}^{+\infty}t^{-p}\,dt$ 收敛</li>
+                        <li>若 $p \leq 1$：发散</li>
+                    </ul>
+                    
+                    <p><strong>Step 4：由积分判别法得到级数结果</strong></p>
+                    <div class="mn-math">$$\sum_{n=2}^{\infty}\frac{1}{n(\ln n)^p} \begin{cases} \text{收敛} & \text{若 } p > 1 \\ \text{发散} & \text{若 } p \leq 1 \end{cases}$$</div>
+                </div>
+
+                <div class="mn-highlight">
+                    <strong>思路小结：</strong>
+                    <p>这个例子展示了"换元 + 积分判别"的组合拳：</p>
+                    <ul class="mn-list">
+                        <li>复习了换元积分的技巧</li>
+                        <li>把复杂积分化归为简单的 p-型</li>
+                        <li>用积分结果直接推出级数敛散性</li>
+                    </ul>
+                </div>
+
+                <!-- 可视化：ln级数 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 级数 $\sum\frac{1}{n(\ln n)^p}$ 的部分和</h3>
+                        <div class="mn-viz-controls">
+                            <div class="mn-control-group">
+                                <span class="mn-control-label">p =</span>
+                                <input type="range" id="lnSeriesSlider" min="5" max="25" value="10">
+                                <span class="mn-slider-value" id="lnSeriesVal">1.0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="lnSeriesSvg" viewBox="0 0 700 260" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats">
+                        <div class="mn-stat"><div class="mn-stat-label">当前 p</div><div class="mn-stat-value" id="lnPDisplay">1.0</div></div>
+                        <div class="mn-stat" id="lnStatusStat"><div class="mn-stat-label">敛散性</div><div class="mn-stat-value" id="lnStatus">发散</div></div>
+                        <div class="mn-stat"><div class="mn-stat-label">S₁₀₀ 值</div><div class="mn-stat-value" id="lnS100">—</div></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: 知识地图 -->
+            <section class="mn-section" id="sec-6">
+                <span class="mn-section-num">SECTION 06</span>
+                <h2 class="mn-section-title">定积分篇知识地图</h2>
+
+                <p>到这一步，"定积分"这条主线基本上算闭环了。让我们在脑子里搭一个从头到尾的知识地图：</p>
+
+                <div class="mn-roadmap">
+                    <div class="mn-roadmap-title">🗺️ 定积分知识体系</div>
+                    
+                    <div class="mn-roadmap-item">
+                        <div class="mn-roadmap-num">1</div>
+                        <div class="mn-roadmap-content">
+                            <div class="mn-roadmap-label">从黎曼和出发：定积分的定义</div>
+                            <div class="mn-roadmap-desc">分割区间 → 选点 → 黎曼和 $S(T,\xi) = \sum f(\xi_i)\Delta x_i$ → 极限存在且与分割、选点无关 ⇒ 可积</div>
+                            <div class="mn-roadmap-keywords">
+                                <span class="mn-keyword">分割–近似–极限</span>
+                                <span class="mn-keyword">带符号面积</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-roadmap-item">
+                        <div class="mn-roadmap-num">2</div>
+                        <div class="mn-roadmap-content">
+                            <div class="mn-roadmap-label">可积性判定：达布上和/下和 & 振幅</div>
+                            <div class="mn-roadmap-desc">上确界/下确界 $M_i, m_i$ → 达布上和/下和 $U(T), L(T)$ → 振幅 $\omega_i = M_i - m_i$ → 连续、单调有界函数可积</div>
+                            <div class="mn-roadmap-keywords">
+                                <span class="mn-keyword">sup/inf</span>
+                                <span class="mn-keyword">振幅 ω</span>
+                                <span class="mn-keyword">一致连续</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-roadmap-item">
+                        <div class="mn-roadmap-num">3</div>
+                        <div class="mn-roadmap-content">
+                            <div class="mn-roadmap-label">定积分的基本性质</div>
+                            <div class="mn-roadmap-desc">线性 → 区间可加 → 大小比较 → 绝对值不等式 → 积分第一中值定理</div>
+                            <div class="mn-roadmap-keywords">
+                                <span class="mn-keyword">线性</span>
+                                <span class="mn-keyword">可加性</span>
+                                <span class="mn-keyword">中值定理</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-roadmap-item">
+                        <div class="mn-roadmap-num">4</div>
+                        <div class="mn-roadmap-content">
+                            <div class="mn-roadmap-label">微积分基本定理 & 原函数</div>
+                            <div class="mn-roadmap-desc">积分函数 $F(x) = \int_a^x f(t)dt$ 连续 → FTC I: $F'(x) = f(x)$ → FTC II: $\int_a^b f = F(b) - F(a)$</div>
+                            <div class="mn-roadmap-keywords">
+                                <span class="mn-keyword">面积函数的导数=高度</span>
+                                <span class="mn-keyword">牛顿-莱布尼兹</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-roadmap-item">
+                        <div class="mn-roadmap-num">5</div>
+                        <div class="mn-roadmap-content">
+                            <div class="mn-roadmap-label">定积分的计算技巧</div>
+                            <div class="mn-roadmap-desc">换元法（链式法则反向）→ 分部积分（乘积求导反向）→ 奇偶性 & 对称区间</div>
+                            <div class="mn-roadmap-keywords">
+                                <span class="mn-keyword">换元</span>
+                                <span class="mn-keyword">分部</span>
+                                <span class="mn-keyword">对称性</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-roadmap-item">
+                        <div class="mn-roadmap-num">6</div>
+                        <div class="mn-roadmap-content">
+                            <div class="mn-roadmap-label">几何与物理应用</div>
+                            <div class="mn-roadmap-desc">面积 → 弧长 $L = \int\sqrt{1+f'^2}dx$ → 旋转体体积（圆盘法、壳层法）→ 做功、质心等</div>
+                            <div class="mn-roadmap-keywords">
+                                <span class="mn-keyword">弧长</span>
+                                <span class="mn-keyword">体积</span>
+                                <span class="mn-keyword">物理应用</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-roadmap-item">
+                        <div class="mn-roadmap-num">7</div>
+                        <div class="mn-roadmap-content">
+                            <div class="mn-roadmap-label">广义定积分（反常积分）</div>
+                            <div class="mn-roadmap-desc">区间无穷长 → 端点无界 → p-型积分 → 比较判别法 → 绝对/条件收敛</div>
+                            <div class="mn-roadmap-keywords">
+                                <span class="mn-keyword">极限兜底</span>
+                                <span class="mn-keyword">无穷区间</span>
+                                <span class="mn-keyword">端点奇点</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-roadmap-item">
+                        <div class="mn-roadmap-num">8</div>
+                        <div class="mn-roadmap-content">
+                            <div class="mn-roadmap-label">定积分 ⇔ 无穷级数：积分判别法</div>
+                            <div class="mn-roadmap-desc">连续版加法 vs 离散版加法 → 积分判别法 → p-级数、$\frac{1}{n(\ln n)^p}$ 等敛散性</div>
+                            <div class="mn-roadmap-keywords">
+                                <span class="mn-keyword">Integral Test</span>
+                                <span class="mn-keyword">p-级数</span>
+                                <span class="mn-keyword">同敛散</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 知识结构图 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 定积分知识结构图</h3>
+                    </div>
+                    <div class="mn-svg-container">
+                        <svg id="roadmapSvg" viewBox="0 0 700 350" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7: Summary -->
+            <section class="mn-section" id="sec-7">
+                <span class="mn-section-num">SECTION 07</span>
+                <h2 class="mn-section-title">本节小结</h2>
+
+                <div class="mn-summary">
+                    <h3 class="mn-summary-title"><span>📋</span> 积分与级数的桥梁</h3>
+                    <div class="mn-summary-grid">
+                        <div class="mn-summary-item">
+                            <strong>积分判别法</strong><br>
+                            $f$ 连续、正、单调递减<br>
+                            $\sum f(n)$ 与 $\int f$ 同敛散
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>p-级数</strong><br>
+                            $\sum\frac{1}{n^p}$<br>
+                            $p>1$ 收敛，$p\leq 1$ 发散
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>调和级数</strong><br>
+                            $\sum\frac{1}{n} = +\infty$<br>
+                            增长极慢但发散
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>进阶例子</strong><br>
+                            $\sum\frac{1}{n(\ln n)^p}$<br>
+                            换元 + 积分判别
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>几何直觉</strong><br>
+                            柱子高度和 ≈ 曲线下面积<br>
+                            夹逼 → 同敛散
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>知识闭环</strong><br>
+                            黎曼和 → FTC → 广义积分<br>
+                            → 级数联系
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mn-end">
+                    <div class="mn-end-divider"><span class="mn-end-icon">✅</span></div>
+                    <p>第九节完成！定积分的主线内容到此告一段落。下一节是总复习，系统梳理全章要点与典型题型。</p>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    
+    var app = document.getElementById('mathNotesApp');
+    if (!app) return;
+    
+    // ========== SIDEBAR ==========
+    var sidebar = document.getElementById('mnSidebar');
+    var sidebarToggle = document.getElementById('mnSidebarToggle');
+    
+    sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+    });
+    
+    var directory = document.getElementById('mnDirectory');
+    var directoryHeader = directory.querySelector('.mn-directory-header');
+    directoryHeader.addEventListener('click', function() {
+        directory.classList.toggle('open');
+    });
+    
+    // ========== THEME ==========
+    var themeToggle = document.getElementById('mnThemeToggle');
+    var themeIcon = document.getElementById('mnThemeIcon');
+    
+    var savedTheme = localStorage.getItem('mn-theme') || 'light';
+    app.setAttribute('data-theme', savedTheme);
+    themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+    
+    themeToggle.addEventListener('click', function() {
+        var current = app.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        app.setAttribute('data-theme', next);
+        localStorage.setItem('mn-theme', next);
+        themeIcon.textContent = next === 'dark' ? '☀️' : '🌙';
+        redrawAll();
+    });
+    
+    // ========== NAV LINKS ==========
+    var navLinks = app.querySelectorAll('.mn-nav-link');
+    navLinks.forEach(function(link) {
+        link.addEventListener('click', function() {
+            navLinks.forEach(function(l) { l.classList.remove('active'); });
+            this.classList.add('active');
+        });
+    });
+    
+    // ========== HELPERS ==========
+    function getColors() {
+        var style = getComputedStyle(app);
+        return {
+            curve: style.getPropertyValue('--mn-svg-curve').trim() || '#4f46e5',
+            curve2: style.getPropertyValue('--mn-svg-curve2').trim() || '#f59e0b',
+            fill: style.getPropertyValue('--mn-svg-fill').trim() || 'rgba(79,70,229,0.25)',
+            fill2: style.getPropertyValue('--mn-svg-fill2').trim() || 'rgba(245,158,11,0.25)',
+            grid: style.getPropertyValue('--mn-svg-grid').trim() || '#e0e7ff',
+            axis: style.getPropertyValue('--mn-svg-axis').trim() || '#3730a3',
+            bg: style.getPropertyValue('--mn-bg-secondary').trim() || '#ffffff',
+            text: style.getPropertyValue('--mn-text-primary').trim() || '#1e1b4b',
+            bar: style.getPropertyValue('--mn-svg-bar').trim() || '#14b8a6',
+            bar2: style.getPropertyValue('--mn-svg-bar2').trim() || '#f472b6',
+            muted: style.getPropertyValue('--mn-text-muted').trim() || '#6366f1',
+            primary: style.getPropertyValue('--mn-accent-primary').trim() || '#4f46e5',
+            secondary: style.getPropertyValue('--mn-accent-secondary').trim() || '#6366f1',
+            tertiary: style.getPropertyValue('--mn-accent-tertiary').trim() || '#f59e0b',
+            teal: style.getPropertyValue('--mn-accent-teal').trim() || '#14b8a6',
+            rose: style.getPropertyValue('--mn-accent-rose').trim() || '#e11d48'
+        };
+    }
+    
+    // ========== 1. Integral Test Visualization ==========
+    var nSlider = document.getElementById('nSlider');
+    
+    function drawIntegralTest(N) {
+        var svg = document.getElementById('integralTestSvg');
+        var colors = getColors();
+        var width = 700, height = 320;
+        var margin = {top: 30, right: 50, bottom: 50, left: 60};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        var xMax = N + 1.5;
+        var yMax = 1.2;
+        
+        var xScale = function(x) { return margin.left + (x / xMax) * plotWidth; };
+        var yScale = function(y) { return height - margin.bottom - (y / yMax) * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Grid
+        for (var i = 1; i <= N+1; i++) {
+            var gx = xScale(i);
+            content += '<line x1="'+gx+'" y1="'+margin.top+'" x2="'+gx+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.grid+'" stroke-dasharray="2,2" opacity="0.5"/>';
+        }
+        
+        // Draw bars (right-aligned: bar at [n, n+1] has height f(n))
+        var barSum = 0;
+        for (var n = 1; n <= N; n++) {
+            var barHeight = 1 / n;
+            barSum += barHeight;
+            var x1 = xScale(n);
+            var x2 = xScale(n + 1);
+            var y1 = yScale(barHeight);
+            var y2 = yScale(0);
+            
+            content += '<rect x="'+x1+'" y="'+y1+'" width="'+(x2-x1)+'" height="'+(y2-y1)+'" fill="'+colors.bar+'" opacity="0.4" stroke="'+colors.bar+'" stroke-width="1"/>';
+        }
+        
+        // Draw curve y = 1/x and fill area
+        var curvePath = '';
+        var areaPath = 'M ' + xScale(1) + ' ' + yScale(0);
+        for (var i = 0; i <= 200; i++) {
+            var x = 1 + i * N / 200;
+            var y = 1 / x;
+            var px = xScale(x);
+            var py = yScale(y);
+            if (i === 0) curvePath = 'M ' + px + ' ' + py;
+            else curvePath += ' L ' + px + ' ' + py;
+            areaPath += ' L ' + px + ' ' + py;
+        }
+        areaPath += ' L ' + xScale(N+1) + ' ' + yScale(0) + ' Z';
+        
+        content += '<path d="'+areaPath+'" fill="'+colors.fill+'" opacity="0.5"/>';
+        content += '<path d="'+curvePath+'" fill="none" stroke="'+colors.curve+'" stroke-width="3"/>';
+        
+        // Axis
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        content += '<line x1="'+xScale(1)+'" y1="'+margin.top+'" x2="'+xScale(1)+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // Labels
+        for (var i = 1; i <= N+1; i++) {
+            content += '<text x="'+xScale(i)+'" y="'+(yScale(0)+20)+'" fill="'+colors.text+'" font-size="11" text-anchor="middle">'+i+'</text>';
+        }
+        content += '<text x="'+(margin.left-10)+'" y="'+yScale(1)+'" fill="'+colors.text+'" font-size="12" text-anchor="end">1</text>';
+        content += '<text x="'+(width/2)+'" y="22" fill="'+colors.text+'" font-size="14" text-anchor="middle" font-weight="500">y = 1/x 与柱子面积对比</text>';
+        
+        svg.innerHTML = content;
+        
+        // Calculate integral: ∫_1^{N+1} 1/x dx = ln(N+1)
+        var intArea = Math.log(N + 1);
+        
+        document.getElementById('barSum').textContent = barSum.toFixed(3);
+        document.getElementById('intArea').textContent = intArea.toFixed(3);
+    }
+    
+    nSlider.addEventListener('input', function() {
+        var N = parseInt(this.value);
+        document.getElementById('nVal').textContent = N;
+        drawIntegralTest(N);
+    });
+    
+    // ========== 2. p-Series Visualization ==========
+    var pSeriesSlider = document.getElementById('pSeriesSlider');
+    
+    function drawPSeries(p) {
+        var svg = document.getElementById('pSeriesSvg');
+        var colors = getColors();
+        var width = 700, height = 280;
+        var margin = {top: 30, right: 50, bottom: 50, left: 60};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        var maxN = 50;
+        
+        // Calculate partial sums for current p
+        var sums = [0];
+        var sum = 0;
+        for (var n = 1; n <= maxN; n++) {
+            sum += Math.pow(n, -p);
+            sums.push(sum);
+        }
+        
+        // Calculate partial sums for p=1 (reference)
+        var sumsRef = [0];
+        var sumRef = 0;
+        for (var n = 1; n <= maxN; n++) {
+            sumRef += 1 / n;
+            sumsRef.push(sumRef);
+        }
+        
+        var yMax = Math.max(sums[maxN], sumsRef[maxN]) * 1.1;
+        
+        var xScale = function(n) { return margin.left + (n / maxN) * plotWidth; };
+        var yScale = function(y) { return height - margin.bottom - (y / yMax) * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Grid
+        for (var i = 10; i <= maxN; i += 10) {
+            var gx = xScale(i);
+            content += '<line x1="'+gx+'" y1="'+margin.top+'" x2="'+gx+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.grid+'" stroke-dasharray="2,2" opacity="0.5"/>';
+        }
+        
+        // Reference curve (p=1)
+        var refPath = '';
+        for (var n = 1; n <= maxN; n++) {
+            var px = xScale(n);
+            var py = yScale(sumsRef[n]);
+            if (n === 1) refPath = 'M ' + px + ' ' + py;
+            else refPath += ' L ' + px + ' ' + py;
+        }
+        content += '<path d="'+refPath+'" fill="none" stroke="'+colors.curve2+'" stroke-width="2" stroke-dasharray="5,3" opacity="0.6"/>';
+        
+        // Main curve
+        var mainPath = '';
+        for (var n = 1; n <= maxN; n++) {
+            var px = xScale(n);
+            var py = yScale(sums[n]);
+            if (n === 1) mainPath = 'M ' + px + ' ' + py;
+            else mainPath += ' L ' + px + ' ' + py;
+        }
+        content += '<path d="'+mainPath+'" fill="none" stroke="'+colors.curve+'" stroke-width="3"/>';
+        
+        // Endpoint dot
+        content += '<circle cx="'+xScale(maxN)+'" cy="'+yScale(sums[maxN])+'" r="5" fill="'+colors.curve+'"/>';
+        
+        // If p > 1, draw horizontal asymptote (approximate limit)
+        if (p > 1) {
+            // Riemann zeta approximation for visualization
+            var limit = sums[maxN] + Math.pow(maxN, 1-p) / (p-1);
+            if (limit < yMax) {
+                content += '<line x1="'+margin.left+'" y1="'+yScale(limit)+'" x2="'+(width-margin.right)+'" y2="'+yScale(limit)+'" stroke="'+colors.teal+'" stroke-width="1.5" stroke-dasharray="8,4" opacity="0.7"/>';
+                content += '<text x="'+(width-margin.right-5)+'" y="'+(yScale(limit)-8)+'" fill="'+colors.teal+'" font-size="11" text-anchor="end">极限值</text>';
+            }
+        }
+        
+        // Axis
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        content += '<line x1="'+margin.left+'" y1="'+margin.top+'" x2="'+margin.left+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // Labels
+        for (var i = 10; i <= maxN; i += 10) {
+            content += '<text x="'+xScale(i)+'" y="'+(yScale(0)+18)+'" fill="'+colors.text+'" font-size="11" text-anchor="middle">'+i+'</text>';
+        }
+        content += '<text x="'+(width/2)+'" y="'+(height-10)+'" fill="'+colors.muted+'" font-size="12" text-anchor="middle">n</text>';
+        content += '<text x="'+(width/2)+'" y="22" fill="'+colors.text+'" font-size="14" text-anchor="middle" font-weight="500">部分和 S_N = Σ(1/n^p)</text>';
+        
+        svg.innerHTML = content;
+        
+        // Update stats
+        var converges = p > 1;
+        document.getElementById('pDisplay').textContent = p.toFixed(1);
+        document.getElementById('seriesStatus').textContent = converges ? '收敛 ✓' : '发散 ✗';
+        document.getElementById('s50Val').textContent = sums[maxN].toFixed(3);
+        
+        var statusStat = document.getElementById('seriesStatusStat');
+        statusStat.style.borderTopColor = converges ? colors.teal : colors.rose;
+        document.getElementById('seriesStatus').style.color = converges ? colors.teal : colors.rose;
+    }
+    
+    pSeriesSlider.addEventListener('input', function() {
+        var p = parseInt(this.value) / 10;
+        document.getElementById('pSeriesVal').textContent = p.toFixed(1);
+        drawPSeries(p);
+    });
+    
+    // ========== 3. Harmonic Series Visualization ==========
+    var harmonicSlider = document.getElementById('harmonicSlider');
+    
+    function drawHarmonic(N) {
+        var svg = document.getElementById('harmonicSvg');
+        var colors = getColors();
+        var width = 700, height = 260;
+        var margin = {top: 30, right: 50, bottom: 50, left: 60};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        // Calculate H_N
+        var H = 0;
+        for (var n = 1; n <= N; n++) {
+            H += 1 / n;
+        }
+        var lnN = Math.log(N);
+        var euler = H - lnN;
+        
+        var yMax = Math.max(H, lnN) * 1.15;
+        
+        var xScale = function(n) { return margin.left + (Math.log(n) / Math.log(N)) * plotWidth; };
+        var yScale = function(y) { return height - margin.bottom - (y / yMax) * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Draw ln(x) curve
+        var lnPath = '';
+        for (var i = 1; i <= 100; i++) {
+            var n = Math.pow(N, i/100);
+            var px = xScale(n);
+            var py = yScale(Math.log(n));
+            if (i === 1) lnPath = 'M ' + px + ' ' + py;
+            else lnPath += ' L ' + px + ' ' + py;
+        }
+        content += '<path d="'+lnPath+'" fill="none" stroke="'+colors.curve2+'" stroke-width="2.5" opacity="0.7"/>';
+        
+        // Draw H_n curve (sample points)
+        var hPath = '';
+        var hSum = 0;
+        var step = Math.max(1, Math.floor(N / 100));
+        for (var n = 1; n <= N; n += step) {
+            // Recalculate sum up to n
+            var partialH = 0;
+            for (var k = 1; k <= n; k++) partialH += 1/k;
+            var px = xScale(n);
+            var py = yScale(partialH);
+            if (n === 1) hPath = 'M ' + px + ' ' + py;
+            else hPath += ' L ' + px + ' ' + py;
+        }
+        // Add final point
+        var finalPx = xScale(N);
+        var finalPy = yScale(H);
+        hPath += ' L ' + finalPx + ' ' + finalPy;
+        content += '<path d="'+hPath+'" fill="none" stroke="'+colors.curve+'" stroke-width="3"/>';
+        
+        // Endpoint dots
+        content += '<circle cx="'+finalPx+'" cy="'+finalPy+'" r="5" fill="'+colors.curve+'"/>';
+        content += '<circle cx="'+finalPx+'" cy="'+yScale(lnN)+'" r="4" fill="'+colors.curve2+'"/>';
+        
+        // Gap annotation
+        var gapY = (finalPy + yScale(lnN)) / 2;
+        content += '<line x1="'+(finalPx+10)+'" y1="'+finalPy+'" x2="'+(finalPx+10)+'" y2="'+yScale(lnN)+'" stroke="'+colors.tertiary+'" stroke-width="2"/>';
+        content += '<text x="'+(finalPx+20)+'" y="'+gapY+'" fill="'+colors.tertiary+'" font-size="11" dominant-baseline="middle">γ ≈ 0.577</text>';
+        
+        // Axis
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        content += '<line x1="'+margin.left+'" y1="'+margin.top+'" x2="'+margin.left+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // Labels
+        content += '<text x="'+xScale(1)+'" y="'+(yScale(0)+18)+'" fill="'+colors.text+'" font-size="11" text-anchor="middle">1</text>';
+        content += '<text x="'+xScale(N)+'" y="'+(yScale(0)+18)+'" fill="'+colors.text+'" font-size="11" text-anchor="middle">'+N+'</text>';
+        content += '<text x="'+(width/2)+'" y="'+(height-10)+'" fill="'+colors.muted+'" font-size="12" text-anchor="middle">n (对数刻度)</text>';
+        content += '<text x="'+(width/2)+'" y="22" fill="'+colors.text+'" font-size="14" text-anchor="middle" font-weight="500">调和级数 H_N vs ln(N)</text>';
+        
+        // Legend
+        content += '<text x="'+(width-margin.right-10)+'" y="'+(margin.top+20)+'" fill="'+colors.curve+'" font-size="12" text-anchor="end">H_N</text>';
+        content += '<text x="'+(width-margin.right-10)+'" y="'+(margin.top+38)+'" fill="'+colors.curve2+'" font-size="12" text-anchor="end">ln(N)</text>';
+        
+        svg.innerHTML = content;
+        
+        document.getElementById('harmonicSum').textContent = H.toFixed(3);
+        document.getElementById('lnN').textContent = lnN.toFixed(3);
+        document.getElementById('euler').textContent = euler.toFixed(3);
+    }
+    
+    harmonicSlider.addEventListener('input', function() {
+        var N = parseInt(this.value);
+        document.getElementById('harmonicN').textContent = N;
+        drawHarmonic(N);
+    });
+    
+    // ========== 4. ln Series Visualization ==========
+    var lnSeriesSlider = document.getElementById('lnSeriesSlider');
+    
+    function drawLnSeries(p) {
+        var svg = document.getElementById('lnSeriesSvg');
+        var colors = getColors();
+        var width = 700, height = 260;
+        var margin = {top: 30, right: 50, bottom: 50, left: 60};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        var maxN = 100;
+        
+        // Calculate partial sums
+        var sums = [0, 0]; // start from n=2
+        var sum = 0;
+        for (var n = 2; n <= maxN; n++) {
+            sum += 1 / (n * Math.pow(Math.log(n), p));
+            sums.push(sum);
+        }
+        
+        var yMax = sums[maxN] * 1.15;
+        
+        var xScale = function(n) { return margin.left + ((n-2) / (maxN-2)) * plotWidth; };
+        var yScale = function(y) { return height - margin.bottom - (y / yMax) * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Grid
+        for (var i = 20; i <= maxN; i += 20) {
+            var gx = xScale(i);
+            content += '<line x1="'+gx+'" y1="'+margin.top+'" x2="'+gx+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.grid+'" stroke-dasharray="2,2" opacity="0.5"/>';
+        }
+        
+        // Main curve
+        var mainPath = '';
+        for (var n = 2; n <= maxN; n++) {
+            var px = xScale(n);
+            var py = yScale(sums[n]);
+            if (n === 2) mainPath = 'M ' + px + ' ' + py;
+            else mainPath += ' L ' + px + ' ' + py;
+        }
+        content += '<path d="'+mainPath+'" fill="none" stroke="'+colors.curve+'" stroke-width="3"/>';
+        content += '<circle cx="'+xScale(maxN)+'" cy="'+yScale(sums[maxN])+'" r="5" fill="'+colors.curve+'"/>';
+        
+        // Axis
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        content += '<line x1="'+margin.left+'" y1="'+margin.top+'" x2="'+margin.left+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // Labels
+        content += '<text x="'+xScale(2)+'" y="'+(yScale(0)+18)+'" fill="'+colors.text+'" font-size="11" text-anchor="middle">2</text>';
+        for (var i = 20; i <= maxN; i += 20) {
+            content += '<text x="'+xScale(i)+'" y="'+(yScale(0)+18)+'" fill="'+colors.text+'" font-size="11" text-anchor="middle">'+i+'</text>';
+        }
+        content += '<text x="'+(width/2)+'" y="22" fill="'+colors.text+'" font-size="14" text-anchor="middle" font-weight="500">部分和 S_N = Σ 1/(n·(ln n)^p)</text>';
+        
+        svg.innerHTML = content;
+        
+        // Update stats
+        var converges = p > 1;
+        document.getElementById('lnPDisplay').textContent = p.toFixed(1);
+        document.getElementById('lnStatus').textContent = converges ? '收敛 ✓' : '发散 ✗';
+        document.getElementById('lnS100').textContent = sums[maxN].toFixed(3);
+        
+        var statusStat = document.getElementById('lnStatusStat');
+        statusStat.style.borderTopColor = converges ? colors.teal : colors.rose;
+        document.getElementById('lnStatus').style.color = converges ? colors.teal : colors.rose;
+    }
+    
+    lnSeriesSlider.addEventListener('input', function() {
+        var p = parseInt(this.value) / 10;
+        document.getElementById('lnSeriesVal').textContent = p.toFixed(1);
+        drawLnSeries(p);
+    });
+    
+    // ========== 5. Knowledge Roadmap SVG ==========
+    function drawRoadmap() {
+        var svg = document.getElementById('roadmapSvg');
+        var colors = getColors();
+        var width = 700, height = 350;
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Define nodes
+        var nodes = [
+            {x: 350, y: 40, label: '黎曼和', sub: '定义'},
+            {x: 150, y: 110, label: '可积性', sub: '判定'},
+            {x: 350, y: 110, label: '性质', sub: '体系'},
+            {x: 550, y: 110, label: 'FTC', sub: '基本定理'},
+            {x: 150, y: 190, label: '计算', sub: '技巧'},
+            {x: 350, y: 190, label: '应用', sub: '几何/物理'},
+            {x: 550, y: 190, label: '广义', sub: '积分'},
+            {x: 350, y: 280, label: '级数', sub: '联系'}
+        ];
+        
+        // Draw connections
+        var connections = [
+            [0, 1], [0, 2], [0, 3],
+            [1, 4], [2, 4], [2, 5], [3, 4], [3, 5], [3, 6],
+            [4, 7], [5, 7], [6, 7]
+        ];
+        
+        connections.forEach(function(conn) {
+            var from = nodes[conn[0]];
+            var to = nodes[conn[1]];
+            content += '<line x1="'+from.x+'" y1="'+(from.y+20)+'" x2="'+to.x+'" y2="'+(to.y-20)+'" stroke="'+colors.primary+'" stroke-width="2" opacity="0.3"/>';
+        });
+        
+        // Draw nodes
+        nodes.forEach(function(node, i) {
+            var gradient = 'url(#nodeGrad'+i+')';
+            content += '<defs><linearGradient id="nodeGrad'+i+'" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:'+colors.primary+';stop-opacity:1"/><stop offset="100%" style="stop-color:'+colors.secondary+';stop-opacity:1"/></linearGradient></defs>';
+            
+            content += '<ellipse cx="'+node.x+'" cy="'+node.y+'" rx="55" ry="24" fill="'+gradient+'" opacity="0.9"/>';
+            content += '<text x="'+node.x+'" y="'+(node.y-3)+'" fill="white" font-size="13" text-anchor="middle" font-weight="600">'+node.label+'</text>';
+            content += '<text x="'+node.x+'" y="'+(node.y+12)+'" fill="white" font-size="10" text-anchor="middle" opacity="0.8">'+node.sub+'</text>';
+        });
+        
+        // Title
+        content += '<text x="350" y="335" fill="'+colors.muted+'" font-size="12" text-anchor="middle">定积分知识体系结构图</text>';
+        
+        svg.innerHTML = content;
+    }
+    
+    // ========== REDRAW ALL ==========
+    function redrawAll() {
+        drawIntegralTest(parseInt(nSlider.value));
+        drawPSeries(parseInt(pSeriesSlider.value) / 10);
+        drawHarmonic(parseInt(harmonicSlider.value));
+        drawLnSeries(parseInt(lnSeriesSlider.value) / 10);
+        drawRoadmap();
+    }
+    
+    // ========== INIT ==========
+    drawIntegralTest(6);
+    drawPSeries(1.0);
+    drawHarmonic(100);
+    drawLnSeries(1.0);
+    drawRoadmap();
+    
+    // ========== KATEX ==========
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'function') {
+            renderMathInElement(app, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError: false
+            });
+        } else {
+            setTimeout(initKaTeX, 100);
+        }
+    }
+    initKaTeX();
+})();
+</script>
+
+</body>
+</html>

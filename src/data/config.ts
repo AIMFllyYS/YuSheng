@@ -1,0 +1,41 @@
+export const SITE_CONFIG = {
+  ADMIN_PIN: "yusheng",
+  VIDEO_SRC:
+    "https://player.bilibili.com/player.html?isOutside=true&aid=114946629176000&bvid=BV1yz8yzbER2&cid=31396204501&p=1",
+  DANMAKU_TEXTS: [
+    "羽化成蝶",
+    "ENFP",
+    "HUST",
+    "摄影大佬",
+    "修仙中...",
+    "既寿永昌",
+    "不问前程",
+    "✨",
+    "📸",
+    "🌲",
+    "世界不死",
+    "理想不灭",
+  ],
+  QUIZ_BANK: [
+    { q: "我目前就读于哪所大学？", options: ["武汉大学", "华中科技大学", "哈尔滨工业大学", "清华大学"], a: 1 },
+    { q: "我的MBTI人格是？", options: ["INTP", "ENFP", "ISTJ", "ENTJ"], a: 1 },
+    { q: "我的家乡在哪里？", options: ["北京", "武汉", "哈尔滨", "上海"], a: 2 },
+    { q: "我的格言是？", options: ["不问前程，尽管繁荣", "好好学习，天天向上", "我要成为海贼王", "为中华之崛起"], a: 0 },
+  ],
+  TRUTH_BANK: [
+    "#真心话# 对未来的迷茫",
+    "#提问# 摄影用的什么设备？",
+    "#真心话# 大学最后悔的事",
+    "#提问# 如何平衡修仙与学习",
+    "#真心话# 最想对自己说的话",
+  ],
+  POLL_OPS: ["更喜欢摄影", "更喜欢文章", "更喜欢Vlog", "我是来看脸的"],
+  FORTUNE_BANK: [
+    { type: "学习", text: "今日宜刷题，灵感爆棚！" },
+    { type: "修仙", text: "道心稳固，境界松动。" },
+    { type: "生活", text: "出门见喜，遇见小确幸。" },
+    { type: "科研", text: "实验一次成功，数据完美。" },
+    { type: "代码", text: "Bug退散，一次编译通过。" },
+    { type: "社交", text: "今日适合交朋友，有贵人相助。" },
+  ],
+} as const;

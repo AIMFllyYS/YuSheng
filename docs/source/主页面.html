@@ -1,0 +1,2283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIMflly - 羽升 | 羽化成蝶 升生不息</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --h-main: 45;
+            --h-sub: 210;
+            --accent-main: hsl(45, 85%, 65%);
+            --accent-sub: hsl(210, 85%, 65%);
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            /* 背景 & 文字颜色（方便以后切换日夜模式） */
+            --bg-color: #0a0f1a;
+            --text-color: #f1f5f9;
+        }
+
+        /* 白天模式：通过给 <html> 加 .light-theme 控制 */
+        :root.light-theme {
+            --bg-color: #f9fafb;
+            --text-color: #020617;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(148, 163, 184, 0.6);
+        }
+        .light-theme body {
+            cursor: auto; /* 白天模式可以考虑还原系统光标（可选） */
+        }
+
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            font-family: 'Noto Serif SC', serif;
+            color: var(--text-color);
+            background: var(--bg-color);
+            cursor: none;
+        }
+
+        @media (max-width: 768px) {
+            body { cursor: auto; }
+            #cursor-dot, #cursor-ring { display: none !important; }
+        }
+
+        #bg-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        /* 自定义光标 */
+        #cursor-dot, #cursor-ring {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.2s;
+        }
+        #cursor-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 0 12px rgba(255,255,255,0.9), 0 0 24px var(--accent-main);
+        }
+        #cursor-ring {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.4);
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            backdrop-filter: blur(2px);
+        }
+
+        /* 玻璃卡片 */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .glass-card:hover {
+            background: rgba(255,255,255,0.08);
+            transform: translateY(-4px) scale(1.01);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        .font-art { font-family: 'Ma Shan Zheng', cursive; }
+        .font-english { font-family: 'Playfair Display', serif; }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .font-kuaile { font-family: 'ZCOOL KuaiLe', cursive; }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--accent-main), #fff, var(--accent-sub));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 页面区块 */
+        .page-section {
+            display: none;
+            opacity: 0;
+            min-height: calc(100vh - 100px);
+            padding-top: 100px;
+        }
+        .page-section.active {
+            display: block;
+            animation: fadeInPage 0.7s ease-out forwards;
+        }
+        @keyframes fadeInPage {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 视频弹窗遮罩 */
+        #video-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(12px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        #video-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+        #video-container {
+            width: 90%;
+            max-width: 900px;
+            aspect-ratio: 16/9;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 0 80px rgba(255,255,255,0.1);
+            transform: scale(0.9);
+            transition: transform 0.4s ease;
+        }
+        #video-overlay.show #video-container {
+            transform: scale(1);
+        }
+        #video-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        #close-video {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 2rem;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.3s, color 0.3s;
+            z-index: 101;
+        }
+        #close-video:hover {
+            transform: rotate(90deg);
+            color: var(--accent-main);
+        }
+
+        /* 头像悬浮触发区 */
+        .avatar-trigger {
+            position: relative;
+            cursor: pointer;
+        }
+        .avatar-trigger::after {
+            content: '悬停查看视频';
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .avatar-trigger:hover::after {
+            opacity: 1;
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.4); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-main); }
+
+        /* 弹幕 */
+        .danmaku {
+            position: fixed;
+            white-space: nowrap;
+            color: rgba(255,255,255,0.12);
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 1.2rem;
+            pointer-events: none;
+            z-index: 5;
+            animation: danmakuFloat linear forwards;
+        }
+        @keyframes danmakuFloat {
+            from { transform: translateX(100vw); }
+            to { transform: translateX(-100%); }
+        }
+
+        /* 时间线折叠 */
+        .timeline-item { cursor: pointer; transition: background 0.2s; }
+        .timeline-item:hover { background: rgba(255,255,255,0.03); }
+        .timeline-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s; }
+        .timeline-item.open .timeline-body { max-height: 200px; padding-top: 12px; }
+        .timeline-item .chevron { transition: transform 0.3s; }
+        .timeline-item.open .chevron { transform: rotate(180deg); }
+
+        /* 投票条 */
+        .poll-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            background: linear-gradient(90deg, var(--accent-main), var(--accent-sub));
+            transition: width 0.8s ease-out;
+        }
+
+        /* 幸运签动画 */
+        @keyframes fortunePop {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .fortune-pop { animation: fortunePop 0.4s ease-out; }
+
+        /* 浮动动画 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        .animate-float { animation: float 5s ease-in-out infinite; }
+
+        /* 闯关选项 */
+        .quiz-option {
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .quiz-option:hover { background: rgba(255,255,255,0.08); }
+        .quiz-option.correct {
+            background: rgba(34,197,94,0.4) !important;
+            border-color: #22c55e !important;
+        }
+        .quiz-option.wrong {
+            background: rgba(239,68,68,0.4) !important;
+            border-color: #ef4444 !important;
+            animation: shake 0.4s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        /* ========== 人生轨迹页面样式 ========== */
+        #journey-page {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: linear-gradient(135deg, #0a0f1a 0%, #1a1a2e 50%, #16213e 100%);
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            overflow: hidden;
+        }
+        #journey-page.show {
+            display: block;
+            opacity: 1;
+        }
+
+        #journey-close {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            font-size: 1.5rem;
+            color: #fff;
+            cursor: pointer;
+            z-index: 210;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        #journey-close:hover {
+            transform: rotate(90deg);
+            background: var(--accent-main);
+            color: #0a0f1a;
+        }
+
+        #journey-canvas-container {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            cursor: grab;
+            position: relative;
+        }
+        #journey-canvas-container:active {
+            cursor: grabbing;
+        }
+
+        #journey-viewport {
+            position: absolute;
+            width: 3000px;
+            height: 2000px;
+            transform-origin: center center;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* 蜿蜒小路 SVG */
+        #path-svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .journey-path {
+            fill: none;
+            stroke: url(#pathGradient);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 20 10;
+            filter: drop-shadow(0 0 15px rgba(255, 200, 100, 0.4));
+        }
+
+        .journey-path-glow {
+            fill: none;
+            stroke: rgba(255, 200, 100, 0.15);
+            stroke-width: 40;
+            stroke-linecap: round;
+            filter: blur(10px);
+        }
+
+        /* 节点样式 */
+        .journey-node {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            z-index: 5;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .journey-node:hover {
+            transform: translate(-50%, -50%) scale(1.15);
+            z-index: 10;
+        }
+
+        .node-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 
+                0 0 30px rgba(255,200,100,0.3),
+                inset 0 0 20px rgba(255,255,255,0.1);
+            transition: all 0.4s;
+        }
+
+        .journey-node:hover .node-circle {
+            border-color: var(--accent-main);
+            box-shadow: 
+                0 0 50px rgba(255,200,100,0.5),
+                inset 0 0 30px rgba(255,255,255,0.2);
+        }
+
+        .node-year {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-main);
+            text-shadow: 0 0 10px rgba(255,200,100,0.5);
+            white-space: nowrap;
+        }
+
+        .node-title {
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 1.1rem;
+            color: #fff;
+            white-space: nowrap;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
+
+        /* 展开的详情卡片 */
+        .node-detail {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            width: 280px;
+            background: rgba(10, 15, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s;
+            z-index: 20;
+        }
+
+        .journey-node.expanded .node-detail {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+            pointer-events: auto;
+        }
+
+        .node-detail h4 {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 1.3rem;
+            color: var(--accent-main);
+            margin-bottom: 10px;
+        }
+
+        .node-detail p {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+        }
+
+        .node-detail-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .node-detail-close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* 装饰元素 */
+        .journey-decoration {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.15;
+        }
+
+        .decoration-tree {
+            font-size: 3rem;
+            filter: drop-shadow(0 0 10px rgba(100, 200, 100, 0.3));
+        }
+
+        .decoration-star {
+            font-size: 1.5rem;
+            color: #fff;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.2); }
+        }
+
+        /* 提示信息 */
+        .journey-hint {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 205;
+        }
+
+        .journey-hint i {
+            animation: bounce 1.5s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* 缩放控制 */
+        .journey-controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 205;
+        }
+
+        .journey-controls button {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .journey-controls button:hover {
+            background: var(--accent-main);
+            color: #0a0f1a;
+        }
+
+        /* 小地图 */
+        .journey-minimap {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 150px;
+            height: 100px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 205;
+        }
+
+        .minimap-viewport {
+            position: absolute;
+            border: 2px solid var(--accent-main);
+            background: rgba(255,200,100,0.1);
+            border-radius: 3px;
+            transition: all 0.1s;
+        }
+
+        .minimap-path {
+            stroke: rgba(255,200,100,0.5);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .minimap-dot {
+            fill: var(--accent-main);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-yellow-400 selection:text-black">
+
+    <canvas id="bg-canvas"></canvas>
+    <div id="cursor-ring"></div>
+    <div id="cursor-dot"></div>
+    <div id="danmaku-layer"></div>
+
+    <!-- 视频遮罩弹窗 -->
+    <div id="video-overlay">
+        <div id="close-video"><i class="fas fa-times"></i></div>
+        <div id="video-container">
+            <iframe id="video-iframe" src="" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- 人生轨迹页面 -->
+    <div id="journey-page">
+        <div id="journey-close"><i class="fas fa-times"></i></div>
+        
+        <div id="journey-canvas-container">
+            <div id="journey-viewport">
+                <!-- SVG 路径 -->
+                <svg id="path-svg" viewBox="0 0 3000 2000">
+                    <defs>
+                        <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#fbbf24" />
+                            <stop offset="50%" stop-color="#f472b6" />
+                            <stop offset="100%" stop-color="#60a5fa" />
+                        </linearGradient>
+                    </defs>
+                    <!-- 发光底层 -->
+                    <path class="journey-path-glow" d="M 200,1000 
+                        C 400,1000 500,700 700,700 
+                        S 900,900 1100,850 
+                        S 1400,600 1600,650 
+                        S 1900,800 2100,750 
+                        S 2400,500 2600,550 
+                        S 2800,700 2900,650" />
+                    <!-- 主路径 -->
+                    <path class="journey-path" d="M 200,1000 
+                        C 400,1000 500,700 700,700 
+                        S 900,900 1100,850 
+                        S 1400,600 1600,650 
+                        S 1900,800 2100,750 
+                        S 2400,500 2600,550 
+                        S 2800,700 2900,650" />
+                </svg>
+
+                <!-- 装饰元素 -->
+                <div class="journey-decoration decoration-tree" style="left: 150px; top: 850px;">🌲</div>
+                <div class="journey-decoration decoration-tree" style="left: 350px; top: 600px;">🌳</div>
+                <div class="journey-decoration decoration-tree" style="left: 850px; top: 750px;">🌲</div>
+                <div class="journey-decoration decoration-tree" style="left: 1250px; top: 500px;">🌳</div>
+                <div class="journey-decoration decoration-tree" style="left: 1750px; top: 700px;">🌲</div>
+                <div class="journey-decoration decoration-tree" style="left: 2150px; top: 600px;">🌳</div>
+                <div class="journey-decoration decoration-tree" style="left: 2550px; top: 450px;">🌲</div>
+                
+                <div class="journey-decoration decoration-star" style="left: 300px; top: 500px; animation-delay: 0s;">✦</div>
+                <div class="journey-decoration decoration-star" style="left: 600px; top: 400px; animation-delay: 0.3s;">✦</div>
+                <div class="journey-decoration decoration-star" style="left: 1000px; top: 550px; animation-delay: 0.6s;">✦</div>
+                <div class="journey-decoration decoration-star" style="left: 1400px; top: 400px; animation-delay: 0.9s;">✦</div>
+                <div class="journey-decoration decoration-star" style="left: 1800px; top: 500px; animation-delay: 1.2s;">✦</div>
+                <div class="journey-decoration decoration-star" style="left: 2200px; top: 350px; animation-delay: 1.5s;">✦</div>
+                <div class="journey-decoration decoration-star" style="left: 2600px; top: 400px; animation-delay: 1.8s;">✦</div>
+
+                <!-- 节点们 -->
+                <div class="journey-node" style="left: 200px; top: 1000px;" data-id="birth">
+                    <span class="node-year">2004</span>
+                    <div class="node-circle">👶</div>
+                    <span class="node-title">生命起点</span>
+                    <div class="node-detail">
+                        <div class="node-detail-close"><i class="fas fa-times"></i></div>
+                        <h4>🌅 生命起点</h4>
+                        <p>在哈尔滨这座冰城，一个小生命开始了他的旅程。北方的雪，南方的梦，都在等着他去探索。</p>
+                    </div>
+                </div>
+
+                <div class="journey-node" style="left: 700px; top: 700px;" data-id="childhood">
+                    <span class="node-year">2010-2016</span>
+                    <div class="node-circle">📚</div>
+                    <span class="node-title">求学启蒙</span>
+                    <div class="node-detail">
+                        <div class="node-detail-close"><i class="fas fa-times"></i></div>
+                        <h4>📖 求学启蒙</h4>
+                        <p>小学时代，第一次接触朗诵和主持。站上舞台的那一刻，发现声音原来可以传递这么多情感。</p>
+                    </div>
+                </div>
+
+                <div class="journey-node" style="left: 1100px; top: 850px;" data-id="junior">
+                    <span class="node-year">2016-2019</span>
+                    <div class="node-circle">🎤</div>
+                    <span class="node-title">初中岁月</span>
+                    <div class="node-detail">
+                        <div class="node-detail-close"><i class="fas fa-times"></i></div>
+                        <h4>🎭 初中岁月</h4>
+                        <p>主持、演讲、活动策划……开始在人群中找到自己的位置。那时候还不知道，这些经历会成为未来的养分。</p>
+                    </div>
+                </div>
+
+                <div class="journey-node" style="left: 1600px; top: 650px;" data-id="senior">
+                    <span class="node-year">2022-2025</span>
+                    <div class="node-circle">🔬</div>
+                    <span class="node-title">高中蜕变</span>
+                    <div class="node-detail">
+                        <div class="node-detail-close"><i class="fas fa-times"></i></div>
+                        <h4>🦋 高中蜕变</h4>
+                        <p>理科的严谨和文艺的浪漫在这里交汇。备考的日夜里，「不问前程，尽管繁荣」成了写在课桌上的座右铭。</p>
+                    </div>
+                </div>
+
+                <div class="journey-node" style="left: 2100px; top: 750px;" data-id="college">
+                    <span class="node-year">2025</span>
+                    <div class="node-circle">🏫</div>
+                    <span class="node-title">华科启程</span>
+                    <div class="node-detail">
+                        <div class="node-detail-close"><i class="fas fa-times"></i></div>
+                        <h4>🎓 华科启程</h4>
+                        <p>踏入华中科技大学基础医学院。森林大学的名号果然名不虚传，在这里，「世界不死，理想不灭」有了新的注脚。</p>
+                    </div>
+                </div>
+
+                <div class="journey-node" style="left: 2600px; top: 550px;" data-id="growth">
+                    <span class="node-year">2025 初</span>
+                    <div class="node-circle">🚀</div>
+                    <span class="node-title">探索成长</span>
+                    <div class="node-detail">
+                        <div class="node-detail-close"><i class="fas fa-times"></i></div>
+                        <h4>✨ 探索成长</h4>
+                        <p>摄影、剪辑、写作、编程……把想法搬到线上。基因工程、AI、多组学，在医学和算法之间，找一条属于自己的小径。</p>
+                    </div>
+                </div>
+
+                <div class="journey-node" style="left: 2900px; top: 650px;" data-id="future">
+                    <span class="node-year">未来</span>
+                    <div class="node-circle">🌟</div>
+                    <span class="node-title">无限可能</span>
+                    <div class="node-detail">
+                        <div class="node-detail-close"><i class="fas fa-times"></i></div>
+                        <h4>🌈 无限可能</h4>
+                        <p>故事还在继续书写。羽化成蝶，升生不息——前方的路，还有无限可能在等待。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 提示 -->
+        <div class="journey-hint">
+            <i class="fas fa-hand-pointer"></i>
+            拖动画布探索 · 点击节点查看详情
+        </div>
+
+        <!-- 缩放控制 -->
+        <div class="journey-controls">
+            <button onclick="zoomJourney(1.2)" title="放大"><i class="fas fa-plus"></i></button>
+            <button onclick="zoomJourney(0.8)" title="缩小"><i class="fas fa-minus"></i></button>
+            <button onclick="resetJourneyView()" title="重置"><i class="fas fa-compress-arrows-alt"></i></button>
+        </div>
+
+        <!-- 小地图 -->
+        <div class="journey-minimap">
+            <svg width="150" height="100" viewBox="0 0 3000 2000">
+                <path class="minimap-path" d="M 200,1000 
+                    C 400,1000 500,700 700,700 
+                    S 900,900 1100,850 
+                    S 1400,600 1600,650 
+                    S 1900,800 2100,750 
+                    S 2400,500 2600,550 
+                    S 2800,700 2900,650" />
+                <circle class="minimap-dot" cx="200" cy="1000" r="40" />
+                <circle class="minimap-dot" cx="700" cy="700" r="40" />
+                <circle class="minimap-dot" cx="1100" cy="850" r="40" />
+                <circle class="minimap-dot" cx="1600" cy="650" r="40" />
+                <circle class="minimap-dot" cx="2100" cy="750" r="40" />
+                <circle class="minimap-dot" cx="2600" cy="550" r="40" />
+                <circle class="minimap-dot" cx="2900" cy="650" r="40" />
+            </svg>
+            <div class="minimap-viewport" id="minimap-viewport"></div>
+        </div>
+    </div>
+
+    <!-- 导航栏 -->
+    <nav class="fixed w-full z-50 top-0 p-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center glass-card px-6 py-3 rounded-full">
+            <!-- 左侧 LOGO -->
+            <button onclick="switchPage('home')" class="text-2xl font-bold font-art tracking-widest text-gradient">
+                羽升
+            </button>
+
+            <!-- 中间导航 -->
+            <div class="hidden md:flex space-x-6 text-sm tracking-wider font-light text-gray-300">
+                <button onclick="switchPage('home')" class="nav-btn hover:text-white transition-colors">首页</button>
+                <button onclick="switchPage('about')" class="nav-btn hover:text-white transition-colors">自我</button>
+                <button onclick="switchPage('portal')" class="nav-btn hover:text-white transition-colors">功能</button>
+                <button onclick="switchPage('stories')" class="nav-btn hover:text-white transition-colors">众妙</button>
+                <button onclick="switchPage('insight')" class="nav-btn hover:text-white transition-colors">三观</button>
+                <button onclick="switchPage('interactive')" class="nav-btn hover:text-[color:var(--accent-main)] transition-colors font-medium">
+                    <i class="fas fa-magic mr-1"></i>灵犀
+                </button>
+            </div>
+
+            <!-- 右侧：主题切换 + 音乐按钮 + 移动端菜单 -->
+            <div class="flex items-center space-x-3">
+                <!-- 日夜模式 -->
+                <button id="theme-toggle"
+                        class="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/5 border border-white/20 hover:bg-white/10 transition-colors"
+                        title="切换日夜模式">
+                    <i id="theme-toggle-icon" class="fas fa-moon text-sm"></i>
+                </button>
+
+                <!-- 音乐按钮：进入歌单页面 -->
+                <button onclick="switchPage('music')"
+                        class="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/5 border border-white/20 hover:bg-white/10 transition-colors"
+                        title="歌单">
+                    <i class="fas fa-music text-sm"></i>
+                </button>
+
+                <!-- 移动端菜单按钮 -->
+                <button class="md:hidden text-white text-xl" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="hidden absolute top-20 left-4 right-4 glass-card p-5 flex flex-col space-y-3 text-center md:hidden">
+            <button onclick="switchPage('home');toggleMobileMenu()">首页</button>
+            <button onclick="switchPage('about');toggleMobileMenu()">自我</button>
+            <button onclick="switchPage('portal');toggleMobileMenu()">功能</button>
+            <button onclick="switchPage('stories');toggleMobileMenu()">众妙</button>
+            <button onclick="switchPage('insight');toggleMobileMenu()">三观</button>
+            <button onclick="switchPage('interactive');toggleMobileMenu()">灵犀</button>
+            <!-- 新增：移动端歌单入口 -->
+            <button onclick="switchPage('music');toggleMobileMenu()">歌单</button>
+        </div>
+    </nav>
+
+
+    <main class="relative z-10 px-4 md:px-8 max-w-6xl mx-auto">
+
+        <!-- 首页 -->
+        <section id="home" class="page-section active flex flex-col items-center pt-32">
+            <div class="w-full max-w-4xl mx-auto text-center">
+                <!-- 头像（悬浮触发视频） -->
+                <div class="avatar-trigger animate-float w-36 h-36 mx-auto mb-10 rounded-full overflow-hidden border-2 border-white/20 shadow-[0_0_50px_rgba(255,255,255,0.2)]"
+                     onmouseenter="showVideo()" onmouseleave="hideVideo()">
+                    <div class="w-full h-full bg-gradient-to-br from-purple-600 via-indigo-600 to-cyan-500 flex items-center justify-center text-5xl text-white">
+                        <i class="fas fa-feather-alt"></i>
+                    </div>
+                </div>
+
+                <h1 class="text-5xl md:text-7xl font-art mb-5 text-gradient">在下羽升</h1>
+                <p class="text-xl md:text-2xl font-light mb-3 tracking-[0.25em] text-gray-200">羽化成蝶 · 升生不息</p>
+                <div class="h-px w-20 bg-gradient-to-r from-transparent via-white/50 to-transparent my-6 mx-auto"></div>
+                <p class="text-lg md:text-xl text-gray-300 italic font-art max-w-xl mx-auto leading-relaxed mb-12">
+                    "不问前程，尽管繁荣"
+                </p>
+
+                <!-- 社交与连接 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10 text-left">
+                    <!-- B站账号 -->
+                    <div class="glass-card p-5">
+                        <h3 class="text-base font-bold mb-4 flex items-center text-pink-300">
+                            <i class="fab fa-bilibili mr-2 text-lg"></i> 视频创作
+                        </h3>
+                        <div class="space-y-2">
+                            <a href="https://space.bilibili.com/3546949376543207" 
+                               class="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-pink-500/15 transition-colors group">
+                                <div class="flex items-center">
+                                    <i class="fas fa-video text-gray-400 mr-3 group-hover:text-pink-300 w-5"></i>
+                                    <span class="text-sm">羽升日记 (Vlog)</span>
+                                </div>
+                                <i class="fas fa-external-link-alt text-xs text-gray-500"></i>
+                            </a>
+                            <a href="https://space.bilibili.com/3461563507804968" 
+                               class="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-emerald-500/15 transition-colors group">
+                                <div class="flex items-center">
+                                    <i class="fas fa-cube text-gray-400 mr-3 group-hover:text-emerald-300 w-5"></i>
+                                    <span class="text-sm">MC 羽升 (Game)</span>
+                                </div>
+                                <i class="fas fa-external-link-alt text-xs text-gray-500"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 联系方式 -->
+                    <div class="glass-card p-5">
+                        <h3 class="text-base font-bold mb-4 flex items-center" style="color: var(--accent-main);">
+                            <i class="fas fa-address-card mr-2 text-lg"></i> 建立连接
+                        </h3>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="p-2.5 bg-white/5 rounded-lg border border-white/10 flex items-center gap-2 hover:bg-white/10 transition-colors">
+                                <i class="fab fa-weixin text-green-400 w-4"></i>
+                                <span class="select-all">AIMFlly</span>
+                            </div>
+                            <div class="p-2.5 bg-white/5 rounded-lg border border-white/10 flex items-center gap-2 hover:bg-white/10 transition-colors">
+                                <i class="fab fa-qq text-blue-400 w-4"></i>
+                                <span class="select-all">2158858577</span>
+                            </div>
+                            <div class="p-2.5 bg-white/5 rounded-lg border border-white/10 flex items-center gap-2 hover:bg-white/10 transition-colors">
+                                <span class="font-bold text-red-400 text-[10px] w-4 text-center">书</span>
+                                <span class="select-all">AIMFlly</span>
+                            </div>
+                            <div class="p-2.5 bg-white/5 rounded-lg border border-white/10 flex items-center gap-2 hover:bg-white/10 transition-colors">
+                                <i class="fas fa-fish text-orange-400 w-4"></i>
+                                <span class="select-all">羽升羽升</span>
+                            </div>
+                            <div class="col-span-2 p-2.5 bg-white/5 rounded-lg border border-white/10 flex items-center gap-2 hover:bg-white/10 transition-colors">
+                                <i class="fas fa-envelope text-yellow-400 w-4"></i>
+                                <span class="select-all text-[11px]">AIMFlly@outlook.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="switchPage('about')" class="glass-card px-8 py-3 hover:bg-white/10 transition-colors text-sm tracking-widest" style="color: var(--accent-main); border-color: var(--accent-main);">
+                    <i class="fas fa-chevron-right mr-2"></i> 开启旅程
+                </button>
+            </div>
+        </section>
+
+        <!-- 自我 -->
+        <section id="about" class="page-section">
+            <div class="glass-card p-8 md:p-10 relative overflow-hidden mb-8">
+                <div class="absolute -right-8 -top-8 text-[140px] opacity-[0.03] font-art pointer-events-none select-none" style="color: var(--accent-main);">羽</div>
+
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-3xl font-art flex items-center">
+                        <span class="font-english text-lg mr-2" style="color: var(--accent-main);">01</span> 羽升 MEself
+                    </h2>
+                    <span class="text-[10px] tracking-[0.2em] uppercase text-gray-500 font-english">about</span>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- 左侧信息 -->
+                    <div class="space-y-5">
+                        <div>
+                            <span class="text-xs tracking-widest block mb-1" style="color: var(--accent-main);">COORDINATE</span>
+                            <div class="flex items-center space-x-2 text-sm">
+                                <i class="fas fa-map-marker-alt text-red-400"></i>
+                                <span>黑龙江 · 哈尔滨</span>
+                            </div>
+                            <div class="flex items-center space-x-2 mt-1.5 text-gray-400 text-xs">
+                                <i class="fas fa-university"></i>
+                                <span>华中科技大学 · 基础医学院</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-xs tracking-widest block mb-1" style="color: var(--accent-main);">HOBBIES</span>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="px-2.5 py-1 bg-white/5 rounded-full text-[11px] border border-white/10">剪辑</span>
+                                <span class="px-2.5 py-1 bg-white/5 rounded-full text-[11px] border border-white/10">摄影</span>
+                                <span class="px-2.5 py-1 bg-white/5 rounded-full text-[11px] border border-white/10">写作</span>
+                                <span class="px-2.5 py-1 bg-white/5 rounded-full text-[11px] border border-white/10">编程</span>
+                                <span class="px-2.5 py-1 bg-white/5 rounded-full text-[11px] border border-white/10">主持</span>
+                                <span class="px-2.5 py-1 bg-white/5 rounded-full text-[11px] border border-white/10">抽象</span>
+                                <span class="px-2.5 py-1 bg-white/5 rounded-full text-[11px] border border-white/10">修仙</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-xs tracking-widest block mb-1" style="color: var(--accent-main);">MBTI</span>
+                            <div class="text-3xl font-bold text-gradient font-english">ENFP</div>
+                            <p class="text-[11px] text-gray-400 mt-0.5">竞选者型人格 · e/i 双模切换</p>
+                        </div>
+
+                        <!-- 时间线 -->
+                        <div>
+                            <span class="text-xs tracking-widest block mb-2" style="color: var(--accent-main);">TIMELINE</span>
+                            <div class="space-y-2 text-xs" id="timeline-container">
+                                <div class="timeline-item glass-card p-3 rounded-lg" data-year="2022">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium">2025 · 序章</span>
+                                        <i class="fas fa-chevron-down text-gray-400 chevron"></i>
+                                    </div>
+                                    <div class="timeline-body text-gray-300 text-[11px] leading-relaxed">
+                                        正式踏入华中科技大学，初识医学与社团，在忙乱中慢慢找到节奏。
+                                    </div>
+                                </div>
+                                <div class="timeline-item glass-card p-3 rounded-lg" data-year="2023">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium">2025 · 分岔路</span>
+                                        <i class="fas fa-chevron-down text-gray-400 chevron"></i>
+                                    </div>
+                                    <div class="timeline-body text-gray-300 text-[11px] leading-relaxed">
+                                        开始认真思考「基因工程」「多组学」「AI」与自己的关系。读书会、活动策划、视频剪辑陆续上线。
+                                    </div>
+                                </div>
+                                <div class="timeline-item glass-card p-3 rounded-lg" data-year="2024">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium">2025 · 升生不息</span>
+                                        <i class="fas fa-chevron-down text-gray-400 chevron"></i>
+                                    </div>
+                                    <div class="timeline-body text-gray-300 text-[11px] leading-relaxed">
+                                        把更多想法搬到线上：网站、表单、习惯计划、长期项目。一点点把「世界不死，理想不灭」写成自己的脚注。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧详细介绍 -->
+                    <div class="md:col-span-2 space-y-5 text-gray-300 text-sm leading-relaxed">
+                        <div>
+                            <h4 class="font-bold text-white mb-1.5">何言 e/i？🙃</h4>
+                            <p>进行活动时基本上是最外向的，平时跟大家熟了可以很抽象 ₍₍ ง(*Ӧ)ว ⁾⁾，也可以很严肃（｀へ´）。不过面对一些陌生人，尤其是在线下的时候，会突然切换成 i 人模式。所以 MBTI 对我来说更像一个「观察自己状态」的小标签，而不是定论。</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white mb-1.5">赋予想象 🤔</h4>
+                            <p>只要时间足够长，就会忍不住琢磨很多细枝末节的小东西：流程该怎么拆、仪式感怎么设计、这个活动的「彩蛋」藏在哪里。喜欢未雨绸缪，也喜欢通过剪辑和写作，为自己制造一点点可以回头看的纪念。</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white mb-1.5">永远完不成的计划？😳</h4>
+                            <p>做事容易细到极致，也就很容易低估时间，再加上总被各种事情打断，于是计划表上永远有「未完待续」。但在高压之下，反而能锁定一件事情埋头硬刚，最后靠「临门一脚」完成一些当时觉得不太可能的目标。</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white mb-1.5">一点简单的「三观基底」</h4>
+                            <p>不太喜欢「万能答案」，更偏向于「一起讨论」。世界在变化，人也在变化，但我希望保留的底色是：尊重、共情，以及对知识和理想还没完全磨掉的那点热情。</p>
+                        </div>
+                        <div class="pt-4 border-t border-white/10 text-xs text-gray-400">
+                            <span class="font-medium text-gray-300">未来方向：</span>基因工程、AI + 多组学精准医学，在医学和算法之间找一条适合自己的小径。
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新增：人生轨迹入口按钮 -->
+            <div class="text-center pb-10">
+                <button onclick="openJourneyPage()" class="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full overflow-hidden transition-all duration-500 hover:scale-105"
+                    style="background: linear-gradient(135deg, rgba(255,200,100,0.2), rgba(100,150,255,0.2)); border: 1px solid rgba(255,255,255,0.2);">
+                    <span class="absolute inset-0 bg-gradient-to-r from-amber-500/20 via-purple-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
+                    <i class="fas fa-route text-xl" style="color: var(--accent-main);"></i>
+                    <span class="font-art text-lg tracking-wider">探索人生轨迹</span>
+                    <i class="fas fa-arrow-right text-sm opacity-0 group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-1 transition-all duration-300"></i>
+                </button>
+                <p class="text-xs text-gray-500 mt-3">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    可拖动画布，点击节点查看详情
+                </p>
+            </div>
+        </section>
+
+        <!-- 功能 / 星际传送门 -->
+        <section id="portal" class="page-section">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-3xl font-art border-l-4 pl-4" style="border-color: var(--accent-main);">星际传送门</h2>
+                    <p class="mt-2 text-xs text-gray-400 max-w-lg">把生活拆成几颗小行星：有记笔记的星、有写日记的星、有 MC 方块宇宙，也有开源的星海。</p>
+                </div>
+                <span class="text-[10px] text-gray-500 border border-gray-600 px-2 py-1 rounded font-english tracking-widest uppercase">system links</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pb-16">
+                <!-- 笔记 -->
+                <a href="https://husteread.com/index.php/aimflly-notes/"  class="glass-card p-5 group">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="p-3 rounded-full text-blue-300 group-hover:text-white transition-all" style="background: rgba(59,130,246,0.15);">
+                            <i class="fas fa-book-open text-lg"></i>
+                        </div>
+                        <i class="fas fa-external-link-alt text-gray-500 group-hover:text-white text-xs"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-1">我的笔记</h3>
+                    <p class="text-xs text-gray-400 group-hover:text-gray-200">课堂边角、社团灵感与随机奇想，全都落在这一页页注脚里。</p>
+                </a>
+
+                <!-- 应用 -->
+                <a href="https://husteread.com/index.php/aimflly-apps/"  class="glass-card p-5 group">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="p-3 rounded-full text-purple-300 group-hover:text-white transition-all" style="background: rgba(139,92,246,0.15);">
+                            <i class="fas fa-layer-group text-lg"></i>
+                        </div>
+                        <i class="fas fa-external-link-alt text-gray-500 group-hover:text-white text-xs"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-1">我的应用</h3>
+                    <p class="text-xs text-gray-400 group-hover:text-gray-200">小工具、小网页、小脚本，把「想做的事」变成「点一下就能做」。</p>
+                </a>
+
+                <!-- 记忆 -->
+                <a href="https://husteread.com/index.php/aimflly-memory/"  class="glass-card p-5 group">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="p-3 rounded-full text-pink-300 group-hover:text-white transition-all" style="background: rgba(236,72,153,0.15);">
+                            <i class="fas fa-hourglass-half text-lg"></i>
+                        </div>
+                        <i class="fas fa-external-link-alt text-gray-500 group-hover:text-white text-xs"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-1">一刻记忆</h3>
+                    <p class="text-xs text-gray-400 group-hover:text-gray-200">把时间折叠成一帧一帧画面，回头看时，会发现自己真的走了很远。</p>
+                </a>
+
+                <!-- 致敬树林 -->
+                <a href="https://husteread.com/index.php/aimflly-wave/" class="glass-card p-5 group">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="p-3 rounded-full text-green-300 group-hover:text-white transition-all" style="background: rgba(34,197,94,0.15);">
+                            <i class="fas fa-tree text-lg"></i>
+                        </div>
+                        <i class="fas fa-external-link-alt text-gray-500 group-hover:text-white text-xs"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-1">致敬树林</h3>
+                    <p class="text-xs text-gray-400 group-hover:text-gray-200">HUST 的森林，世界不死，理想不灭。每一阵风吹过，都是一次重新出发。</p>
+                </a>
+
+                <!-- 开源共享 -->
+                <a href="https://husteread.com/index.php/aimflly-share/"  class="glass-card p-5 group">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="p-3 rounded-full text-yellow-300 group-hover:text-white transition-all" style="background: rgba(234,179,8,0.15);">
+                            <i class="fas fa-share-alt text-lg"></i>
+                        </div>
+                        <i class="fas fa-external-link-alt text-gray-500 group-hover:text-white text-xs"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-1">开源共享</h3>
+                    <p class="text-xs text-gray-400 group-hover:text-gray-200">写过的代码、做过的表单、踩过的坑，能帮到一个人，就多一份意义。</p>
+                </a>
+
+                <!-- 人生启示录 -->
+                <a href="https://husteread.com/index.php/aimflly-insight"  class="glass-card p-5 group">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="p-3 rounded-full text-indigo-300 group-hover:text-white transition-all" style="background: rgba(79,70,229,0.15);">
+                            <i class="fas fa-lightbulb text-lg"></i>
+                        </div>
+                        <i class="fas fa-external-link-alt text-gray-500 group-hover:text-white text-xs"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-1">人生启示录</h3>
+                    <p class="text-xs text-gray-400 group-hover:text-gray-200">一些路过的思考，一些当时没懂、后来突然懂了的小结。</p>
+                </a>
+
+                <!-- 羽升日记 -->
+                <a href="https://space.bilibili.com/3546949376543207" class="glass-card p-5 group" target="_blank">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="p-3 rounded-full text-red-300 group-hover:text-white transition-all" style="background: rgba(248,113,113,0.15);">
+                            <i class="fab fa-bilibili text-lg"></i>
+                        </div>
+                        <i class="fas fa-external-link-alt text-gray-500 group-hover:text-white text-xs"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-1">羽升日记</h3>
+                    <p class="text-xs text-gray-400 group-hover:text-gray-200">B 站小日常和碎碎念，算是一份公开的「心情备份」。</p>
+                </a>
+
+                <!-- MC 羽升 -->
+                <a href="https://space.bilibili.com/3461563507804968"  class="glass-card p-5 group">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="p-3 rounded-full text-emerald-300 group-hover:text-white transition-all" style="background: rgba(16,185,129,0.15);">
+                            <i class="fas fa-cube text-lg"></i>
+                        </div>
+                        <i class="fas fa-gamepad text-gray-500 group-hover:text-white text-xs"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-1">MC 羽升</h3>
+                    <p class="text-xs text-gray-400 group-hover:text-gray-200">在方块世界里盖理想城，把「世界不死，理想不灭」搭成一条条路。</p>
+                </a>
+
+                <!-- 代码仓库 -->
+                <a href="#" class="glass-card p-5 group">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="p-3 rounded-full text-gray-300 group-hover:text-white transition-all" style="background: rgba(148,163,184,0.15);">
+                            <i class="fab fa-github text-lg"></i>
+                        </div>
+                        <i class="fas fa-code-branch text-gray-500 group-hover:text-white text-xs"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-1">代码仓库</h3>
+                    <p class="text-xs text-gray-400 group-hover:text-gray-200">这里会慢慢堆起一些小项目，欢迎以后一起来折腾。</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- 众妙之门 -->
+        <section id="stories" class="page-section">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-3xl font-art border-l-4 pl-4" style="border-color: var(--accent-sub);">众妙之门</h2>
+                    <p class="mt-2 text-xs text-gray-400">这里是「兴趣宇宙」的一小角：镜头、文字、舞台，都只是载体，核心是「想把当下好好记录一下」。</p>
+                </div>
+                <span class="text-[10px] text-gray-500 border border-gray-600 px-2 py-1 rounded font-english tracking-widest uppercase">stories</span>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-5">
+                <!-- 摄影 -->
+                <div class="glass-card p-5 hover:bg-purple-900/10 transition-colors">
+                    <div class="h-44 rounded-xl bg-gradient-to-b from-gray-700/50 to-gray-900/50 mb-4 overflow-hidden relative group">
+                        <div class="absolute inset-0 flex items-center justify-center text-gray-500 group-hover:scale-110 transition-transform duration-500">
+                            <i class="fas fa-camera-retro text-5xl"></i>
+                        </div>
+                        <div class="absolute bottom-0 left-0 w-full p-2 bg-black/60 text-[11px] text-center">捕捉光影的瞬间</div>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">摄影 plus 剪辑 🎬</h3>
+                    <p class="text-sm text-gray-300 leading-relaxed">快门按下去的那一刻，画面只是素材；真正的故事在后期慢慢拼起来。剪辑带给我的快乐，是把「当时没来得及感受的情绪」重新拼回时间里。</p>
+                </div>
+
+                <!-- 写作 -->
+                <div class="glass-card p-5 hover:bg-indigo-900/10 transition-colors">
+                    <div class="h-44 rounded-xl bg-gradient-to-b from-gray-700/50 to-gray-900/50 mb-4 overflow-hidden relative group">
+                        <div class="absolute inset-0 flex items-center justify-center text-gray-500 group-hover:scale-110 transition-transform duration-500">
+                            <i class="fas fa-pen-nib text-5xl"></i>
+                        </div>
+                        <div class="absolute bottom-0 left-0 w-full p-2 bg-black/60 text-[11px] text-center">修仙之路的宁静</div>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">写作 ◎ 修仙 ✍️</h3>
+                    <p class="text-sm text-gray-300 leading-relaxed">相比于「一次性讲明白一个大道理」，我更喜欢写一些很日常、但回头看会微微心软的片段。修仙不一定要刀光剑影，可以是一杯热水、一封写给未来的信。</p>
+                </div>
+            </div>
+
+            <div class="glass-card p-5 mt-5">
+                <div class="flex flex-col md:flex-row items-center gap-5">
+                    <div class="p-4 bg-white/10 rounded-full shrink-0">
+                        <i class="fas fa-microphone-alt text-3xl" style="color: var(--accent-main);"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold mb-2">主持朗诵 📚</h3>
+                        <p class="text-sm text-gray-300 leading-relaxed">若论一技之长，大概是主持和朗诵带来的「声音肌肉记忆」。从小舞台到更大的礼堂，每一次站上去，都是在重新学习如何跟观众对话，也在学着把紧张转化成一种温柔的力量。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 三观临世 -->
+        <section id="insight" class="page-section">
+            <div class="glass-card p-8 md:p-10 relative overflow-hidden border-t-4" style="border-color: var(--accent-main);">
+                <div class="flex items-center justify-between mb-5">
+                    <h2 class="text-3xl font-art">
+                        <span class="font-english text-lg mr-2 text-red-400">03</span> 三观临世 🎉
+                    </h2>
+                    <span class="text-[10px] text-gray-500 font-english tracking-widest uppercase">worldview</span>
+                </div>
+
+                <div class="space-y-4 text-gray-300 leading-relaxed">
+                    <p>过去几年，我们于书海中遨游，我们在人群中欢呼，我们在世界里承载一份又一份的梦想。有时候会觉得自己只是洪流中的一个小点，但转念一想，每一个小点汇在一起，才真正在改变时代。</p>
+                    
+                    <p>假期的三天，我们透过屏幕看见远方无尽的戈壁，看见人头攒动、川流不息。我们站在与时代交汇的路口，一侧是用算法和芯片构成的未来，一侧是仍在努力被看见的普通生活。</p>
+
+                    <blockquote class="border-l-4 pl-5 italic text-lg text-white my-6 bg-white/5 p-5 rounded-r-xl" style="border-color: var(--accent-main);">
+                        "尽管繁华，不问前程"
+                    </blockquote>
+
+                    <p>我们追溯过往的那一代，仁人志士洒血战场，无数科学家饱经风霜，用这一生的积累换取一栋栋高楼大厦。而我们这一代，站在他们的肩膀上，看得更远，也更应该明白：所谓繁华，不是为了炫耀，而是为了让更多人看见希望的光。</p>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-white/10 text-center">
+                    <h3 class="text-2xl font-cinzel tracking-widest mb-2" style="color: var(--accent-main);">LIVE LONG AND PROSPER</h3>
+                    <p class="font-kuaile text-xl text-gray-300">—— 我们是：既寿永昌</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 灵犀交互 -->
+        <section id="interactive" class="page-section pb-20">
+            <!-- ✅ 标题：只保留一份 -->
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-3xl font-art text-gradient">灵犀一动 · 交互空间</h2>
+                <span class="text-[10px] text-gray-500 font-english tracking-widest uppercase">playground</span>
+            </div>
+
+            <!-- 🎂 友友们的庆生宴 · 长按钮 -->
+            <a href="https://husteread.com/index.php/birthday/" 
+            target="_blank"
+            class="block mb-6 group select-none">
+                <div class="glass-card relative overflow-hidden rounded-2xl px-5 py-4 md:px-7 md:py-5
+                            flex items-center justify-between
+                            border border-amber-300/60
+                            bg-gradient-to-r from-amber-400/25 via-pink-400/18 to-sky-400/20
+                            transition-all duration-500 group-hover:translate-y-[-2px] group-hover:shadow-xl group-hover:shadow-amber-400/40">
+
+                    <!-- 左侧标题区域 -->
+                    <div class="flex items-center gap-3 md:gap-4">
+                        <div class="w-10 h-10 md:w-11 md:h-11 rounded-full bg-black/20 flex items-center justify-center shadow-inner">
+                            <i class="fas fa-birthday-cake text-lg md:text-xl text-amber-300"></i>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm md:text-base font-bold tracking-wide">
+                                友友们的庆生宴
+                            </span>
+                            <span class="text-[11px] md:text-xs text-gray-200/80">
+                                记录每一次「被记得」的生日小小仪式感 🎈
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 右侧引导文案 -->
+                    <div class="hidden sm:flex items-center gap-2 text-[11px] md:text-xs text-amber-100">
+                        <span>点我前往庆生活动页</span>
+                        <i class="fas fa-arrow-right-long text-xs md:text-sm group-hover:translate-x-0.5 transition-transform"></i>
+                    </div>
+
+                    <!-- 移动端右侧简洁箭头 -->
+                    <div class="sm:hidden flex items-center justify-center ml-3 text-amber-100">
+                        <i class="fas fa-chevron-right text-sm"></i>
+                    </div>
+
+                    <!-- 背景装饰光斑 -->
+                    <div class="pointer-events-none absolute -right-10 -top-10 w-32 h-32 rounded-full bg-amber-300/25 blur-3xl opacity-70"></div>
+                    <div class="pointer-events-none absolute left-1/3 -bottom-10 w-40 h-40 rounded-full bg-pink-400/20 blur-3xl opacity-60"></div>
+                </div>
+            </a>
+
+            <!-- ✅ 这里只保留「一层」 grid：两列布局 -->
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- 匿名问我：在大屏上占两列 -->
+                <div class="glass-card p-6 lg:col-span-2">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-envelope-open-text mr-2" style="color: var(--accent-main);"></i> 匿名问我
+                        </h3>
+                        <button onclick="adminExport()" class="text-[11px] text-gray-500 hover:text-white underline">管理导出</button>
+                    </div>
+
+                    <!-- 闯关 -->
+                    <div id="quiz-step">
+                        <p class="text-xs text-gray-400 mb-4">为了防止机器人，请先回答关于我的小问题，通过后即可开启匿名提问箱！</p>
+                        <div class="bg-white/5 p-4 rounded-xl">
+                            <p class="font-bold mb-3 text-sm" id="quiz-question">Loading...</p>
+                            <div class="grid grid-cols-2 gap-2" id="quiz-options"></div>
+                        </div>
+                    </div>
+
+                    <!-- 提问表单 -->
+                    <div id="ask-step" class="hidden">
+                        <div class="flex gap-2 mb-3 overflow-x-auto pb-2" id="truth-tags"></div>
+                        <textarea id="qa-input" class="w-full bg-black/30 border border-white/15 rounded-xl p-3 text-sm focus:outline-none focus:border-[color:var(--accent-main)] transition-colors" rows="3" placeholder="写下你的问题或想说的话..."></textarea>
+                        <div class="flex justify-between items-center mt-3">
+                            <span class="text-[11px] text-gray-500">数据仅保存在本地存储</span>
+                            <button onclick="submitQuestion()" class="px-5 py-2 rounded-full font-bold text-sm transition-all hover:scale-105" style="background: var(--accent-main); color: #0a0f1a;">
+                                发送 <i class="fas fa-paper-plane ml-1"></i>
+                            </button>
+                        </div>
+
+                        <div class="mt-5 pt-5 border-t border-white/10">
+                            <h4 class="text-[11px] font-bold text-gray-500 mb-2 uppercase tracking-wider">Recent Messages</h4>
+                            <div id="qa-wall" class="space-y-2 max-h-32 overflow-y-auto pr-2">
+                                <div class="text-center text-gray-600 text-xs py-3">暂无留言，快来抢沙发~</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 左列：偏好投票 -->
+                <div class="glass-card p-6">
+                    <h3 class="text-xl font-bold mb-3 flex items-center">
+                        <i class="fas fa-chart-pie mr-2" style="color: var(--accent-sub);"></i> 偏好小投票
+                    </h3>
+                    <p class="text-[11px] text-gray-400 mb-4">点击选项即可投票，实时查看大家的选择（本地模拟）</p>
+                    <div id="poll-container" class="space-y-3"></div>
+                </div>
+
+                <!-- 右列：竖着排三块（幸运签 / 主题 / 表情） -->
+                <div class="flex flex-col gap-5">
+                    <!-- 幸运签 -->
+                    <div class="glass-card p-5 text-center relative overflow-hidden group flex-1">
+                        <div class="absolute inset-0 bg-gradient-to-br from-red-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                        <h3 class="text-lg font-bold mb-2">今日运势 · 幸运签</h3>
+                        <div id="fortune-display" class="font-art text-xl min-h-[3rem] flex items-center justify-center my-3 transition-all" style="color: var(--accent-main);">?</div>
+                        <button onclick="drawFortune()" class="px-4 py-1.5 border border-white/20 rounded-full text-xs hover:bg-white/10 transition-colors z-10 relative">
+                            <i class="fas fa-random mr-1"></i> 抽取签文
+                        </button>
+                    </div>
+
+                    <!-- 主题调节 -->
+                    <div class="glass-card p-5">
+                        <h3 class="text-sm font-bold mb-3 text-gray-400 uppercase tracking-wider">Theme Settings</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span>Primary Hue</span>
+                                    <span id="hue-val-1">45</span>
+                                </div>
+                                <input type="range" min="0" max="360" value="45" oninput="updateTheme(this.value, null)" class="w-full h-2 bg-gradient-to-r from-red-500 via-green-500 to-blue-500 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span>Secondary Hue</span>
+                                    <span id="hue-val-2">210</span>
+                                </div>
+                                <input type="range" min="0" max="360" value="210" oninput="updateTheme(null, this.value)" class="w-full h-2 bg-gradient-to-r from-red-500 via-green-500 to-blue-500 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 表情反馈 -->
+                    <div class="glass-card p-5">
+                        <h3 class="text-sm font-bold mb-3 text-gray-400 uppercase tracking-wider">Tiny Reactions</h3>
+                        <div class="flex flex-wrap gap-2" id="emoji-container">
+                            <button class="emoji-btn px-3 py-2 rounded-full bg-white/5 hover:bg-white/10 flex items-center gap-2 text-sm" data-emoji="👍">
+                                <span>👍</span><span class="emoji-count text-[11px] text-gray-400">0</span>
+                            </button>
+                            <button class="emoji-btn px-3 py-2 rounded-full bg-white/5 hover:bg-white/10 flex items-center gap-2 text-sm" data-emoji="✨">
+                                <span>✨</span><span class="emoji-count text-[11px] text-gray-400">0</span>
+                            </button>
+                            <button class="emoji-btn px-3 py-2 rounded-full bg-white/5 hover:bg-white/10 flex items-center gap-2 text-sm" data-emoji="🌲">
+                                <span>🌲</span><span class="emoji-count text-[11px] text-gray-400">0</span>
+                            </button>
+                            <button class="emoji-btn px-3 py-2 rounded-full bg-white/5 hover:bg-white/10 flex items-center gap-2 text-sm" data-emoji="📷">
+                                <span>📷</span><span class="emoji-count text-[11px] text-gray-400">0</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 音乐歌单页面 -->
+        <section id="music" class="page-section pb-20">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-3xl font-art text-gradient flex items-center">
+                        <i class="fas fa-music mr-3"></i> 羽升的歌单
+                    </h2>
+                    <p class="mt-2 text-xs text-gray-400 max-w-lg">
+                        这里是「随缘更新」的私人歌单，所有内容只保存在浏览器本地，你可以随时增删自己的歌名和链接。
+                    </p>
+                </div>
+                <span class="text-[10px] text-gray-500 border border-gray-600 px-2 py-1 rounded font-english tracking-widest uppercase">
+                    playlist
+                </span>
+            </div>
+
+            <!-- 音乐人信息 -->
+            <div class="glass-card p-5 mb-6 grid md:grid-cols-2 gap-4">
+                <div>
+                    <h3 class="text-sm font-bold mb-2 text-gray-200">最爱的音乐人 · ONLY ONE</h3>
+                    <div class="px-4 py-3 rounded-xl bg-white/5 border border-amber-400/60 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-pink-400 flex items-center justify-center text-black text-lg">
+                                🎵
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold">祝一可</div>
+                                <div class="text-[11px] text-gray-300">「唯一本命」 · 写在这里当签名</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold mb-2 text-gray-200">其他爱慕的音乐人</h3>
+                    <div class="px-4 py-3 rounded-xl bg-white/5 border border-blue-400/60 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-black text-lg">
+                                💿
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold">hanser</div>
+                                <div class="text-[11px] text-gray-300">温柔收藏夹里的常驻嘉宾</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分类歌单区域（JS 动态渲染） -->
+            <div id="music-list" class="grid md:grid-cols-2 gap-5 mb-8">
+                <!-- 由 JS renderPlaylist() 自动填充 -->
+            </div>
+
+            <!-- 播放器 -->
+            <div class="glass-card p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="text-xs text-gray-400">
+                    <div class="font-bold text-gray-200 mb-1">Now Playing</div>
+                    <div id="now-playing" class="text-sm text-gray-300">暂无播放 · 点击某一首歌尝试播放</div>
+                    <div class="mt-1 text-[11px] text-gray-500">
+                        提示：你可以在添加歌曲时填入 mp3 链接（公网可访问），本页面不会内置任何真实歌曲，只是提供一个播放壳子。
+                    </div>
+                </div>
+                <audio id="music-audio" controls class="w-full md:w-1/2">
+                    您的浏览器不支持 audio 标签。
+                </audio>
+            </div>
+        </section>
+
+
+  
+    </main>
+
+    <footer class="text-center py-6 text-gray-500 text-xs relative z-10 glass-card mx-4 mb-4 rounded-xl">
+        <p>&copy; 2025 AIMflly-羽升. All Rights Reserved.</p>
+        <p class="mt-1 font-art text-gray-400">尽管繁华 · 不问前程</p>
+    </footer>
+
+    <script>
+        // ========== 配置参数 ==========
+        const CONFIG = {
+            ADMIN_PIN: 'yusheng',
+            VIDEO_SRC: 'https://player.bilibili.com/player.html?isOutside=true&aid=114946629176000&bvid=BV1yz8yzbER2&cid=31396204501&p=1',
+            DANMAKU_TEXTS: ['羽化成蝶', 'ENFP', 'HUST', '摄影大佬', '修仙中...', '既寿永昌', '不问前程', '✨', '📸', '🌲', '世界不死', '理想不灭'],
+            QUIZ_BANK: [
+                { q: "我目前就读于哪所大学？", options: ["武汉大学", "华中科技大学", "哈尔滨工业大学", "清华大学"], a: 1 },
+                { q: "我的MBTI人格是？", options: ["INTP", "ENFP", "ISTJ", "ENTJ"], a: 1 },
+                { q: "我的家乡在哪里？", options: ["北京", "武汉", "哈尔滨", "上海"], a: 2 },
+                { q: "我的格言是？", options: ["不问前程，尽管繁荣", "好好学习，天天向上", "我要成为海贼王", "为中华之崛起"], a: 0 }
+            ],
+            TRUTH_BANK: ["#真心话# 对未来的迷茫", "#提问# 摄影用的什么设备？", "#真心话# 大学最后悔的事", "#提问# 如何平衡修仙与学习", "#真心话# 最想对自己说的话"],
+            POLL_OPS: ["更喜欢摄影", "更喜欢文章", "更喜欢Vlog", "我是来看脸的"],
+            FORTUNE_BANK: [
+                { type: "学习", text: "今日宜刷题，灵感爆棚！" },
+                { type: "修仙", text: "道心稳固，境界松动。" },
+                { type: "生活", text: "出门见喜，遇见小确幸。" },
+                { type: "科研", text: "实验一次成功，数据完美。" },
+                { type: "代码", text: "Bug退散，一次编译通过。" },
+                { type: "社交", text: "今日适合交朋友，有贵人相助。" }
+            ]
+        };
+
+        // ========== 页面切换 ==========
+        function switchPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(el => {
+                el.classList.remove('active');
+                setTimeout(() => { if(!el.classList.contains('active')) el.style.display = 'none'; }, 500);
+            });
+            const target = document.getElementById(pageId);
+            target.style.display = 'block';
+            void target.offsetWidth;
+            target.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        // ========== 视频弹窗 ==========
+        let videoTimeout;
+        function showVideo() {
+            clearTimeout(videoTimeout);
+            const overlay = document.getElementById('video-overlay');
+            const iframe = document.getElementById('video-iframe');
+            iframe.src = CONFIG.VIDEO_SRC;
+            overlay.style.display = 'flex';
+            setTimeout(() => overlay.classList.add('show'), 10);
+        }
+
+        function hideVideo() {
+            videoTimeout = setTimeout(() => {
+                const overlay = document.getElementById('video-overlay');
+                overlay.classList.remove('show');
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    document.getElementById('video-iframe').src = '';
+                }, 400);
+            }, 300);
+        }
+
+        document.getElementById('video-overlay').addEventListener('mouseenter', () => clearTimeout(videoTimeout));
+        document.getElementById('video-overlay').addEventListener('mouseleave', hideVideo);
+        document.getElementById('close-video').addEventListener('click', (e) => {
+            e.stopPropagation();
+            clearTimeout(videoTimeout);
+            const overlay = document.getElementById('video-overlay');
+            overlay.classList.remove('show');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                document.getElementById('video-iframe').src = '';
+            }, 400);
+        });
+
+        // ========== 时间线折叠 ==========
+        document.querySelectorAll('.timeline-item').forEach(item => {
+            item.addEventListener('click', () => item.classList.toggle('open'));
+        });
+
+        // ========== 闯关与提问 ==========
+        let currentQuizIndex = Math.floor(Math.random() * CONFIG.QUIZ_BANK.length);
+
+        function initQuiz() {
+            const quiz = CONFIG.QUIZ_BANK[currentQuizIndex];
+            document.getElementById('quiz-question').innerText = quiz.q;
+            const container = document.getElementById('quiz-options');
+            container.innerHTML = '';
+            quiz.options.forEach((opt, idx) => {
+                const btn = document.createElement('div');
+                btn.className = 'quiz-option p-2.5 border border-white/15 rounded-lg text-center text-xs';
+                btn.innerText = opt;
+                btn.onclick = () => checkQuiz(idx, quiz.a, btn);
+                container.appendChild(btn);
+            });
+            renderQAWall();
+        }
+
+        function checkQuiz(selected, correct, btn) {
+            if (selected === correct) {
+                btn.classList.add('correct');
+                setTimeout(() => {
+                    document.getElementById('quiz-step').style.display = 'none';
+                    document.getElementById('ask-step').style.display = 'block';
+                    initTruthTags();
+                }, 500);
+            } else {
+                btn.classList.add('wrong');
+                setTimeout(() => btn.classList.remove('wrong'), 500);
+            }
+        }
+
+        function initTruthTags() {
+            const container = document.getElementById('truth-tags');
+            container.innerHTML = '';
+            CONFIG.TRUTH_BANK.forEach(tag => {
+                const span = document.createElement('span');
+                span.className = 'whitespace-nowrap px-2.5 py-1 bg-white/5 rounded-full text-[11px] cursor-pointer hover:bg-[color:var(--accent-main)] hover:text-black transition-colors';
+                span.innerText = tag;
+                span.onclick = () => {
+                    const textarea = document.getElementById('qa-input');
+                    textarea.value = tag + " " + textarea.value;
+                };
+                container.appendChild(span);
+            });
+        }
+
+        function submitQuestion() {
+            const input = document.getElementById('qa-input');
+            const val = input.value.trim();
+            if (!val) return alert("内容不能为空哦~");
+            let data = JSON.parse(localStorage.getItem('aimflly_qa_data') || '[]');
+            data.unshift({ content: val, time: new Date().toLocaleString() });
+            localStorage.setItem('aimflly_qa_data', JSON.stringify(data));
+            input.value = '';
+            alert("发送成功！(已保存到本地)");
+            renderQAWall();
+        }
+
+        function renderQAWall() {
+            const wall = document.getElementById('qa-wall');
+            let data = JSON.parse(localStorage.getItem('aimflly_qa_data') || '[]');
+            if (data.length === 0) {
+                wall.innerHTML = '<div class="text-center text-gray-600 text-xs py-3">暂无留言，快来抢沙发~</div>';
+                return;
+            }
+            wall.innerHTML = '';
+            data.slice(0, 5).forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'bg-white/5 p-2.5 rounded-lg text-xs border-l-2';
+                div.style.borderColor = 'var(--accent-main)';
+                div.innerHTML = `<span class="text-[10px] text-gray-500 block">${item.time}</span>${item.content}`;
+                wall.appendChild(div);
+            });
+        }
+
+        function adminExport() {
+            const pin = prompt("请输入管理口令:");
+            if (pin === CONFIG.ADMIN_PIN) {
+                const data = localStorage.getItem('aimflly_qa_data') || '[]';
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'aimflly_qa_export.json';
+                a.click();
+            } else if(pin) {
+                alert("口令错误！");
+            }
+        }
+
+        // ========== 投票 ==========
+        function initPoll() {
+            const container = document.getElementById('poll-container');
+            const storedVotes = JSON.parse(localStorage.getItem('aimflly_poll_data') || JSON.stringify(new Array(CONFIG.POLL_OPS.length).fill(0)));
+            const total = storedVotes.reduce((a, b) => a + b, 0);
+
+            container.innerHTML = '';
+            CONFIG.POLL_OPS.forEach((op, idx) => {
+                const count = storedVotes[idx];
+                const percent = total === 0 ? 0 : Math.round((count / total) * 100);
+
+                const div = document.createElement('div');
+                div.className = 'relative h-10 bg-white/5 rounded-lg cursor-pointer overflow-hidden group';
+                div.onclick = () => votePoll(idx);
+                div.innerHTML = `
+                    <div class="absolute top-0 left-0 h-full poll-bar-fill" style="width: ${percent}%"></div>
+                    <div class="absolute inset-0 flex justify-between items-center px-4 z-10 pointer-events-none">
+                        <span class="font-medium text-xs group-hover:text-[color:var(--accent-main)] transition-colors">${op}</span>
+                        <span class="text-[11px] text-gray-400">${percent}% (${count})</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function votePoll(idx) {
+            let votes = JSON.parse(localStorage.getItem('aimflly_poll_data') || JSON.stringify(new Array(CONFIG.POLL_OPS.length).fill(0)));
+            votes[idx]++;
+            localStorage.setItem('aimflly_poll_data', JSON.stringify(votes));
+            initPoll();
+        }
+
+        // ========== 幸运签 & 主题 ==========
+        function drawFortune() {
+            const display = document.getElementById('fortune-display');
+            display.style.opacity = 0;
+            setTimeout(() => {
+                const item = CONFIG.FORTUNE_BANK[Math.floor(Math.random() * CONFIG.FORTUNE_BANK.length)];
+                display.innerHTML = `<span class="text-xs block text-gray-400 mb-1">[${item.type}]</span>${item.text}`;
+                display.style.opacity = 1;
+                display.classList.add('fortune-pop');
+                setTimeout(() => display.classList.remove('fortune-pop'), 400);
+            }, 200);
+        }
+
+        function updateTheme(primary, secondary) {
+            const root = document.documentElement;
+            if (primary !== null) {
+                root.style.setProperty('--h-main', primary);
+                root.style.setProperty('--accent-main', `hsl(${primary}, 85%, 65%)`);
+                document.getElementById('hue-val-1').innerText = primary;
+            }
+            if (secondary !== null) {
+                root.style.setProperty('--h-sub', secondary);
+                root.style.setProperty('--accent-sub', `hsl(${secondary}, 85%, 65%)`);
+                document.getElementById('hue-val-2').innerText = secondary;
+            }
+        }
+
+        // ========== 表情反馈 ==========
+        function initEmoji() {
+            const data = JSON.parse(localStorage.getItem('aimflly_emoji_data') || '{}');
+            document.querySelectorAll('.emoji-btn').forEach(btn => {
+                const emoji = btn.dataset.emoji;
+                const count = data[emoji] || 0;
+                btn.querySelector('.emoji-count').innerText = count;
+                btn.onclick = () => {
+                    data[emoji] = (data[emoji] || 0) + 1;
+                    localStorage.setItem('aimflly_emoji_data', JSON.stringify(data));
+                    btn.querySelector('.emoji-count').innerText = data[emoji];
+                };
+            });
+        }
+
+        // ========== 日夜模式切换 ==========
+        const THEME_KEY = 'aimflly_theme';
+
+        function applyThemeFromStorage() {
+            const saved = localStorage.getItem(THEME_KEY);
+            const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+            const shouldUseLight = saved ? (saved === 'light') : prefersLight;
+
+            if (shouldUseLight) {
+                document.documentElement.classList.add('light-theme');
+            } else {
+                document.documentElement.classList.remove('light-theme');
+            }
+            updateThemeToggleIcon();
+        }
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.documentElement.classList.contains('light-theme');
+            localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark');
+            updateThemeToggleIcon();
+        }
+
+        function updateThemeToggleIcon() {
+            const icon = document.getElementById('theme-toggle-icon');
+            if (!icon) return;
+            const isLight = document.documentElement.classList.contains('light-theme');
+            icon.className = isLight ? 'fas fa-sun text-sm' : 'fas fa-moon text-sm';
+        }
+
+        // ========== 音乐歌单 ==========
+        const MUSIC_KEY = 'aimflly_playlist_v1';
+        const MUSIC_CATEGORIES = [
+            { key: 'pure', label: '纯音' },
+            { key: 'english', label: '英文' },
+            { key: 'favorite', label: '最爱' },
+            { key: 'insight', label: '顿悟' },
+            { key: 'other', label: '其他' }
+        ];
+
+        let musicData = {
+            pure: [],
+            english: [],
+            favorite: [],
+            insight: [],
+            other: []
+        };
+
+        function loadMusicData() {
+            try {
+                const raw = localStorage.getItem(MUSIC_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    // 防止结构不完整
+                    MUSIC_CATEGORIES.forEach(cat => {
+                        if (!parsed[cat.key]) parsed[cat.key] = [];
+                    });
+                    musicData = parsed;
+                }
+            } catch (e) {
+                console.warn('音乐数据解析失败，将使用空歌单', e);
+            }
+        }
+
+        function saveMusicData() {
+            localStorage.setItem(MUSIC_KEY, JSON.stringify(musicData));
+        }
+
+        function renderPlaylist() {
+            const container = document.getElementById('music-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            MUSIC_CATEGORIES.forEach(cat => {
+                const card = document.createElement('div');
+                card.className = 'glass-card p-5 flex flex-col h-full';
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-base font-bold text-gray-100">${cat.label}</h3>
+                        <span class="text-[11px] text-gray-500">${musicData[cat.key].length} 首</span>
+                    </div>
+                    <div class="space-y-2 mb-3">
+                        <input name="song-name" type="text"
+                            class="w-full bg-black/20 border border-white/15 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-[color:var(--accent-main)]"
+                            placeholder="歌名 / 备注（必填）">
+                        <input name="song-url" type="text"
+                            class="w-full bg-black/10 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-[color:var(--accent-main)]"
+                            placeholder="可选：音频链接（mp3 / 直链）">
+                        <button type="button" data-role="add"
+                                class="w-full mt-1 text-xs px-3 py-1.5 rounded-full border border-white/20 hover:bg-white/10 transition-colors">
+                            + 添加到「${cat.label}」
+                        </button>
+                    </div>
+                    <div class="music-song-list flex-1 overflow-y-auto pr-1 space-y-1 text-xs"></div>
+                `;
+
+                const nameInput = card.querySelector('input[name="song-name"]');
+                const urlInput = card.querySelector('input[name="song-url"]');
+                const addBtn = card.querySelector('button[data-role="add"]');
+                const listEl = card.querySelector('.music-song-list');
+
+                addBtn.addEventListener('click', () => {
+                    const name = nameInput.value.trim();
+                    const url = urlInput.value.trim();
+                    if (!name) {
+                        alert('歌名不能为空呀～');
+                        return;
+                    }
+                    musicData[cat.key].push({ name, url });
+                    saveMusicData();
+                    renderPlaylist();
+                });
+
+                // 渲染歌曲列表
+                musicData[cat.key].forEach((song, idx) => {
+                    const row = document.createElement('div');
+                    row.className = 'flex items-center justify-between px-2 py-1 rounded-lg bg-white/5 border border-white/10';
+
+                    const left = document.createElement('div');
+                    left.className = 'flex-1 pr-2';
+                    left.innerHTML = `<div class="text-gray-100 truncate">${song.name}</div>` +
+                        (song.url
+                            ? `<div class="text-[10px] text-gray-500 truncate">已绑定音频链接</div>`
+                            : `<div class="text-[10px] text-gray-500 truncate">未绑定音频链接</div>`
+                        );
+
+                    const right = document.createElement('div');
+                    right.className = 'flex items-center gap-1';
+
+                    const playBtn = document.createElement('button');
+                    playBtn.className = 'w-7 h-7 rounded-full bg-emerald-500/20 hover:bg-emerald-500/40 flex items-center justify-center text-[10px]';
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    playBtn.addEventListener('click', () => playSong(cat.key, idx));
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'w-7 h-7 rounded-full bg-red-500/20 hover:bg-red-500/40 flex items-center justify-center text-[10px]';
+                    delBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                    delBtn.addEventListener('click', () => deleteSong(cat.key, idx));
+
+                    right.appendChild(playBtn);
+                    right.appendChild(delBtn);
+
+                    row.appendChild(left);
+                    row.appendChild(right);
+                    listEl.appendChild(row);
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        function playSong(catKey, index) {
+            const audio = document.getElementById('music-audio');
+            const nowEl = document.getElementById('now-playing');
+            if (!audio || !nowEl) return;
+
+            const song = (musicData[catKey] || [])[index];
+            if (!song) return;
+
+            if (!song.url) {
+                alert('这首歌还没有绑定音频链接，暂时只能当作「记忆清单」哦～');
+                return;
+            }
+
+            audio.src = song.url;
+            audio.play().catch(err => {
+                console.warn('播放失败', err);
+                alert('浏览器拒绝自动播放，或者链接不可用，请检查音频地址。');
+            });
+            nowEl.innerText = song.name;
+        }
+
+        function deleteSong(catKey, index) {
+            if (!confirm('确定要删除这首歌吗？')) return;
+            if (!musicData[catKey]) return;
+            musicData[catKey].splice(index, 1);
+            saveMusicData();
+            renderPlaylist();
+        }
+
+        /* 初始化音乐模块：在 onload 里调用 */
+        function initMusic() {
+            loadMusicData();
+            renderPlaylist();
+        }
+
+        // ========== 弹幕 ==========
+        function spawnDanmaku() {
+            const container = document.getElementById('danmaku-layer');
+            const text = CONFIG.DANMAKU_TEXTS[Math.floor(Math.random() * CONFIG.DANMAKU_TEXTS.length)];
+            const el = document.createElement('div');
+            el.className = 'danmaku';
+            el.innerText = text;
+            el.style.top = (Math.random() * 75 + 10) + '%';
+            el.style.animationDuration = (Math.random() * 6 + 10) + 's';
+            el.style.fontSize = (Math.random() * 0.6 + 0.9) + 'rem';
+            container.appendChild(el);
+            setTimeout(() => el.remove(), 16000);
+        }
+        setInterval(spawnDanmaku, 4000);
+
+        // ========== Canvas 背景 & 羽毛拖尾 ==========
+        // ========== Canvas 背景 & 羽毛拖尾 ==========
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorRing = document.getElementById('cursor-ring');
+        let width, height, orbs = [], feathers = [];
+        let lastFeatherTime = 0;
+        let mouseX = 0, mouseY = 0;
+
+        /* 画布尺寸 */
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        /* 背景流光球 */
+        class Orb {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.r = Math.random() * 180 + 80;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
+                const colors = ['#4f46e5', '#8b5cf6', '#06b6d4', '#eab308', '#ec4899'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.alpha = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < -this.r) this.x = width + this.r;
+                if (this.x > width + this.r) this.x = -this.r;
+                if (this.y < -this.r) this.y = height + this.r;
+                if (this.y > height + this.r) this.y = -this.r;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.r);
+                g.addColorStop(0, 'rgba(255,255,255,0.9)');
+                g.addColorStop(0.3, this.color);
+                g.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < 12; i++) orbs.push(new Orb());
+
+        /* 羽毛粒子 */
+        function createFeather(x, y) {
+            const now = performance.now();
+            if (now - lastFeatherTime < 150) return;
+            lastFeatherTime = now;
+            if (feathers.length > 40) return;
+
+            feathers.push({
+                x: x + (Math.random() - 0.5) * 10,
+                y: y + (Math.random() - 0.5) * 10,
+                vx: (Math.random() - 0.5) * 0.3,
+                vy: 0.1 + Math.random() * 0.15,
+                life: 0,
+                maxLife: 100 + Math.floor(Math.random() * 50),
+                size: 10 + Math.random() * 6,
+                angle: (Math.random() - 0.5) * 0.5,
+                va: (Math.random() - 0.5) * 0.01
+            });
+        }
+
+function drawFeathers() {
+    for (let i = feathers.length - 1; i >= 0; i--) {
+        const f = feathers[i];
+        f.life++;
+        f.x += f.vx;
+        f.y += f.vy;
+        f.vy += 0.002;
+        f.angle += f.va;
+
+        const t = f.life / f.maxLife;
+        if (t >= 1) { feathers.splice(i, 1); continue; }
+
+        const alpha = (1 - t) * 0.7;
+        const scale = 1 - t * 0.3;
+
+        ctx.save();
+        ctx.translate(f.x, f.y + t * 10);
+        ctx.rotate(f.angle);
+
+        const w = f.size * 2.5 * scale;
+        const h = f.size * 0.8 * scale;
+
+        const grad = ctx.createLinearGradient(-w / 2, 0, w / 2, 0);
+        grad.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.1})`);
+        grad.addColorStop(0.3, `rgba(255, 255, 255, ${alpha})`);
+        grad.addColorStop(1, `rgba(255, 255, 255, 0)`);
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(-w / 2, 0);
+        ctx.quadraticCurveTo(0, -h, w / 2, 0);
+        ctx.quadraticCurveTo(0, h, -w / 2, 0);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.3})`;
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(-w / 2 + 2, 0);
+        ctx.lineTo(w / 2 - 2, 0);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+}
+
+/* 鼠标移动 + 羽毛拖尾 */
+window.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    if (cursorDot && cursorRing) {
+        cursorDot.style.left = mouseX + 'px';
+        cursorDot.style.top = mouseY + 'px';
+        cursorRing.style.left = mouseX + 'px';
+        cursorRing.style.top = mouseY + 'px';
+    }
+    createFeather(mouseX, mouseY);
+});
+
+/* 彩色动态流光背景 */
+function animate(timestamp) {
+    const t = timestamp || 0;
+    const shift = (t * 0.04) % (width * 2);
+
+    // 多色流光渐变
+    const grad = ctx.createLinearGradient(-width + shift, 0, shift, height);
+    grad.addColorStop(0, 'hsla(210, 80%, 16%, 1)');
+    grad.addColorStop(0.25, 'hsla(260, 80%, 20%, 1)');
+    grad.addColorStop(0.5, 'hsla(330, 80%, 22%, 1)');
+    grad.addColorStop(0.75, 'hsla(40, 85%, 24%, 1)');
+    grad.addColorStop(1, 'hsla(180, 80%, 18%, 1)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, width, height);
+
+    // 轻微加深，保证文字对比度
+    ctx.fillStyle = 'rgba(4, 7, 20, 0.45)';
+    ctx.fillRect(0, 0, width, height);
+
+    // 光晕球
+    ctx.globalCompositeOperation = 'screen';
+    orbs.forEach(o => { o.update(); o.draw(); });
+
+    // 羽毛拖尾
+    ctx.globalCompositeOperation = 'lighter';
+    drawFeathers();
+
+    ctx.globalCompositeOperation = 'source-over';
+    requestAnimationFrame(animate);
+}
+
+
+        window.addEventListener('mousemove', e => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            if (cursorDot && cursorRing) {
+                cursorDot.style.left = mouseX + 'px';
+                cursorDot.style.top = mouseY + 'px';
+                cursorRing.style.left = mouseX + 'px';
+                cursorRing.style.top = mouseY + 'px';
+            }
+            createFeather(mouseX, mouseY);
+        });
+
+        // ========== 人生轨迹页面功能 ==========
+        let journeyViewport = null;
+        let journeyContainer = null;
+        let isDragging = false;
+        let startX, startY, scrollLeft, scrollTop;
+        let currentScale = 1;
+        let viewX = 0, viewY = 0;
+
+        function openJourneyPage() {
+            const page = document.getElementById('journey-page');
+            page.style.display = 'block';
+            setTimeout(() => page.classList.add('show'), 10);
+            
+            journeyViewport = document.getElementById('journey-viewport');
+            journeyContainer = document.getElementById('journey-canvas-container');
+            
+            // 初始化视图位置（居中显示起点）
+            viewX = -200 + window.innerWidth / 2;
+            viewY = -1000 + window.innerHeight / 2;
+            updateViewportTransform();
+            updateMinimap();
+            
+            // 绑定拖动事件
+            journeyContainer.addEventListener('mousedown', startDrag);
+            journeyContainer.addEventListener('mousemove', drag);
+            journeyContainer.addEventListener('mouseup', endDrag);
+            journeyContainer.addEventListener('mouseleave', endDrag);
+            
+            // 触摸支持
+            journeyContainer.addEventListener('touchstart', startDragTouch);
+            journeyContainer.addEventListener('touchmove', dragTouch);
+            journeyContainer.addEventListener('touchend', endDrag);
+            
+            // 滚轮缩放
+            journeyContainer.addEventListener('wheel', handleWheel);
+            
+            // 节点点击事件
+            document.querySelectorAll('.journey-node').forEach(node => {
+                node.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleNodeDetail(node);
+                });
+            });
+            
+            // 详情关闭按钮
+            document.querySelectorAll('.node-detail-close').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    btn.closest('.journey-node').classList.remove('expanded');
+                });
+            });
+        }
+
+        function closeJourneyPage() {
+            const page = document.getElementById('journey-page');
+            page.classList.remove('show');
+            setTimeout(() => page.style.display = 'none', 500);
+        }
+
+        document.getElementById('journey-close').addEventListener('click', closeJourneyPage);
+
+        function startDrag(e) {
+            isDragging = true;
+            journeyContainer.style.cursor = 'grabbing';
+            startX = e.clientX;
+            startY = e.clientY;
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            viewX += dx;
+            viewY += dy;
+            startX = e.clientX;
+            startY = e.clientY;
+            updateViewportTransform();
+            updateMinimap();
+        }
+
+        function endDrag() {
+            isDragging = false;
+            if (journeyContainer) {
+                journeyContainer.style.cursor = 'grab';
+            }
+        }
+
+        function startDragTouch(e) {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            }
+        }
+
+        function dragTouch(e) {
+            if (!isDragging || e.touches.length !== 1) return;
+            e.preventDefault();
+            const dx = e.touches[0].clientX - startX;
+            const dy = e.touches[0].clientY - startY;
+            viewX += dx;
+            viewY += dy;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            updateViewportTransform();
+            updateMinimap();
+        }
+
+        function handleWheel(e) {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            zoomJourney(delta);
+        }
+
+        function zoomJourney(factor) {
+            const newScale = Math.max(0.3, Math.min(2, currentScale * factor));
+            currentScale = newScale;
+            updateViewportTransform();
+        }
+
+        function resetJourneyView() {
+            currentScale = 1;
+            viewX = -200 + window.innerWidth / 2;
+            viewY = -1000 + window.innerHeight / 2;
+            updateViewportTransform();
+            updateMinimap();
+        }
+
+        function updateViewportTransform() {
+            if (journeyViewport) {
+                journeyViewport.style.transform = `translate(${viewX}px, ${viewY}px) scale(${currentScale})`;
+            }
+        }
+
+        function updateMinimap() {
+            const minimapViewport = document.getElementById('minimap-viewport');
+            if (!minimapViewport) return;
+            
+            // 计算小地图视口位置
+            const mapWidth = 150;
+            const mapHeight = 100;
+            const canvasWidth = 3000;
+            const canvasHeight = 2000;
+            
+            const vpWidth = window.innerWidth / currentScale;
+            const vpHeight = window.innerHeight / currentScale;
+            
+            const x = (-viewX / currentScale) / canvasWidth * mapWidth;
+            const y = (-viewY / currentScale) / canvasHeight * mapHeight;
+            const w = vpWidth / canvasWidth * mapWidth;
+            const h = vpHeight / canvasHeight * mapHeight;
+            
+            minimapViewport.style.left = Math.max(0, Math.min(mapWidth - w, x)) + 'px';
+            minimapViewport.style.top = Math.max(0, Math.min(mapHeight - h, y)) + 'px';
+            minimapViewport.style.width = Math.min(mapWidth, w) + 'px';
+            minimapViewport.style.height = Math.min(mapHeight, h) + 'px';
+        }
+
+        function toggleNodeDetail(node) {
+            // 关闭其他节点
+            document.querySelectorAll('.journey-node.expanded').forEach(n => {
+                if (n !== node) n.classList.remove('expanded');
+            });
+            // 切换当前节点
+            node.classList.toggle('expanded');
+        }
+
+        // ========== 初始化 ==========
+        window.onload = function() {
+            applyThemeFromStorage();   // 日夜模式初始化
+            initQuiz();
+            initPoll();
+            initEmoji();
+            initMusic();               // 歌单初始化（渲染空/已有歌单）
+
+            // 允许的页面 id，对应你的 <section id="...">
+            const allowedPages = ['home', 'about', 'portal', 'stories', 'insight', 'interactive', 'music'];
+
+            // 取当前 URL 的 hash，比如 #portal -> 'portal'
+            const hash = window.location.hash ? window.location.hash.replace('#', '') : '';
+
+            // 如果 hash 是合法的页面 id，就用它；否则退回 home
+            const defaultPage = allowedPages.includes(hash) ? hash : 'home';
+
+            switchPage(defaultPage);   // 这里不再写死 'home' 了
+            animate();
+        };
+
+
+        // 绑定主题按钮点击
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeBtn = document.getElementById('theme-toggle');
+            if (themeBtn) {
+                themeBtn.addEventListener('click', toggleTheme);
+            }
+        });
+
+    </script>
+</body>
+</html>

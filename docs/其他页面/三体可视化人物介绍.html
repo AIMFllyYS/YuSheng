@@ -1,0 +1,1194 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>三体·虚空人物照片墙</title>
+  <style>
+    :root{
+      --bg0:#0f1526;
+      --bg1:#1a2334;
+      --sage:#a7c4a0;
+      --beige:#e7dccb;
+      --dust:#86a9c8;
+      --warm:#8f8a83;
+      --shadow: 0 18px 70px rgba(0,0,0,.35);
+      --shadow2: 0 10px 25px rgba(0,0,0,.25);
+      --radius: 18px;
+      --uiBlur: 14px;
+      --cardW: 220px;
+      --cardH: 300px;
+      --photoH: 170px;
+      --ease: cubic-bezier(.2,.8,.2,1);
+    }
+    *{box-sizing:border-box;}
+    html,body{height:100%; margin:0; font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC","Microsoft YaHei","Noto Sans CJK SC", Arial;}
+    body{
+      overflow:hidden;
+      color: rgba(231,220,203,.92);
+      background:
+        radial-gradient(1200px 700px at 30% 25%, rgba(134,169,200,.18), transparent 60%),
+        radial-gradient(900px 600px at 70% 70%, rgba(167,196,160,.14), transparent 65%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+    /* WP 容器隔离：避免主题样式干扰 */
+    #tbp-app, #tbp-app *{ box-sizing:border-box; }
+    #tbp-app{ position:fixed; inset:0; overflow:hidden; }
+
+    #starfield{ position:fixed; inset:0; width:100%; height:100%; z-index:0; }
+    .nebula{
+      position:fixed; inset:-20%;
+      z-index:1; pointer-events:none;
+      background:
+        radial-gradient(900px 700px at 20% 30%, rgba(167,196,160,.12), transparent 60%),
+        radial-gradient(1100px 800px at 80% 60%, rgba(134,169,200,.10), transparent 62%),
+        radial-gradient(700px 600px at 55% 15%, rgba(231,220,203,.06), transparent 58%),
+        radial-gradient(900px 800px at 50% 95%, rgba(143,138,131,.08), transparent 60%);
+      filter: blur(18px) saturate(1.05);
+      opacity:.9;
+      mix-blend-mode: screen;
+      animation: nebulaDrift 18s ease-in-out infinite alternate;
+    }
+    @keyframes nebulaDrift{
+      from{ transform: translate3d(-1.2%, -0.8%, 0) scale(1.02); }
+      to  { transform: translate3d( 1.0%,  1.0%, 0) scale(1.06); }
+    }
+
+    .hud{
+      position:fixed;
+      top:14px; left:14px; right:14px;
+      z-index:5;
+      display:flex;
+      gap:12px;
+      align-items:stretch;
+      justify-content:space-between;
+      pointer-events:none; /* 容器不抢鼠标 */
+    }
+    .panel{
+      pointer-events:auto;
+      backdrop-filter: blur(var(--uiBlur));
+      -webkit-backdrop-filter: blur(var(--uiBlur));
+      background: linear-gradient(180deg, rgba(26,35,52,.72), rgba(15,21,38,.58));
+      border: 1px solid rgba(231,220,203,.10);
+      box-shadow: var(--shadow2);
+      border-radius: var(--radius);
+      padding: 12px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-height: 54px;
+    }
+    .brand{display:flex; flex-direction:column; gap:2px; padding-right:6px;}
+    .brand b{font-size:14px; letter-spacing:.6px; color: rgba(231,220,203,.95);}
+    .brand small{font-size:12px; color: rgba(231,220,203,.65);}
+    .chiprow{display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
+    .chip{
+      user-select:none;
+      cursor:pointer;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size:12px;
+      border:1px solid rgba(231,220,203,.14);
+      background: rgba(34,50,74,.35);
+      color: rgba(231,220,203,.82);
+      transition: transform .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease);
+      white-space:nowrap;
+    }
+    .chip:hover{ transform: translateY(-1px); border-color: rgba(167,196,160,.35); }
+    .chip.on{
+      background: rgba(167,196,160,.16);
+      border-color: rgba(167,196,160,.45);
+      box-shadow: 0 0 0 2px rgba(167,196,160,.10) inset;
+    }
+    .search{display:flex; align-items:center; gap:10px; min-width: 320px;}
+    .search input{
+      width: 320px; max-width: 42vw;
+      border:1px solid rgba(231,220,203,.16);
+      background: rgba(15,21,38,.35);
+      color: rgba(231,220,203,.92);
+      outline:none;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: 13px;
+    }
+    .search input:focus{
+      border-color: rgba(134,169,200,.42);
+      box-shadow: 0 0 0 4px rgba(134,169,200,.12);
+    }
+    .btn{
+      cursor:pointer;
+      border:1px solid rgba(231,220,203,.14);
+      background: rgba(34,50,74,.35);
+      color: rgba(231,220,203,.85);
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 13px;
+      transition: transform .18s var(--ease), border-color .18s var(--ease);
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(134,169,200,.38); }
+    .btn:active{ transform: translateY(0) scale(.98); }
+    .btn.primary{
+      background: rgba(134,169,200,.16);
+      border-color: rgba(134,169,200,.42);
+    }
+
+    #viewport{ position:fixed; inset:0; z-index:2; overflow:hidden; }
+    #constellations{ position:fixed; inset:0; z-index:3; pointer-events:none; opacity:.85; transition: opacity .2s var(--ease); }
+    #constellations.hidden{ opacity:0; }
+
+    #world{
+      position:absolute; top:0; left:0;
+      width:1700px; height:1400px;
+      transform-origin: 0 0;
+      will-change: transform;
+    }
+    .dust{
+      position:absolute; inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(2px 2px at 10% 20%, rgba(231,220,203,.18), transparent 60%),
+        radial-gradient(1.5px 1.5px at 80% 35%, rgba(167,196,160,.18), transparent 60%),
+        radial-gradient(2px 2px at 55% 78%, rgba(134,169,200,.18), transparent 60%),
+        radial-gradient(1.2px 1.2px at 28% 62%, rgba(231,220,203,.12), transparent 60%),
+        radial-gradient(1.8px 1.8px at 66% 12%, rgba(143,138,131,.16), transparent 60%);
+      opacity:.6;
+      filter: blur(.2px);
+      animation: dustDrift 9s ease-in-out infinite alternate;
+    }
+    @keyframes dustDrift{
+      from{ transform: translate3d(-6px, -8px, 0); }
+      to  { transform: translate3d( 8px,  6px, 0); }
+    }
+
+    .card{
+      position:absolute;
+      width: var(--cardW);
+      height: var(--cardH);
+      border-radius: var(--radius);
+      border:1px solid rgba(231,220,203,.12);
+      background: linear-gradient(180deg, rgba(34,50,74,.58), rgba(15,21,38,.50));
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+      cursor:pointer;
+      transform: translateZ(0) rotate(var(--rot,0deg));
+      transition: transform .22s var(--ease), box-shadow .22s var(--ease), border-color .22s var(--ease), filter .22s var(--ease), opacity .22s var(--ease);
+      user-select:none;
+    }
+    .card:hover{
+      transform: translateY(-6px) rotate(var(--rot,0deg)) scale(1.02);
+      border-color: rgba(167,196,160,.35);
+      box-shadow: 0 24px 70px rgba(0,0,0,.40), 0 0 0 2px rgba(167,196,160,.08) inset;
+      filter: saturate(1.06);
+    }
+    .card.dim{ opacity:.18; pointer-events:none; filter: grayscale(.3) blur(.2px); }
+    .card.hidden{ opacity:0; pointer-events:none; }
+
+    .frameTop{
+      height: var(--photoH);
+      position:relative;
+      overflow:hidden;
+      border-bottom: 1px solid rgba(231,220,203,.10);
+      background:
+        radial-gradient(220px 140px at 20% 25%, rgba(167,196,160,.18), transparent 62%),
+        radial-gradient(260px 160px at 80% 70%, rgba(134,169,200,.16), transparent 64%),
+        linear-gradient(180deg, rgba(26,35,52,.65), rgba(15,21,38,.35));
+    }
+    .frameTop canvas{ width:100%; height:100%; display:block; opacity:.95; }
+    .tagbar{ position:absolute; left:10px; right:10px; bottom:10px; display:flex; flex-wrap:wrap; gap:6px; }
+    .tag{
+      font-size:11px; padding: 5px 8px;
+      border-radius:999px;
+      border:1px solid rgba(231,220,203,.14);
+      background: rgba(15,21,38,.35);
+      color: rgba(231,220,203,.78);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .tag.a{ border-color: rgba(167,196,160,.24); }
+    .tag.b{ border-color: rgba(134,169,200,.24); }
+    .tag.c{ border-color: rgba(143,138,131,.24); }
+
+    .cardBody{
+      padding: 12px 12px 14px;
+      display:flex; flex-direction:column; gap:8px;
+      height: calc(var(--cardH) - var(--photoH));
+    }
+    .name{display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
+    .name b{ font-size: 15px; letter-spacing:.3px; }
+    .name span{ font-size:12px; color: rgba(231,220,203,.62); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width: 44%; }
+    .desc{
+      font-size:12px; color: rgba(231,220,203,.70); line-height:1.45;
+      display:-webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow:hidden;
+      min-height: 52px;
+    }
+    .meta{
+      margin-top:auto; display:flex; justify-content:space-between; align-items:center;
+      font-size:11px; color: rgba(231,220,203,.60);
+      padding-top: 8px; border-top: 1px dashed rgba(231,220,203,.10); gap:10px;
+    }
+    .meta .dot{
+      display:inline-block; width:7px; height:7px; border-radius:999px;
+      background: rgba(167,196,160,.55); box-shadow: 0 0 14px rgba(167,196,160,.20);
+      margin-right:6px; vertical-align: middle;
+    }
+
+    .overlay{
+      position:fixed; inset:0; z-index:10;
+      background: rgba(10,14,24,.58);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display:none; align-items:center; justify-content:center;
+      padding: 18px;
+    }
+    .overlay.show{ display:flex; }
+
+    .modal{
+      width:min(980px, 92vw);
+      max-height: min(86vh, 820px);
+      overflow:hidden;
+      border-radius: 22px;
+      border:1px solid rgba(231,220,203,.14);
+      background: linear-gradient(180deg, rgba(26,35,52,.82), rgba(15,21,38,.72));
+      box-shadow: var(--shadow);
+      display:grid;
+      grid-template-columns: 360px 1fr;
+    }
+    .modalLeft{ border-right: 1px solid rgba(231,220,203,.10); padding: 14px; display:flex; flex-direction:column; gap:10px; }
+    .modalRight{ padding: 14px 14px 16px; overflow:auto; }
+    .modalRight::-webkit-scrollbar{ width: 10px; }
+    .modalRight::-webkit-scrollbar-thumb{
+      background: rgba(231,220,203,.12);
+      border-radius: 999px;
+      border: 2px solid rgba(15,21,38,.35);
+    }
+    .modalTitle{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; padding: 2px 2px 0; }
+    .modalTitle h2{ margin:0; font-size: 18px; letter-spacing:.4px; }
+    .close{
+      cursor:pointer;
+      border:1px solid rgba(231,220,203,.14);
+      background: rgba(34,50,74,.35);
+      color: rgba(231,220,203,.85);
+      border-radius: 14px;
+      padding: 8px 10px;
+      font-size: 13px;
+      transition: transform .18s var(--ease);
+      user-select:none;
+      height: fit-content;
+    }
+    .close:hover{ transform: translateY(-1px); }
+
+    .subline{ margin-top:-4px; font-size: 12px; color: rgba(231,220,203,.68); line-height: 1.4; }
+    .modalPhoto{
+      height: 210px;
+      border-radius: 18px;
+      overflow:hidden;
+      border:1px solid rgba(231,220,203,.12);
+      background:
+        radial-gradient(280px 180px at 20% 25%, rgba(167,196,160,.18), transparent 62%),
+        radial-gradient(320px 200px at 85% 75%, rgba(134,169,200,.16), transparent 64%),
+        linear-gradient(180deg, rgba(26,35,52,.65), rgba(15,21,38,.35));
+      position:relative;
+    }
+    .modalPhoto canvas{ width:100%; height:100%; display:block; }
+    .pillRow{ display:flex; flex-wrap:wrap; gap:8px; }
+    .pill{
+      font-size:12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(231,220,203,.14);
+      background: rgba(15,21,38,.30);
+      color: rgba(231,220,203,.80);
+    }
+    .pill.good{ border-color: rgba(167,196,160,.34); background: rgba(167,196,160,.10); }
+    .pill.blue{ border-color: rgba(134,169,200,.34); background: rgba(134,169,200,.10); }
+    .pill.warn{ border-color: rgba(244,189,96,.32); background: rgba(244,189,96,.08); }
+
+    .section{
+      margin: 10px 0 14px;
+      padding: 12px;
+      border:1px solid rgba(231,220,203,.10);
+      border-radius: 16px;
+      background: rgba(34,50,74,.22);
+    }
+    .section h3{
+      margin:0 0 8px;
+      font-size: 13px;
+      letter-spacing:.3px;
+      color: rgba(231,220,203,.90);
+      display:flex; align-items:center; gap:8px;
+    }
+    .section h3 i{
+      width:10px; height:10px; border-radius:999px;
+      background: rgba(134,169,200,.45);
+      box-shadow: 0 0 20px rgba(134,169,200,.18);
+      display:inline-block;
+    }
+    .section ul{ margin: 0; padding-left: 18px; color: rgba(231,220,203,.76); line-height: 1.6; font-size: 13px; }
+    .section p{ margin:0; color: rgba(231,220,203,.74); line-height: 1.7; font-size: 13px; }
+
+    .relList{ display:flex; flex-wrap:wrap; gap:8px; }
+    .rel{
+      cursor:pointer;
+      border:1px solid rgba(231,220,203,.14);
+      background: rgba(15,21,38,.28);
+      color: rgba(231,220,203,.80);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12px;
+      transition: transform .18s var(--ease), border-color .18s var(--ease);
+      user-select:none;
+    }
+    .rel:hover{ transform: translateY(-1px); border-color: rgba(167,196,160,.36); }
+
+    .gate{
+      position:fixed; inset:0; z-index:20;
+      background: radial-gradient(1200px 700px at 30% 25%, rgba(134,169,200,.20), transparent 60%),
+                  linear-gradient(180deg, rgba(15,21,38,.92), rgba(26,35,52,.88));
+      display:flex; align-items:center; justify-content:center;
+      padding: 18px;
+    }
+    .gateCard{
+      width:min(820px, 94vw);
+      border-radius: 22px;
+      border:1px solid rgba(231,220,203,.16);
+      background: rgba(34,50,74,.30);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .gateCard h1{ margin:0 0 10px; font-size: 18px; letter-spacing:.5px; }
+    .gateCard p{ margin:0 0 12px; color: rgba(231,220,203,.78); line-height: 1.75; font-size: 13px; }
+    .gateRow{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:flex-end;
+      margin-top: 10px;
+    }
+    .tiny{ font-size:12px; color: rgba(231,220,203,.62); }
+
+    @media (max-width: 860px){
+      .modal{ grid-template-columns: 1fr; }
+      .modalLeft{ border-right:none; border-bottom: 1px solid rgba(231,220,203,.10); }
+      .search input{ width: 44vw; min-width: 190px; }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .nebula,.dust{ animation:none !important; }
+      .card,.btn,.chip{ transition:none !important; }
+    }
+  </style>
+</head>
+
+<body>
+<div id="tbp-app">
+  <canvas id="starfield"></canvas>
+  <div class="nebula"></div>
+
+  <div class="hud">
+    <div class="panel" style="gap:14px;">
+      <div class="brand">
+        <b>数码星海 · 三体人物虚空照片墙</b>
+        <small>拖拽漫游｜滚轮缩放｜点击人物展开档案｜可开关“关系星座”</small>
+      </div>
+      <div class="chiprow" id="bookChips"></div>
+    </div>
+
+    <div class="panel search">
+      <input id="q" placeholder="搜：面壁者 / ETO / 执剑人 / 红岸 / 智子 …" />
+      <button class="btn" id="toggleLines">✨关系星座：开</button>
+      <button class="btn primary" id="randomJump">随机跳一个</button>
+      <button class="btn" id="resetView">回到中心</button>
+    </div>
+  </div>
+
+  <div id="viewport">
+    <canvas id="constellations"></canvas>
+    <div id="world">
+      <div class="dust"></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modalLeft">
+        <div class="modalTitle">
+          <div>
+            <h2 id="mName">——</h2>
+            <div class="subline" id="mSub">——</div>
+          </div>
+          <div class="close" id="close">关闭</div>
+        </div>
+
+        <div class="modalPhoto">
+          <canvas id="mCanvas"></canvas>
+          <div class="tagbar" id="mTags"></div>
+        </div>
+
+        <div class="pillRow" id="mPills"></div>
+
+        <div class="section" style="margin-top:auto;">
+          <h3><i></i>关系跳转</h3>
+          <div class="relList" id="mRels"></div>
+          <p class="tiny" style="margin-top:10px;">点关系名字：直接跳到对方档案，并高亮连线。</p>
+        </div>
+      </div>
+
+      <div class="modalRight">
+        <div class="section">
+          <h3><i></i>一句话简介</h3>
+          <p id="mOneLine">——</p>
+        </div>
+
+        <div class="section">
+          <h3><i></i>所在纪元 / 身份标签</h3>
+          <ul id="mEra"></ul>
+        </div>
+
+        <div class="section">
+          <h3><i></i>关键事件（概括）</h3>
+          <ul id="mActs"></ul>
+        </div>
+
+        <div class="section">
+          <h3><i></i>备注（轻度解读）</h3>
+          <p id="mNotes">——</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gate" id="gate">
+    <div class="gateCard">
+      <h1>⚠️ 剧透提醒</h1>
+      <p>这个照片墙包含《三体》《黑暗森林》《死神永生》人物关键选择与后果（重大剧透）。</p>
+      <p class="tiny">如果你只想无剧透看“人物名单”，点下面“我只看名单”。</p>
+      <div class="gateRow">
+        <button class="btn" id="gateList">我只看名单</button>
+        <button class="btn primary" id="gateOk">我已知晓，直接进入</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  // ====== 数据 ======
+  const BOOKS = [
+    { id:"tbp",  name:"《三体》" },
+    { id:"df",   name:"《黑暗森林》" },
+    { id:"de",   name:"《死神永生》" }
+  ];
+
+  const CHARACTERS = [
+    { id:"ye-wenjie", name:"叶文洁", en:"Ye Wenjie", books:["tbp","df"],
+      era:["文革/红岸时期","危机纪元早期"], camp:["地球","ETO"],
+      role:"天体物理学家｜红岸基地关键人物",
+      oneline:"她把“宇宙的回应”带到人间，也把人类推上了漫长的审判台。",
+      acts:["进入红岸基地参与对外探索。","完成第一次对三体世界的主动通信。","推动ETO形成并扩张。"],
+      notes:"把个人创伤与时代绝望投射到宇宙尺度上。",
+      tags:["红岸基地","第一次接触","ETO","宇宙社会学"], rels:["mike-evans","yang-dong","luo-ji"]
+    },
+    { id:"wang-miao", name:"汪淼", en:"Wang Miao", books:["tbp"],
+      era:["危机纪元前夜"], camp:["地球"], role:"纳米材料研究者｜调查线核心",
+      oneline:"他是“从倒计时里醒来的人”，把虚拟游戏背后的真实挖了出来。",
+      acts:["卷入调查科学异常与ETO渗透。","通过《三体》游戏接近核心线索。","协助瓦解ETO关键沟通链路。"],
+      notes:"第一部“普通人视角”的锚点。",
+      tags:["倒计时","三体游戏","调查线"], rels:["shi-qiang","ding-yi","ye-wenjie"]
+    },
+    { id:"shi-qiang", name:"史强", en:"Shi Qiang（大史）", books:["tbp","df"],
+      era:["危机纪元前夜","危机纪元"], camp:["地球"], role:"警官/反恐｜面壁安保",
+      oneline:"粗粝、直觉强，但关键时刻能把人从崩塌边缘拽回来。",
+      acts:["参与对ETO的侦破与行动。","推动关键打击方案。","成为罗辑的重要支撑。"],
+      notes:"文明的“免疫系统”。",
+      tags:["大史","行动","安保"], rels:["wang-miao","luo-ji","ye-wenjie"]
+    },
+    { id:"ding-yi", name:"丁仪", en:"Ding Yi", books:["tbp","df"],
+      era:["危机纪元前夜","危机纪元"], camp:["地球"], role:"理论物理学家",
+      oneline:"当“物理学被锁死”，他仍用好奇心对抗宇宙的冷漠。",
+      acts:["为调查线提供关键洞见。","见证基础科学困境与路线转向。"],
+      notes:"科学精神的韧性。",
+      tags:["物理学","基础科学"], rels:["wang-miao","yang-dong","shi-qiang"]
+    },
+    { id:"yang-dong", name:"杨冬", en:"Yang Dong", books:["tbp"],
+      era:["危机纪元前夜"], camp:["地球"], role:"弦论学者｜叶文洁之女",
+      oneline:"在“意义被篡改”的恐惧里，她先一步坠入沉默。",
+      acts:["身处基础科学动荡期精神受侵蚀。","她的离去引爆调查线。"],
+      notes:"站在信念崩塌的正中央。",
+      tags:["弦论","自杀潮"], rels:["ye-wenjie","ding-yi","wang-miao"]
+    },
+    { id:"mike-evans", name:"迈克·伊文斯", en:"Mike Evans", books:["tbp"],
+      era:["危机纪元前夜"], camp:["ETO"], role:"ETO实际缔造者/资助者",
+      oneline:"他把对人类的失望，变成了对外来审判的“热忱”。",
+      acts:["创建并扩张ETO。","承担与三体沟通链路。","在行动中被清除。"],
+      notes:"从“爱万物”滑向“恨人类”。",
+      tags:["ETO","沟通链路"], rels:["ye-wenjie","shi-qiang"]
+    },
+    { id:"luo-ji", name:"罗辑", en:"Luo Ji", books:["df","de"],
+      era:["危机纪元","威慑纪元"], camp:["地球"], role:"面壁者｜第一任执剑人",
+      oneline:"他把宇宙看成黑暗森林，于是威慑成了文明最后的语言。",
+      acts:["以宇宙社会学构建核心对抗思路。","形成暗林威慑框架并长期维系平衡。"],
+      notes:"可怕之处在于看清规则后仍坚持执行。",
+      tags:["面壁者","暗森林","执剑人"], rels:["shi-qiang","ye-wenjie","cheng-xin","sophon"]
+    },
+    { id:"zhang-beihai", name:"章北海", en:"Zhang Beihai", books:["df"],
+      era:["危机纪元（舰队时代）"], camp:["地球","逃逸主义"], role:"战略执行者",
+      oneline:"嘴上喊胜利，心里早写好逃离太阳系的计划书。",
+      acts:["推动必胜叙事稳定军心。","实施深空逃逸延续火种。"],
+      notes:"现实主义的刀。",
+      tags:["深空逃逸","舰队时代"], rels:["luo-ji","ding-yi"]
+    },
+    { id:"cheng-xin", name:"程心", en:"Cheng Xin", books:["de"],
+      era:["危机/威慑/广播纪元"], camp:["地球"], role:"阶梯计划发起者｜第二任执剑人",
+      oneline:"她选择温柔，但宇宙往往把温柔当成漏洞。",
+      acts:["推动阶梯计划。","执剑更替中做出关键选择引发失衡。","在后续灾变与逃亡中持续见证宇宙规则。"],
+      notes:"争议核心：把人性坚持到底。",
+      tags:["阶梯计划","执剑人","人性"], rels:["yun-tianming","thomas-wade","ai-aa","luo-ji","guan-yifan","sophon"]
+    },
+    { id:"yun-tianming", name:"云天明", en:"Yun Tianming", books:["de"],
+      era:["危机/广播纪元"], camp:["地球","后被俘获"], role:"阶梯计划载荷｜童话密信",
+      oneline:"他用最轻的故事，装进最重的宇宙机密。",
+      acts:["作为阶梯计划载荷被送出。","以童话方式传递关键信息。"],
+      notes:"看似柔软，却能改变历史分叉。",
+      tags:["童话密信","阶梯计划"], rels:["cheng-xin","ai-aa","sophon","thomas-wade","guan-yifan"]
+    },
+    { id:"thomas-wade", name:"托马斯·维德", en:"Thomas Wade", books:["de"],
+      era:["危机/威慑纪元"], camp:["地球"], role:"强硬现实主义路线代表",
+      oneline:"不问值不值得，只问能不能活下去。",
+      acts:["推动危机计划体系与特殊项目。","在路线分歧中坚持极端求生立场。"],
+      notes:"文明的偏执求生本能。",
+      tags:["强硬","求生"], rels:["cheng-xin","yun-tianming","ai-aa"]
+    },
+    { id:"ai-aa", name:"艾AA", en:"Ai AA", books:["de"],
+      era:["威慑/广播纪元"], camp:["地球"], role:"程心伙伴｜执行/经营",
+      oneline:"聪明务实反应快，是把日子过下去的那种勇敢。",
+      acts:["与程心同行承担现实执行与支持。"],
+      notes:"让宏大叙事落回人的生活。",
+      tags:["伙伴","执行"], rels:["cheng-xin","yun-tianming","guan-yifan","sophon"]
+    },
+    { id:"guan-yifan", name:"关一帆", en:"Guan Yifan", books:["de"],
+      era:["威慑/广播纪元及更远未来"], camp:["地球"], role:"程心同行者",
+      oneline:"当家园被压扁，他陪她在宇宙里走更长的路。",
+      acts:["在关键逃亡链路中与程心结伴同行。"],
+      notes:"后史学的人类样本。",
+      tags:["同行者","未来"], rels:["cheng-xin","ai-aa","sophon","yun-tianming"]
+    },
+    { id:"sophon", name:"智子", en:"Sophon", books:["df","de"],
+      era:["危机/威慑/广播纪元"], camp:["三体文明"], role:"观察/交涉载体",
+      oneline:"她是三体的眼睛，也是人类恐惧的镜子。",
+      acts:["以监视压制关键科技突破。","在关键节点以交涉者形态出现。"],
+      notes:"不可见的枷锁被具象化。",
+      tags:["智子","锁死科学","交涉"], rels:["luo-ji","cheng-xin","yun-tianming","guan-yifan"]
+    }
+  ];
+
+  // ====== 安全启动：WP 里也稳 ======
+  const onReady = (fn) => {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn, { once:true });
+    else fn();
+  };
+
+  // ====== 工具函数 ======
+  const clamp = (v,min,max) => Math.max(min, Math.min(max, v));
+  const hashStr = (s) => {
+    let h = 2166136261;
+    for(let i=0;i<s.length;i++){
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  };
+  const mulberry32 = (a) => () => {
+    let t = a += 0x6D2B79F5;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+
+  // ====== 关键：重绘旗标必须最先定义（彻底杜绝 TDZ） ======
+  let needRedraw = true;
+  const requestConstellationRedraw = () => { needRedraw = true; };
+
+  // ====== 运行时状态 ======
+  const state = {
+    tx: 0, ty: 0, scale: 1,
+    dragging: false, lastX:0, lastY:0,
+    activeId: null,
+    linesOn: true,
+    listOnly: false
+  };
+
+  onReady(() => {
+    // --- 取 DOM ---
+    const starCanvas = document.getElementById("starfield");
+    const sctx = starCanvas.getContext("2d");
+
+    const viewport = document.getElementById("viewport");
+    const world = document.getElementById("world");
+
+    const lineCanvas = document.getElementById("constellations");
+    const lctx = lineCanvas.getContext("2d");
+
+    const overlay = document.getElementById("overlay");
+    const closeBtn = document.getElementById("close");
+
+    // --- 星空背景 ---
+    let stars = [];
+    const resizeStar = () => {
+      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio||1));
+      starCanvas.width = Math.floor(innerWidth*dpr);
+      starCanvas.height = Math.floor(innerHeight*dpr);
+      starCanvas.style.width = innerWidth+"px";
+      starCanvas.style.height = innerHeight+"px";
+      sctx.setTransform(dpr,0,0,dpr,0,0);
+
+      stars = [];
+      const n = Math.floor((innerWidth*innerHeight)/9000);
+      for(let i=0;i<n;i++){
+        stars.push({
+          x: Math.random()*innerWidth,
+          y: Math.random()*innerHeight,
+          r: Math.random()*1.6 + 0.2,
+          a: Math.random()*0.6 + 0.15,
+          vx: (Math.random()-0.5)*0.05,
+          vy: (Math.random()-0.5)*0.05
+        });
+      }
+    };
+    const tickStar = () => {
+      sctx.clearRect(0,0,innerWidth,innerHeight);
+      const g = sctx.createRadialGradient(innerWidth*0.35, innerHeight*0.25, 0, innerWidth*0.35, innerHeight*0.25, Math.max(innerWidth,innerHeight)*0.8);
+      g.addColorStop(0, "rgba(134,169,200,.05)");
+      g.addColorStop(1, "rgba(15,21,38,0)");
+      sctx.fillStyle = g;
+      sctx.fillRect(0,0,innerWidth,innerHeight);
+
+      for(const st of stars){
+        st.x += st.vx; st.y += st.vy;
+        if(st.x< -10) st.x = innerWidth+10;
+        if(st.x> innerWidth+10) st.x = -10;
+        if(st.y< -10) st.y = innerHeight+10;
+        if(st.y> innerHeight+10) st.y = -10;
+        sctx.fillStyle = `rgba(231,220,203,${st.a})`;
+        sctx.fillRect(st.x, st.y, st.r, st.r);
+      }
+      requestAnimationFrame(tickStar);
+    };
+
+    // --- 人物“照片”生成 ---
+    const drawPortrait = (canvas, seed, label) => {
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width, h = canvas.height;
+      const rnd = mulberry32(seed);
+
+      const g = ctx.createLinearGradient(0,0,w,h);
+      g.addColorStop(0, `rgba(26,35,52,1)`);
+      g.addColorStop(1, `rgba(15,21,38,1)`);
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,w,h);
+
+      for(let i=0;i<6;i++){
+        const x = rnd()*w, y=rnd()*h;
+        const r = 60 + rnd()*120;
+        const gg = ctx.createRadialGradient(x,y,0,x,y,r);
+        const a1 = 0.08 + rnd()*0.12;
+        const c = i%2===0 ? `rgba(167,196,160,${a1})` : `rgba(134,169,200,${a1})`;
+        gg.addColorStop(0, c);
+        gg.addColorStop(1, `rgba(15,21,38,0)`);
+        ctx.fillStyle = gg;
+        ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+      }
+      for(let i=0;i<120;i++){
+        const x=rnd()*w, y=rnd()*h;
+        const s = rnd()<0.85 ? 1 : 2;
+        const a = 0.18 + rnd()*0.55;
+        ctx.fillStyle = `rgba(231,220,203,${a})`;
+        ctx.fillRect(x,y,s,s);
+      }
+
+      const cx = w*0.5, cy = h*0.58;
+      const haloR = Math.min(w,h)*0.28;
+      const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, haloR);
+      halo.addColorStop(0, `rgba(231,220,203,.18)`);
+      halo.addColorStop(1, `rgba(231,220,203,0)`);
+      ctx.fillStyle = halo;
+      ctx.beginPath(); ctx.arc(cx, cy, haloR, 0, Math.PI*2); ctx.fill();
+
+      ctx.fillStyle = `rgba(231,220,203,.16)`;
+      ctx.beginPath(); ctx.arc(cx, cy-38, 26, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(cx, cy+22, 58, 40, 0, 0, Math.PI*2); ctx.fill();
+
+      const shine = ctx.createLinearGradient(0,0,w,h);
+      shine.addColorStop(0, "rgba(231,220,203,.18)");
+      shine.addColorStop(.35, "rgba(231,220,203,.00)");
+      shine.addColorStop(.7, "rgba(231,220,203,.10)");
+      shine.addColorStop(1, "rgba(231,220,203,.00)");
+      ctx.fillStyle = shine;
+      ctx.fillRect(0,0,w,h);
+
+      ctx.fillStyle = "rgba(231,220,203,.65)";
+      ctx.font = "600 13px ui-sans-serif, system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei'";
+      ctx.fillText(label, 12, h-14);
+    };
+
+    // --- 卡片生成 ---
+    const cardMap = new Map();
+
+    const buildBookChips = () => {
+      const wrap = document.getElementById("bookChips");
+      wrap.innerHTML = "";
+      const mk = (text, id, on=false) => {
+        const c = document.createElement("div");
+        c.className = "chip" + (on ? " on" : "");
+        c.textContent = text;
+        c.dataset.book = id;
+        return c;
+      };
+      wrap.appendChild(mk("全部","all", true));
+      for(const b of BOOKS) wrap.appendChild(mk(b.name, b.id, false));
+    };
+
+    let filterBook = "all";
+
+    const layoutCards = () => {
+      world.innerHTML = `<div class="dust"></div>`;
+      cardMap.clear();
+
+      const cols = 5;
+      const gapX = 270, gapY = 330;
+      const baseX = 120, baseY = 110;
+
+      CHARACTERS.forEach((ch, i) => {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        const rnd = mulberry32(hashStr(ch.id));
+        const x = baseX + col*gapX + (rnd()*50 - 25);
+        const y = baseY + row*gapY + (rnd()*70 - 35);
+        const rot = (rnd()*8 - 4).toFixed(2) + "deg";
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.style.left = x+"px";
+        card.style.top = y+"px";
+        card.style.setProperty("--rot", rot);
+        card.dataset.id = ch.id;
+
+        const photo = document.createElement("canvas");
+        photo.width = 560;
+        photo.height = 420;
+        const label = (ch.en || "").split(" ")[0] || ch.name;
+        drawPortrait(photo, hashStr(ch.id), label);
+
+        const tags = [];
+        const bookTag = ch.books.includes("tbp") ? "I" : (ch.books.includes("df") ? "II" : "III");
+        tags.push({t: "卷"+bookTag, cls:"a"});
+        tags.push({t: ch.camp[0] || "阵营", cls:"b"});
+        if(ch.tags?.[0]) tags.push({t: ch.tags[0], cls:"c"});
+
+        card.innerHTML = `
+          <div class="frameTop"></div>
+          <div class="cardBody">
+            <div class="name">
+              <b>${ch.name}</b>
+              <span>${ch.en || ""}</span>
+            </div>
+            <div class="desc">${escapeHtml(ch.oneline)}</div>
+            <div class="meta">
+              <div><span class="dot"></span>${escapeHtml(ch.role)}</div>
+              <div>${escapeHtml((ch.era||[])[0] || "")}</div>
+            </div>
+          </div>
+        `;
+        const frameTop = card.querySelector(".frameTop");
+        frameTop.appendChild(photo);
+
+        const tagbar = document.createElement("div");
+        tagbar.className = "tagbar";
+        tags.forEach((t, idx) => {
+          const s = document.createElement("span");
+          s.className = `tag ${t.cls || (idx%2?"b":"a")}`;
+          s.textContent = t.t;
+          tagbar.appendChild(s);
+        });
+        frameTop.appendChild(tagbar);
+
+        card.addEventListener("click", () => openCharacter(ch.id));
+        world.appendChild(card);
+        cardMap.set(ch.id, card);
+      });
+
+      const rows = Math.ceil(CHARACTERS.length / 5);
+      world.style.width  = (baseX*2 + gapX*5) + "px";
+      world.style.height = (baseY*2 + gapY*rows) + "px";
+    };
+
+    // --- 变换/缩放（修复后的顺序：所有依赖都定义完后才会调用 resetView） ---
+    const applyTransform = () => {
+      world.style.transform = `translate3d(${state.tx}px, ${state.ty}px, 0) scale(${state.scale})`;
+      requestConstellationRedraw();
+    };
+
+    const resetView = () => {
+      state.scale = 1;
+      const rawW = parseFloat(world.style.width) || 1600;
+      const rawH = parseFloat(world.style.height) || 1200;
+      state.tx = (innerWidth - rawW)/2;
+      state.ty = (innerHeight - rawH)/2 + 40;
+      applyTransform();
+    };
+
+    // --- 视口拖拽/缩放 ---
+    viewport.addEventListener("pointerdown", (e) => {
+      if(e.button !== 0) return;
+      state.dragging = true;
+      state.lastX = e.clientX;
+      state.lastY = e.clientY;
+      viewport.setPointerCapture(e.pointerId);
+    });
+    viewport.addEventListener("pointermove", (e) => {
+      if(!state.dragging) return;
+      const dx = e.clientX - state.lastX;
+      const dy = e.clientY - state.lastY;
+      state.lastX = e.clientX;
+      state.lastY = e.clientY;
+      state.tx += dx;
+      state.ty += dy;
+      applyTransform();
+    });
+    viewport.addEventListener("pointerup", () => { state.dragging = false; });
+
+    viewport.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const delta = -e.deltaY;
+      const factor = delta > 0 ? 1.08 : 0.92;
+      const newScale = clamp(state.scale * factor, 0.55, 2.0);
+
+      const rect = viewport.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+
+      const wx = (mx - state.tx) / state.scale;
+      const wy = (my - state.ty) / state.scale;
+
+      state.scale = newScale;
+      state.tx = mx - wx * state.scale;
+      state.ty = my - wy * state.scale;
+      applyTransform();
+    }, { passive:false });
+
+    // --- 连线画布 ---
+    const resizeLines = () => {
+      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio||1));
+      lineCanvas.width = Math.floor(innerWidth*dpr);
+      lineCanvas.height = Math.floor(innerHeight*dpr);
+      lineCanvas.style.width = innerWidth+"px";
+      lineCanvas.style.height = innerHeight+"px";
+      lctx.setTransform(dpr,0,0,dpr,0,0);
+      requestConstellationRedraw();
+    };
+
+    const centerOf = (id) => {
+      const el = cardMap.get(id);
+      if(!el || el.classList.contains("hidden")) return null;
+      const r = el.getBoundingClientRect();
+      return { x: r.left + r.width/2, y: r.top + r.height/2 };
+    };
+
+    const drawLinesLoop = () => {
+      if(!state.linesOn){
+        lctx.clearRect(0,0,innerWidth,innerHeight);
+        requestAnimationFrame(drawLinesLoop);
+        return;
+      }
+      if(!needRedraw){
+        requestAnimationFrame(drawLinesLoop);
+        return;
+      }
+      needRedraw = false;
+      lctx.clearRect(0,0,innerWidth,innerHeight);
+
+      // 背景淡线
+      lctx.lineWidth = 1.2;
+      lctx.strokeStyle = "rgba(134,169,200,.10)";
+      lctx.beginPath();
+      for(const ch of CHARACTERS){
+        const a = centerOf(ch.id);
+        if(!a) continue;
+        for(const rid of (ch.rels||[])){
+          const b = centerOf(rid);
+          if(!b) continue;
+          lctx.moveTo(a.x,a.y);
+          lctx.lineTo(b.x,b.y);
+        }
+      }
+      lctx.stroke();
+
+      // 高亮当前人物关系
+      const active = state.activeId ? CHARACTERS.find(x=>x.id===state.activeId) : null;
+      if(active){
+        lctx.lineWidth = 2.4;
+        lctx.strokeStyle = "rgba(167,196,160,.34)";
+        lctx.beginPath();
+        const a = centerOf(active.id);
+        if(a){
+          for(const rid of (active.rels||[])){
+            const b = centerOf(rid);
+            if(!b) continue;
+            lctx.moveTo(a.x,a.y);
+            lctx.lineTo(b.x,b.y);
+          }
+        }
+        lctx.stroke();
+      }
+
+      requestAnimationFrame(drawLinesLoop);
+    };
+
+    // --- Modal ---
+    const closeModal = () => overlay.classList.remove("show");
+    closeBtn.addEventListener("click", closeModal);
+    overlay.addEventListener("click", (e) => { if(e.target === overlay) closeModal(); });
+    window.addEventListener("keydown", (e) => { if(e.key === "Escape") closeModal(); });
+
+    const focusOnCard = (id, animate) => {
+      const card = cardMap.get(id);
+      if(!card) return;
+      const rect = card.getBoundingClientRect();
+      const vx = innerWidth/2, vy = innerHeight/2;
+      const cx = rect.left + rect.width/2;
+      const cy = rect.top + rect.height/2;
+      const dx = vx - cx;
+      const dy = vy - cy;
+
+      if(!animate){
+        state.tx += dx; state.ty += dy;
+        applyTransform();
+        return;
+      }
+      const steps = 18;
+      let i = 0;
+      const startTx = state.tx, startTy = state.ty;
+      const targetTx = state.tx + dx;
+      const targetTy = state.ty + dy;
+      const step = () => {
+        i++;
+        const t = i/steps;
+        const k = 1 - Math.pow(1-t, 3);
+        state.tx = startTx + (targetTx-startTx)*k;
+        state.ty = startTy + (targetTy-startTy)*k;
+        applyTransform();
+        if(i<steps) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+
+    const openCharacter = (id) => {
+      const ch = CHARACTERS.find(x=>x.id===id);
+      if(!ch) return;
+      state.activeId = id;
+
+      // 高亮：只留自己 + 关系
+      const relSet = new Set([id, ...(ch.rels||[])]);
+      for(const [cid, card] of cardMap){
+        if(card.classList.contains("hidden")) continue;
+        card.classList.toggle("dim", !relSet.has(cid));
+      }
+
+      const mName = document.getElementById("mName");
+      const mSub = document.getElementById("mSub");
+      const mOneLine = document.getElementById("mOneLine");
+      const mEra = document.getElementById("mEra");
+      const mActs = document.getElementById("mActs");
+      const mNotes = document.getElementById("mNotes");
+      const mTags = document.getElementById("mTags");
+      const mPills = document.getElementById("mPills");
+      const mRels = document.getElementById("mRels");
+
+      mName.textContent = ch.name;
+      mSub.textContent = `${ch.en || ""} · ${ch.role || ""}`.replace(/^\s*·\s*|\s*·\s*$/g,"");
+      mOneLine.textContent = ch.oneline || "——";
+
+      mEra.innerHTML = "";
+      [
+        `作品出现：${(ch.books||[]).map(b => BOOKS.find(x=>x.id===b)?.name || b).join("、")}`,
+        `主要纪元：${(ch.era||[]).join(" / ")}`,
+        `阵营/立场：${(ch.camp||[]).join(" / ")}`
+      ].forEach(t => {
+        const li = document.createElement("li");
+        li.textContent = t;
+        mEra.appendChild(li);
+      });
+
+      mActs.innerHTML = "";
+      const acts = state.listOnly ? ["（名单模式已隐藏关键事件）"] : (ch.acts || []);
+      acts.forEach(t => {
+        const li = document.createElement("li");
+        li.textContent = t;
+        mActs.appendChild(li);
+      });
+
+      mNotes.textContent = state.listOnly ? "（名单模式：不做剧情解读）" : (ch.notes || "——");
+
+      mTags.innerHTML = "";
+      (ch.tags||[]).slice(0,4).forEach((t,idx)=>{
+        const s = document.createElement("span");
+        s.className = "tag "+(idx%3===0?"a":idx%3===1?"b":"c");
+        s.textContent = t;
+        mTags.appendChild(s);
+      });
+
+      mPills.innerHTML = "";
+      const pill = (text, cls) => {
+        const s = document.createElement("span");
+        s.className = "pill "+cls;
+        s.textContent = text;
+        return s;
+      };
+      mPills.appendChild(pill(`阵营：${(ch.camp||[])[0]||"—"}`, "good"));
+      mPills.appendChild(pill(`作品：${(ch.books||[]).length}卷涉及`, "blue"));
+      mPills.appendChild(pill(`模式：${state.listOnly ? "名单" : "含剧透"}`, "warn"));
+
+      mRels.innerHTML = "";
+      (ch.rels||[]).forEach(rid=>{
+        const other = CHARACTERS.find(x=>x.id===rid);
+        if(!other) return;
+        const b = document.createElement("div");
+        b.className = "rel";
+        b.textContent = other.name;
+        b.addEventListener("click", ()=>{
+          focusOnCard(other.id, true);
+          openCharacter(other.id);
+        });
+        mRels.appendChild(b);
+      });
+      if(!(ch.rels||[]).length){
+        const t = document.createElement("div");
+        t.className = "tiny";
+        t.textContent = "（暂无预设关系）";
+        mRels.appendChild(t);
+      }
+
+      // 大图照片
+      const mc = document.getElementById("mCanvas");
+      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio||1));
+      mc.width = Math.floor(980*dpr);
+      mc.height = Math.floor(560*dpr);
+      mc.style.width = "100%";
+      mc.style.height = "100%";
+      const mctx = mc.getContext("2d");
+      mctx.setTransform(dpr,0,0,dpr,0,0);
+      drawPortrait(mc, hashStr(ch.id)+12345, (ch.en||ch.name));
+
+      overlay.classList.add("show");
+      focusOnCard(id, false);
+      requestConstellationRedraw();
+    };
+
+    // --- 搜索 / 筛选 ---
+    const updateFilter = () => {
+      const q = (document.getElementById("q").value || "").trim().toLowerCase();
+      const keywords = q.split(/\s+/).filter(Boolean);
+
+      for(const ch of CHARACTERS){
+        const card = cardMap.get(ch.id);
+        if(!card) continue;
+
+        const matchBook = (filterBook === "all") || ch.books.includes(filterBook);
+
+        let matchQ = true;
+        if(keywords.length){
+          const hay = [
+            ch.name, ch.en, ch.role,
+            ...(ch.era||[]),
+            ...(ch.camp||[]),
+            ...(ch.tags||[]),
+            ch.oneline,
+            ...(state.listOnly ? [] : (ch.acts||[]))
+          ].join(" ").toLowerCase();
+          matchQ = keywords.every(k => hay.includes(k));
+        }
+
+        const ok = matchBook && matchQ;
+        card.classList.toggle("hidden", !ok);
+        card.classList.remove("dim");
+      }
+
+      requestConstellationRedraw();
+    };
+
+    // --- 顶部按钮绑定 ---
+    document.getElementById("q").addEventListener("input", updateFilter);
+
+    document.getElementById("bookChips").addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if(!chip) return;
+      filterBook = chip.dataset.book;
+      [...document.querySelectorAll("#bookChips .chip")].forEach(c => c.classList.toggle("on", c.dataset.book===filterBook));
+      updateFilter();
+    });
+
+    document.getElementById("toggleLines").addEventListener("click", () => {
+      state.linesOn = !state.linesOn;
+      document.getElementById("constellations").classList.toggle("hidden", !state.linesOn);
+      document.getElementById("toggleLines").textContent = state.linesOn ? "✨关系星座：开" : "✨关系星座：关";
+      requestConstellationRedraw();
+    });
+
+    document.getElementById("resetView").addEventListener("click", () => {
+      state.activeId = null;
+      for(const [, card] of cardMap){ card.classList.remove("dim"); }
+      resetView();
+      requestConstellationRedraw();
+    });
+
+    document.getElementById("randomJump").addEventListener("click", () => {
+      const visible = CHARACTERS.filter(ch => !cardMap.get(ch.id)?.classList.contains("hidden"));
+      if(!visible.length) return;
+      const ch = visible[Math.floor(Math.random()*visible.length)];
+      focusOnCard(ch.id, true);
+      openCharacter(ch.id);
+    });
+
+    // --- 剧透门禁 ---
+    const gate = document.getElementById("gate");
+    document.getElementById("gateOk").addEventListener("click", () => {
+      gate.style.display = "none";
+      state.listOnly = false;
+      updateFilter();
+    });
+    document.getElementById("gateList").addEventListener("click", () => {
+      gate.style.display = "none";
+      state.listOnly = true;
+      document.getElementById("q").value = "";
+      updateFilter();
+    });
+
+    // --- 初始化顺序（关键！） ---
+    buildBookChips();
+    layoutCards();
+    resizeStar();
+    resizeLines();
+    resetView();
+    updateFilter();
+    tickStar();
+    requestAnimationFrame(drawLinesLoop);
+
+    window.addEventListener("resize", () => {
+      resizeStar();
+      resizeLines();
+      requestConstellationRedraw();
+    });
+  });
+
+  function escapeHtml(s){
+    return (s||"")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;");
+  }
+})();
+</script>
+</body>
+</html>

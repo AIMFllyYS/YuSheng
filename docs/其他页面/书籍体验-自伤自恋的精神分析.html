@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>数码茧房 · The Digital Cocoon</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    :root{
+      /* 柔和低饱和：鼠尾草绿/米杏/灰蓝/暖灰 */
+      --cool-a: 205; /* hue */
+      --cool-b: 140;
+      --warm-a: 35;
+      --warm-b: 18;
+
+      --sat: 32%;
+      --light-base: 74%;
+      --light-boost: 0%;
+
+      --room-bg: hsl(195 28% 82%);
+      --wall: hsl(45 30% 88%);
+      --wall2: hsl(35 26% 84%);
+      --floor: hsl(155 18% 78%);
+      --floor2: hsl(190 18% 80%);
+
+      --ink: hsl(220 12% 22%);
+      --muted: hsl(220 10% 40%);
+
+      --glow: 0 0 0.8rem hsl(50 80% 80% / .55), 0 0 2.0rem hsl(145 60% 70% / .35);
+      --softShadow: 0 20px 60px hsl(220 20% 20% / .15);
+      --softShadow2: 0 10px 25px hsl(220 20% 20% / .12);
+    }
+
+    html, body { height: 100%; }
+    body{
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 700px at 20% 20%, hsl(150 30% 90% / .9), transparent 60%),
+        radial-gradient(900px 600px at 80% 30%, hsl(200 30% 90% / .8), transparent 55%),
+        radial-gradient(1000px 700px at 50% 90%, hsl(35 40% 90% / .9), transparent 60%),
+        linear-gradient(180deg, hsl(210 25% 92%), hsl(40 35% 92%));
+      overflow: hidden; /* 不滚动 */
+    }
+
+    /* 轻尘粒子（无外部图） */
+    .dust::before, .dust::after{
+      content:"";
+      position:absolute; inset:-20%;
+      background:
+        radial-gradient(circle at 20% 30%, hsl(45 70% 92% / .45) 0 2px, transparent 3px),
+        radial-gradient(circle at 70% 20%, hsl(160 40% 92% / .35) 0 1.5px, transparent 3px),
+        radial-gradient(circle at 40% 80%, hsl(200 50% 92% / .35) 0 2px, transparent 3px),
+        radial-gradient(circle at 85% 70%, hsl(30 60% 92% / .35) 0 1.5px, transparent 3px),
+        radial-gradient(circle at 10% 70%, hsl(190 40% 92% / .3) 0 1.5px, transparent 3px);
+      filter: blur(.2px);
+      animation: floatDust 18s linear infinite;
+      opacity:.85;
+      pointer-events:none;
+    }
+    .dust::after{
+      animation-duration: 26s;
+      opacity:.65;
+      transform: translate3d(-2%, 2%, 0);
+    }
+    @keyframes floatDust{
+      0%{ transform: translate3d(0,0,0) rotate(0deg); }
+      100%{ transform: translate3d(4%, -4%, 0) rotate(6deg); }
+    }
+
+    /* 等距房间容器 */
+    .stage{
+      position: relative;
+      width: min(980px, 92vw);
+      height: min(640px, 68vh);
+      border-radius: 28px;
+      box-shadow: var(--softShadow);
+      background: radial-gradient(900px 500px at 30% 20%, hsl(150 30% 92% / .9), transparent 60%),
+                  radial-gradient(800px 450px at 80% 40%, hsl(35 40% 92% / .9), transparent 55%),
+                  linear-gradient(180deg, hsl(45 30% 90%), hsl(165 18% 86%));
+      overflow: hidden;
+    }
+
+    /* 动态暖色：由滑块控制，通过内联 style 覆盖 */
+    .stageWarmOverlay{
+      position:absolute; inset:0;
+      pointer-events:none;
+      mix-blend-mode: soft-light;
+      opacity: .85;
+    }
+
+    /* 墙面与地板（2.5D） */
+    .wall{
+      position:absolute; inset:0;
+      background:
+        linear-gradient(180deg, var(--wall), var(--wall2));
+    }
+    .floor{
+      position:absolute;
+      left:-10%; right:-10%;
+      bottom:-35%;
+      height: 65%;
+      transform: perspective(900px) rotateX(62deg);
+      transform-origin: bottom;
+      background:
+        linear-gradient(135deg, var(--floor), var(--floor2));
+      border-top: 1px solid hsl(200 15% 70% / .25);
+      box-shadow: inset 0 40px 80px hsl(220 20% 20% / .08);
+      border-radius: 36px;
+    }
+
+    /* 柔光角落 */
+    .vignette{
+      position:absolute; inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(900px 450px at 50% 20%, transparent 35%, hsl(220 20% 15% / .08) 85%),
+        radial-gradient(700px 350px at 20% 90%, transparent 40%, hsl(220 20% 15% / .08) 90%),
+        radial-gradient(700px 350px at 90% 95%, transparent 40%, hsl(220 20% 15% / .08) 90%);
+      opacity:.8;
+    }
+
+    /* 家具块：轻等距 */
+    .iso{
+      transform: skewY(-8deg);
+      border-radius: 18px;
+      box-shadow: var(--softShadow2);
+      background: hsl(45 22% 90%);
+      border: 1px solid hsl(210 15% 65% / .18);
+      position: relative;
+    }
+    .iso::after{
+      content:"";
+      position:absolute;
+      inset:auto 10% -10% 10%;
+      height: 35%;
+      background: linear-gradient(180deg, hsl(220 20% 20% / .10), transparent);
+      filter: blur(10px);
+      border-radius: 999px;
+      pointer-events:none;
+    }
+
+    /* 可点击物件（点点乐） */
+    .objectBtn{
+      cursor: pointer;
+      user-select: none;
+      transition: transform .22s ease, filter .22s ease, box-shadow .22s ease;
+    }
+    .objectBtn:hover{
+      transform: translateY(-4px) scale(1.02);
+      filter: saturate(1.05);
+      box-shadow: var(--glow);
+    }
+    .objectBtn:active{
+      transform: translateY(-1px) scale(.99);
+    }
+
+    /* 物件小弹跳 */
+    .bounceHint{
+      animation: bounceHint 2.6s ease-in-out infinite;
+    }
+    @keyframes bounceHint{
+      0%,100%{ transform: translateY(0); }
+      50%{ transform: translateY(-4px); }
+    }
+
+    /* 模态遮罩动效 */
+    .fadeIn{
+      animation: fadeIn .18s ease-out both;
+    }
+    @keyframes fadeIn{
+      from{ opacity:0; transform: translateY(6px) scale(.99); }
+      to{ opacity:1; transform: translateY(0) scale(1); }
+    }
+
+    /* 移动端：允许轻微滚动内部列表（不滚动整页） */
+    .modalBodyScroll{
+      max-height: min(60vh, 520px);
+      overflow: auto;
+      scrollbar-width: thin;
+      scrollbar-color: hsl(180 20% 65% / .55) transparent;
+    }
+    .modalBodyScroll::-webkit-scrollbar{ width: 10px; }
+    .modalBodyScroll::-webkit-scrollbar-thumb{
+      background: hsl(180 20% 65% / .55);
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+
+    /* 小标签胶囊 */
+    .pill{
+      border: 1px solid hsl(210 15% 60% / .25);
+      background: hsl(45 35% 92% / .65);
+      border-radius: 999px;
+    }
+
+    /* 让按钮不出现纯黑纯白 */
+    .btnSoft{
+      background: hsl(155 22% 80%);
+      color: var(--ink);
+      border: 1px solid hsl(210 15% 60% / .22);
+      box-shadow: 0 10px 20px hsl(220 20% 20% / .10);
+    }
+    .btnSoft:hover{ filter: brightness(1.02) saturate(1.02); }
+    .btnGhost{
+      background: hsl(45 30% 92% / .55);
+      border: 1px dashed hsl(210 15% 60% / .28);
+    }
+  </style>
+</head>
+
+<body x-data="cocoonApp()" class="relative">
+  <div class="absolute inset-0 dust"></div>
+
+  <!-- 顶部标题 -->
+  <header class="relative z-10 pt-6 px-4">
+    <div class="mx-auto w-full max-w-5xl flex items-start justify-between gap-4">
+      <div class="space-y-1">
+        <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">
+          数码茧房 <span class="text-sm sm:text-base font-normal opacity-70">The Digital Cocoon</span>
+        </h1>
+        <p class="text-sm sm:text-base opacity-70">
+          一个不需要“删掉自我批评”的房间：我们只把其他声音调大一点点。
+        </p>
+      </div>
+
+      <button
+        class="btnGhost px-3 py-2 rounded-xl text-sm leading-tight objectBtn"
+        @click="openModal('help')"
+        aria-label="打开引导"
+      >
+        🧭 小引导
+      </button>
+    </div>
+  </header>
+
+  <!-- 舞台 -->
+  <main class="relative z-10 flex items-center justify-center px-4 pt-4">
+    <section
+      class="stage"
+      :style="stageStyle"
+      aria-label="房间舞台"
+    >
+      <div class="wall"></div>
+
+      <!-- 暖色叠加（由滑块控制） -->
+      <div class="stageWarmOverlay" :style="warmOverlayStyle"></div>
+
+      <div class="floor"></div>
+      <div class="vignette"></div>
+
+      <!-- 房间布局：桌面等距块 + 物件 -->
+      <div class="absolute inset-0 p-5 sm:p-7">
+        <!-- 桌子 -->
+        <div class="iso absolute left-[10%] right-[10%] bottom-[18%] h-[22%]">
+          <div class="absolute -top-7 left-4 right-4 flex items-center justify-between">
+            <div class="pill px-3 py-1 text-xs sm:text-sm opacity-80">🕯️ 夜里也可以柔软</div>
+            <div class="pill px-3 py-1 text-xs sm:text-sm opacity-80">🎧 Lofi 模式：已开启</div>
+          </div>
+        </div>
+
+        <!-- 物件：镜子（墙上） -->
+        <button
+          class="objectBtn absolute left-[8%] top-[14%] w-[26%] sm:w-[18%] rounded-2xl p-3 sm:p-4 text-left"
+          style="background: hsl(200 25% 90% / .65); border: 1px solid hsl(210 15% 60% / .25); box-shadow: var(--softShadow2);"
+          @click="openModal('mirror')"
+        >
+          <div class="flex items-center justify-between">
+            <div class="text-2xl sm:text-3xl bounceHint">🪞</div>
+            <span class="text-xs sm:text-sm opacity-70 pill px-2 py-0.5">点击</span>
+          </div>
+          <div class="mt-2">
+            <div class="font-semibold text-sm sm:text-base">镜子：重构自我影像</div>
+            <div class="text-xs sm:text-sm opacity-70 mt-1">“自责”也许是想珍惜自己的一种方式。[12]</div>
+          </div>
+        </button>
+
+        <!-- 物件：窗户（墙上偏右） -->
+        <button
+          class="objectBtn absolute right-[7%] top-[12%] w-[32%] sm:w-[22%] rounded-2xl p-3 sm:p-4 text-left"
+          style="background: hsl(150 25% 90% / .62); border: 1px solid hsl(210 15% 60% / .25); box-shadow: var(--softShadow2);"
+          @click="openModal('window')"
+        >
+          <div class="flex items-center justify-between">
+            <div class="text-2xl sm:text-3xl bounceHint" style="animation-delay:.4s">🪟</div>
+            <span class="text-xs sm:text-sm opacity-70 pill px-2 py-0.5">点击</span>
+          </div>
+          <div class="mt-2">
+            <div class="font-semibold text-sm sm:text-base">窗户：反映式团队模拟</div>
+            <div class="text-xs sm:text-sm opacity-70 mt-1">让两只小鸟“谈论你”，你只需要听。[10]</div>
+          </div>
+        </button>
+
+        <!-- 物件：台账（桌面左） -->
+        <button
+          class="objectBtn absolute left-[16%] bottom-[22%] w-[34%] sm:w-[22%] rounded-2xl p-3 sm:p-4 text-left"
+          style="background: hsl(45 35% 92% / .75); border: 1px solid hsl(210 15% 60% / .22); box-shadow: var(--softShadow2);"
+          @click="openModal('ledger')"
+        >
+          <div class="flex items-center justify-between">
+            <div class="text-2xl sm:text-3xl bounceHint" style="animation-delay:.8s">📒</div>
+            <span class="text-xs sm:text-sm opacity-70 pill px-2 py-0.5">点击</span>
+          </div>
+          <div class="mt-2">
+            <div class="font-semibold text-sm sm:text-base">桌上台账：自责盈亏表</div>
+            <div class="text-xs sm:text-sm opacity-70 mt-1">算一算“自我攻击”到底值不值。[7]</div>
+          </div>
+        </button>
+
+        <!-- 物件：收音机（桌面中） -->
+        <button
+          class="objectBtn absolute left-[52%] sm:left-[43%] bottom-[20%] w-[32%] sm:w-[18%] rounded-2xl p-3 sm:p-4 text-left"
+          style="background: hsl(205 28% 90% / .72); border: 1px solid hsl(210 15% 60% / .22); box-shadow: var(--softShadow2);"
+          @click="openModal('radio')"
+        >
+          <div class="flex items-center justify-between">
+            <div class="text-2xl sm:text-3xl bounceHint" style="animation-delay:1.2s">📻</div>
+            <span class="text-xs sm:text-sm opacity-70 pill px-2 py-0.5">点击</span>
+          </div>
+          <div class="mt-2">
+            <div class="font-semibold text-sm sm:text-base">复古收音机：复调混音台</div>
+            <div class="text-xs sm:text-sm opacity-70 mt-1">成熟的自恋可以“多声部共存”。[8]</div>
+          </div>
+        </button>
+
+        <!-- 物件：扭蛋机/门（右下） -->
+        <button
+          class="objectBtn absolute right-[10%] bottom-[18%] w-[32%] sm:w-[20%] rounded-2xl p-3 sm:p-4 text-left"
+          style="background: hsl(155 24% 88% / .78); border: 1px solid hsl(210 15% 60% / .22); box-shadow: var(--softShadow2);"
+          @click="openModal('gacha')"
+        >
+          <div class="flex items-center justify-between">
+            <div class="text-2xl sm:text-3xl bounceHint" style="animation-delay:1.6s">💊🚪</div>
+            <span class="text-xs sm:text-sm opacity-70 pill px-2 py-0.5">点击</span>
+          </div>
+          <div class="mt-2">
+            <div class="font-semibold text-sm sm:text-base">扭蛋门：微行动生成器</div>
+            <div class="text-xs sm:text-sm opacity-70 mt-1">做一件你“不讨厌”的事，照顾身体。[7][11]</div>
+          </div>
+        </button>
+
+        <!-- 小提示：点点乐 -->
+        <div class="absolute left-5 bottom-5 sm:left-7 sm:bottom-7 flex items-center gap-2">
+          <span class="pill px-3 py-1 text-xs sm:text-sm opacity-75">🖱️ 悬停会发光，点击会打开小窗</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="relative z-10 px-4 pt-5 pb-6">
+    <div class="mx-auto w-full max-w-5xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <p class="text-sm opacity-75">
+        斋藤环（Saito Tamaki）：“我们无法丢掉自恋，但我们可以让它成熟。”[12]
+      </p>
+      <div class="text-xs opacity-60">
+        提示：本页面为交互式心理教育表达，不替代专业帮助。
+      </div>
+    </div>
+  </footer>
+
+  <!-- 通用模态框 -->
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center px-4"
+    x-show="modal.open"
+    x-transition.opacity
+    @keydown.escape.window="closeModal()"
+    style="display:none;"
+    aria-modal="true"
+    role="dialog"
+  >
+    <!-- 背景遮罩 -->
+    <div class="absolute inset-0" style="background: hsl(220 20% 20% / .22);" @click="closeModal()"></div>
+
+    <!-- 内容卡片 -->
+    <div class="relative w-full max-w-2xl rounded-3xl fadeIn"
+         style="background: hsl(45 35% 92% / .92); border: 1px solid hsl(210 15% 60% / .22); box-shadow: var(--softShadow);">
+      <!-- 顶部栏 -->
+      <div class="flex items-start justify-between gap-3 p-5 sm:p-6 border-b"
+           style="border-color: hsl(210 15% 60% / .18);">
+        <div>
+          <h2 class="text-lg sm:text-xl font-semibold" x-text="modal.title"></h2>
+          <p class="text-sm opacity-70 mt-1" x-text="modal.subtitle"></p>
+        </div>
+        <button class="btnGhost px-3 py-2 rounded-xl text-sm objectBtn" @click="closeModal()" aria-label="关闭">
+          ✕
+        </button>
+      </div>
+
+      <!-- 内容区 -->
+      <div class="p-5 sm:p-6 modalBodyScroll">
+        <!-- HELP -->
+        <template x-if="modal.key === 'help'">
+          <div class="space-y-4">
+            <div class="rounded-2xl p-4" style="background: hsl(150 25% 90% / .55); border:1px solid hsl(210 15% 60% / .18);">
+              <div class="font-semibold">怎么玩？</div>
+              <ul class="mt-2 text-sm opacity-80 space-y-2 list-disc pl-5">
+                <li>把鼠标挪到物件上：它会发光、轻轻弹一下。</li>
+                <li>点一下：会弹出一个小窗。你不需要“正确”，只需要“在场”。</li>
+                <li>收音机的两个滑块（身体感、只是存在）越高，房间会越暖。</li>
+              </ul>
+            </div>
+
+            <div class="rounded-2xl p-4" style="background: hsl(205 28% 90% / .55); border:1px solid hsl(210 15% 60% / .18);">
+              <div class="font-semibold">今晚的暗号</div>
+              <p class="mt-2 text-sm opacity-80">
+                “我不是坏掉了，我是在保护自己；只是这个保护的维护费太高了。”
+              </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+              <button class="btnSoft px-4 py-3 rounded-2xl objectBtn" @click="closeModal()">
+                好的，进屋！
+              </button>
+              <button class="btnGhost px-4 py-3 rounded-2xl objectBtn" @click="openModal('radio')">
+                先去调收音机 📻
+              </button>
+            </div>
+          </div>
+        </template>
+
+        <!-- MIRROR -->
+        <template x-if="modal.key === 'mirror'">
+          <div class="space-y-4">
+            <div class="rounded-2xl p-4" style="background: hsl(200 25% 90% / .55); border:1px solid hsl(210 15% 60% / .18);">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">🪞</span>
+                <div class="font-semibold">你今天讨厌自己哪里？</div>
+              </div>
+              <p class="text-sm opacity-75 mt-2">
+                你可以写，也可以不写。无论写什么，我们都只做一件事：把它“换个框”。（灵感：自责来自“想珍惜自己”。[12]）
+              </p>
+
+              <div class="mt-3">
+                <label class="text-sm opacity-80">输入：</label>
+                <input
+                  class="mt-2 w-full rounded-2xl px-4 py-3 outline-none"
+                  style="background:hsl(45 35% 94%); border:1px solid hsl(210 15% 60% / .22);"
+                  x-model="mirror.input"
+                  placeholder="比如：我太拖延 / 我不够好看 / 我又搞砸了…"
+                />
+              </div>
+
+              <div class="mt-4 flex flex-col sm:flex-row gap-3">
+                <button class="btnSoft px-4 py-3 rounded-2xl objectBtn" @click="mirrorReframe()">
+                  给我一句“重构后的真相”
+                </button>
+                <button class="btnGhost px-4 py-3 rounded-2xl objectBtn" @click="mirror.input=''; mirror.result=''">
+                  清空一下
+                </button>
+              </div>
+            </div>
+
+            <template x-if="mirror.result">
+              <div class="rounded-2xl p-4" style="background: hsl(150 25% 90% / .55); border:1px solid hsl(210 15% 60% / .18);">
+                <div class="text-sm opacity-70">重构后的真相：</div>
+                <div class="mt-2 text-base sm:text-lg font-semibold leading-relaxed" x-text="mirror.result"></div>
+                <div class="mt-2 text-xs opacity-60" x-text="mirror.refTag"></div>
+              </div>
+            </template>
+
+            <div class="text-sm opacity-70">
+              小注：你不是在“找借口”，你是在把刀柄慢慢递回自己手里。
+            </div>
+          </div>
+        </template>
+
+        <!-- LEDGER -->
+        <template x-if="modal.key === 'ledger'">
+          <div class="space-y-4">
+            <div class="rounded-2xl p-4" style="background: hsl(45 35% 92% / .65); border:1px solid hsl(210 15% 60% / .18);">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">📒</span>
+                <div class="font-semibold">“自我责骂”的盈亏表</div>
+              </div>
+              <p class="text-sm opacity-75 mt-2">
+                我们不先评价对错，只先算账：它带来什么代价？又带来什么收益？（“计算得失”。[7]）
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="rounded-2xl p-4" style="background: hsl(200 25% 90% / .55); border:1px solid hsl(210 15% 60% / .18);">
+                <div class="font-semibold">左栏：责骂自己的成本</div>
+                <div class="mt-3 space-y-2 text-sm">
+                  <label class="flex items-center gap-2">
+                    <input type="checkbox" class="accent-[hsl(160_22%_50%)]" x-model="ledger.cost.pain">
+                    <span>痛苦 / 心口发紧 / 想躲起来</span>
+                  </label>
+                  <label class="flex items-center gap-2">
+                    <input type="checkbox" class="accent-[hsl(160_22%_50%)]" x-model="ledger.cost.paralysis">
+                    <span>僵住 / 迟迟无法开始</span>
+                  </label>
+                  <label class="flex items-center gap-2">
+                    <input type="checkbox" class="accent-[hsl(160_22%_50%)]" x-model="ledger.cost.sleep">
+                    <span>睡眠变差 / 反复复盘</span>
+                  </label>
+                  <label class="flex items-center gap-2">
+                    <input type="checkbox" class="accent-[hsl(160_22%_50%)]" x-model="ledger.cost.isolation">
+                    <span>更不想见人 / 更孤立</span>
+                  </label>
+                </div>
+
+                <textarea
+                  class="mt-3 w-full rounded-2xl px-4 py-3 text-sm outline-none"
+                  style="background:hsl(45 35% 94%); border:1px solid hsl(210 15% 60% / .22);"
+                  x-model="ledger.costNote"
+                  placeholder="你还付出了哪些成本？（可选）"
+                  rows="3"
+                ></textarea>
+              </div>
+
+              <div class="rounded-2xl p-4" style="background: hsl(150 25% 90% / .55); border:1px solid hsl(210 15% 60% / .18);">
+                <div class="font-semibold">右栏：责骂自己的收益</div>
+                <div class="mt-3 space-y-2 text-sm">
+                  <label class="flex items-center gap-2">
+                    <input type="checkbox" class="accent-[hsl(160_22%_50%)]" x-model="ledger.benefit.safety">
+                    <span>安全感：先打自己，就不怕别人先打</span>
+                  </label>
+                  <label class="flex items-center gap-2">
+                    <input type="checkbox" class="accent-[hsl(160_22%_50%)]" x-model="ledger.benefit.avoid">
+                    <span>避免挑战：不开始就不会失败</span>
+                  </label>
+                  <label class="flex items-center gap-2">
+                    <input type="checkbox" class="accent-[hsl(160_22%_50%)]" x-model="ledger.benefit.good">
+                    <span>维持“好人/努力的人”形象</span>
+                  </label>
+                  <label class="flex items-center gap-2">
+                    <input type="checkbox" class="accent-[hsl(160_22%_50%)]" x-model="ledger.benefit.control">
+                    <span>控制感：我起码能“管住我自己”</span>
+                  </label>
+                </div>
+
+                <textarea
+                  class="mt-3 w-full rounded-2xl px-4 py-3 text-sm outline-none"
+                  style="background:hsl(45 35% 94%); border:1px solid hsl(210 15% 60% / .22);"
+                  x-model="ledger.benefitNote"
+                  placeholder="它还给了你什么？（可选）"
+                  rows="3"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="rounded-2xl p-4" style="background: hsl(35 35% 90% / .55); border:1px solid hsl(210 15% 60% / .18);">
+              <div class="font-semibold">结算</div>
+              <p class="mt-2 text-sm opacity-80">
+                你不是坏掉了。你只是试图保护自己。只是这面盾牌的维护费太高了。
+              </p>
+              <div class="mt-3 flex flex-col sm:flex-row gap-3">
+                <button class="btnSoft px-4 py-3 rounded-2xl objectBtn" @click="openModal('gacha')">
+                  给我一个更省维护费的“微行动” 💊🚪
+                </button>
+                <button class="btnGhost px-4 py-3 rounded-2xl objectBtn" @click="closeModal()">
+                  我先把账本合上
+                </button>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- RADIO -->
+        <template x-if="modal.key === 'radio'">
+          <div class="space-y-4">
+            <div class="rounded-2xl p-4" style="background: hsl(205 28% 90% / .55); border:1px solid hsl(210 15% 60% / .18);">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">📻</span>
+                <div class="font-semibold">复调混音台（Polyphonic Mixer）</div>
+              </div>
+              <p class="text-sm opacity-75 mt-2">
+                成熟的自恋不是“只剩一个声音”，而是多声部能共存。[8]
+              </p>
+            </div>
+
+            <div class="rounded-2xl p-4 space-y-4" style="background: hsl(45 35% 92% / .65); border:1px solid hsl(210 15% 60% / .18);">
+              <!-- Slider 1 -->
+              <div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="font-semibold">自我批评</span>
+                  <span class="pill px-3 py-1 opacity-80" x-text="radio.critic + '%'"></span>
+                </div>
+                <input
+                  type="range" min="0" max="100"
+                  x-model.number="radio.critic"
+                  class="w-full mt-2"
+                />
+                <p class="text-xs opacity-70 mt-1">
+                  这个滑块不会消失：我们不需要“消音”，只需要“加其他声部”。（默认 100%）
+                </p>
+              </div>
+
+              <!-- Slider 2 -->
+              <div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="font-semibold">身体感</span>
+                  <span class="pill px-3 py-1 opacity-80" x-text="radio.body + '%'"></span>
+                </div>
+                <input
+                  type="range" min="0" max="100"
+                  x-model.number="radio.body"
+                  @input="updateWarmth()"
+                  class="w-full mt-2"
+                />
+                <p class="text-xs opacity-70 mt-1">
+                  试试把注意力挪到：呼吸、脚底、肩膀的重量。
+                </p>
+              </div>
+
+              <!-- Slider 3 -->
+              <div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="font-semibold">只是存在</span>
+                  <span class="pill px-3 py-1 opacity-80" x-text="radio.here + '%'"></span>
+                </div>
+                <input
+                  type="range" min="0" max="100"
+                  x-model.number="radio.here"
+                  @input="updateWarmth()"
+                  class="w-full mt-2"
+                />
+                <p class="text-xs opacity-70 mt-1">
+                  不需要产出。你在这里，就已经算一件事了。
+                </p>
+              </div>
+            </div>
+
+            <div class="rounded-2xl p-4" style="background: hsl(150 25% 90% / .55); border:1px solid hsl(210 15% 60% / .18);">
+              <div class="font-semibold">提示</div>
+              <p class="mt-2 text-sm opacity-80">
+                我们不必让批评者闭嘴。我们只需要把“身体”和“存在”的音量调大一点点。
+              </p>
+              <div class="mt-3 flex flex-col sm:flex-row gap-3">
+                <button class="btnSoft px-4 py-3 rounded-2xl objectBtn" @click="closeModal()">
+                  我去屋里走走（看房间变暖）
+                </button>
+                <button class="btnGhost px-4 py-3 rounded-2xl objectBtn" @click="radioReset()">
+                  还原默认值
+                </button>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- WINDOW -->
+        <template x-if="modal.key === 'window'">
+          <div class="space-y-4">
+            <div class="rounded-2xl p-4" style="background: hsl(150 25% 90% / .55); border:1px solid hsl(210 15% 60% / .18);">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">🪟</span>
+                <div class="font-semibold">反映式团队模拟（Open Dialogue / Reflecting）</div>
+              </div>
+              <p class="text-sm opacity-75 mt-2">
+                你不用立刻解释自己。你只听：两只小鸟如何“替你说”。[10]
+              </p>
+            </div>
+
+            <div class="rounded-2xl p-4" style="background: hsl(45 35% 92% / .65); border:1px solid hsl(210 15% 60% / .18);">
+              <label class="text-sm opacity-80">你此刻的句子（可以改，也可以不改）：</label>
+              <input
+                class="mt-2 w-full rounded-2xl px-4 py-3 outline-none"
+                style="background:hsl(45 35% 94%); border:1px solid hsl(210 15% 60% / .22);"
+                x-model="window.input"
+                placeholder="比如：我今天觉得自己没用。"
+              />
+
+              <div class="mt-3 flex flex-col sm:flex-row gap-3">
+                <button class="btnSoft px-4 py-3 rounded-2xl objectBtn" @click="startReflecting()">
+                  让我听听两只小鸟怎么说 🐦🐦
+                </button>
+                <button class="btnGhost px-4 py-3 rounded-2xl objectBtn" @click="windowReset()">
+                  重置对白
+                </button>
+              </div>
+            </div>
+
+            <div class="rounded-2xl p-4 space-y-3" style="background: hsl(205 28% 90% / .55); border:1px solid hsl(210 15% 60% / .18);">
+              <div class="text-sm opacity-70">窗外对白：</div>
+
+              <div class="space-y-2 text-sm">
+                <template x-for="(line, idx) in window.lines" :key="idx">
+                  <div class="rounded-2xl px-4 py-3"
+                       :style="idx % 2 === 0
+                          ? 'background: hsl(45 35% 94% / .75); border:1px solid hsl(210 15% 60% / .18);'
+                          : 'background: hsl(150 25% 92% / .65); border:1px solid hsl(210 15% 60% / .18);'">
+                    <div class="font-semibold" x-text="line.who"></div>
+                    <div class="mt-1 opacity-85 leading-relaxed" x-text="line.text"></div>
+                  </div>
+                </template>
+              </div>
+
+              <template x-if="window.done">
+                <div class="rounded-2xl p-4" style="background:hsl(35 35% 90% / .55); border:1px solid hsl(210 15% 60% / .18);">
+                  <div class="font-semibold">落点</div>
+                  <p class="mt-2 text-sm opacity-80">
+                    如果你不在乎，你不会这么痛。你在努力寻找意义，这说明你其实很有野心。[15]
+                  </p>
+                </div>
+              </template>
+            </div>
+          </div>
+        </template>
+
+        <!-- GACHA -->
+        <template x-if="modal.key === 'gacha'">
+          <div class="space-y-4">
+            <div class="rounded-2xl p-4" style="background: hsl(155 24% 88% / .7); border:1px solid hsl(210 15% 60% / .18);">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">💊🚪</span>
+                <div class="font-semibold">微行动生成器</div>
+              </div>
+              <p class="text-sm opacity-75 mt-2">
+                目标不是“突然爱上自己”，而是：做一件你“不讨厌”的事；照顾一下身体。[7][11]
+              </p>
+
+              <div class="mt-3 flex flex-col sm:flex-row gap-3">
+                <button class="btnSoft px-4 py-3 rounded-2xl objectBtn" @click="drawMicroAction()">
+                  扭一下，掉一张卡！
+                </button>
+                <button class="btnGhost px-4 py-3 rounded-2xl objectBtn" @click="gacha.card=''">
+                  我先不抽（也可以）
+                </button>
+              </div>
+            </div>
+
+            <template x-if="gacha.card">
+              <div class="rounded-3xl p-5 sm:p-6" style="background: hsl(45 35% 92% / .9); border:1px solid hsl(210 15% 60% / .22); box-shadow: var(--softShadow2);">
+                <div class="flex items-center justify-between gap-3">
+                  <div class="pill px-3 py-1 text-xs sm:text-sm opacity-80">今日小卡</div>
+                  <div class="text-xl">🎴</div>
+                </div>
+                <div class="mt-3 text-base sm:text-lg font-semibold leading-relaxed" x-text="gacha.card"></div>
+                <div class="mt-2 text-xs opacity-60" x-text="gacha.refTag"></div>
+
+                <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button class="btnSoft px-4 py-3 rounded-2xl objectBtn" @click="openModal('ledger')">
+                    把它记进台账 📒
+                  </button>
+                  <button class="btnGhost px-4 py-3 rounded-2xl objectBtn" @click="openModal('radio')">
+                    调一下音量 📻
+                  </button>
+                </div>
+              </div>
+            </template>
+
+            <div class="text-sm opacity-70">
+              小小一句：你愿意给自己“一个动作”，就已经在松开那个结了。
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- 底部按钮 -->
+      <div class="p-5 sm:p-6 pt-0">
+        <div class="flex flex-col sm:flex-row gap-3 justify-end">
+          <button class="btnGhost px-4 py-3 rounded-2xl objectBtn" @click="closeModal()">
+            关上小窗
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function cocoonApp(){
+      return {
+        // 模态
+        modal: { open:false, key:'', title:'', subtitle:'' },
+
+        // 镜子
+        mirror: {
+          input: '',
+          result: '',
+          refTag: '',
+          reframes: [
+            { t: "这份痛说明你对自己有很高的标准（理想自我）。", ref: "[13]" },
+            { t: "你先攻击自己，是为了不让别人先伤到你。", ref: "[14]" },
+            { t: "能这么清楚看见缺点，本身就是高度客观的表现。", ref: "[6]" }
+          ]
+        },
+
+        // 台账
+        ledger: {
+          cost: { pain:true, paralysis:false, sleep:false, isolation:false },
+          benefit: { safety:true, avoid:true, good:false, control:false },
+          costNote: '',
+          benefitNote: ''
+        },
+
+        // 收音机
+        radio: { critic: 100, body: 20, here: 50 },
+
+        // 窗户（反映式对话）
+        window: {
+          input: "我今天觉得自己没用。",
+          lines: [
+            { who: "🐦 小鸟A", text: "Ta 说：我今天觉得自己没用。" },
+            { who: "🐦 小鸟B", text: "这听起来很痛。但 Ta 正在努力寻找意义，对吗？" },
+            { who: "🐦 小鸟A", text: "是的。如果 Ta 不在乎自己的生活，就不会觉得没用。Ta 其实很有野心。" }
+          ],
+          done: true,
+          _timer: null
+        },
+
+        // 扭蛋卡
+        gacha: {
+          card: '',
+          refTag: '',
+          cards: [
+            { t: "整理仪容：修剪指甲或洗把脸。把边界“还给自己”。", ref: "[11]" },
+            { t: "行动：做一件你不讨厌的小事（比如：洗一个杯子）。", ref: "[7]" },
+            { t: "主张：对自己小声说“我更喜欢面条”。练习一点点自我（小自我）。", ref: "[16]" }
+          ]
+        },
+
+        // 暖色控制（由“身体感 + 只是存在”决定）
+        warmth: 0, // 0~1
+
+        // 舞台样式：用 CSS 变量做温度
+        get stageStyle(){
+          // 随暖度轻微提高亮度与饱和（但不刺眼）
+          const w = this.warmth;
+          const lightBoost = 6 + Math.round(w * 10); // 6~16
+          const satBoost = 24 + Math.round(w * 18);  // 24~42
+          // 选择从灰蓝→暖米杏过渡的底色
+          const hue = 200 - Math.round(w * 35);      // 200 → 165
+          return `
+            --room-bg: hsl(${hue} ${satBoost}% ${lightBoost + 70}%);
+          `;
+        },
+
+        get warmOverlayStyle(){
+          const w = this.warmth;
+          // 越暖：更多暖色光斑
+          return `
+            background:
+              radial-gradient(700px 400px at 30% 30%, hsla(35, 70%, 90%, ${0.15 + w*0.35}), transparent 60%),
+              radial-gradient(600px 380px at 80% 40%, hsla(25, 70%, 88%, ${0.10 + w*0.30}), transparent 55%),
+              radial-gradient(700px 420px at 50% 90%, hsla(160, 45%, 88%, ${0.10 + w*0.25}), transparent 60%);
+          `;
+        },
+
+        openModal(key){
+          this.modal.key = key;
+          this.modal.open = true;
+
+          const map = {
+            help:   { title: "屋内小引导", subtitle: "你不需要做对，只需要被温柔地看见。" },
+            mirror: { title: "🪞 镜子：重构自我影像", subtitle: "把自责换个框：它也许是想珍惜自己的方式。[12]" },
+            ledger: { title: "📒 台账：自责盈亏表", subtitle: "先算账，再决定要不要继续付维护费。[7]" },
+            radio:  { title: "📻 复古收音机：复调混音台", subtitle: "批评者不必被消灭，其他声部可以被调大。[8]" },
+            window: { title: "🪟 窗户：反映式团队模拟", subtitle: "两只小鸟谈论你，你只需要听。[10]" },
+            gacha:  { title: "💊🚪 扭蛋门：微行动生成器", subtitle: "做一件你不讨厌的事，照顾身体。[7][11]" }
+          };
+
+          this.modal.title = (map[key] || {}).title || "小窗";
+          this.modal.subtitle = (map[key] || {}).subtitle || "";
+
+          // 打开窗户时，不要让上次定时器残留
+          if(key !== 'window' && this.window._timer){
+            clearTimeout(this.window._timer);
+            this.window._timer = null;
+          }
+        },
+
+        closeModal(){
+          this.modal.open = false;
+          // 收起时停止窗户的定时逐行
+          if(this.window._timer){
+            clearTimeout(this.window._timer);
+            this.window._timer = null;
+          }
+        },
+
+        // 镜子：不管输入啥，给固定数组里的重构真相
+        mirrorReframe(){
+          const idx = Math.floor(Math.random() * this.mirror.reframes.length);
+          this.mirror.result = this.mirror.reframes[idx].t;
+          this.mirror.refTag = "理论锚点 " + this.mirror.reframes[idx].ref;
+        },
+
+        // 收音机：暖度 = (身体感+只是存在)/200
+        updateWarmth(){
+          const w = (Number(this.radio.body) + Number(this.radio.here)) / 200;
+          // 轻微缓动
+          this.warmth = Math.max(0, Math.min(1, w));
+        },
+        radioReset(){
+          this.radio.critic = 100;
+          this.radio.body = 20;
+          this.radio.here = 50;
+          this.updateWarmth();
+        },
+
+        // 窗户：逐行“听见”
+        windowReset(){
+          this.window.input = "我今天觉得自己没用。";
+          this.window.lines = [
+            { who: "🐦 小鸟A", text: "Ta 说：我今天觉得自己没用。" },
+            { who: "🐦 小鸟B", text: "这听起来很痛。但 Ta 正在努力寻找意义，对吗？" },
+            { who: "🐦 小鸟A", text: "是的。如果 Ta 不在乎自己的生活，就不会觉得没用。Ta 其实很有野心。" }
+          ];
+          this.window.done = true;
+        },
+        startReflecting(){
+          // 生成脚本（根据要求：I felt useless today. 的结构）
+          const userLine = (this.window.input || "我今天觉得自己没用。").trim();
+          const normalized = userLine.endsWith("。") ? userLine : userLine + "。";
+
+          const script = [
+            { who: "🧍 你", text: normalized },
+            { who: "🐦 小鸟A", text: "Ta 说：" + normalized },
+            { who: "🐦 小鸟B", text: "这听起来很痛。但 Ta 正在努力寻找意义，对吗？" },
+            { who: "🐦 小鸟A", text: "是的。如果 Ta 不在乎自己的生活，就不会这样说。Ta 其实很有野心。" }
+          ];
+
+          // 逐行展示
+          this.window.lines = [];
+          this.window.done = false;
+
+          if(this.window._timer){
+            clearTimeout(this.window._timer);
+            this.window._timer = null;
+          }
+
+          let i = 0;
+          const tick = () => {
+            this.window.lines.push(script[i]);
+            i++;
+            if(i < script.length){
+              this.window._timer = setTimeout(tick, 520);
+            }else{
+              this.window.done = true;
+              this.window._timer = null;
+            }
+          };
+          tick();
+        },
+
+        // 扭蛋：随机微行动
+        drawMicroAction(){
+          const idx = Math.floor(Math.random() * this.gacha.cards.length);
+          this.gacha.card = this.gacha.cards[idx].t;
+          this.gacha.refTag = "理论锚点 " + this.gacha.cards[idx].ref;
+        },
+
+        init(){
+          // 初始化暖度
+          this.updateWarmth();
+        }
+      }
+    }
+  </script>
+</body>
+</html>

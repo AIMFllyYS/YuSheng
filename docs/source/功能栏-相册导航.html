@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一刻记忆 - Memory Moments</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 4 图标 -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <!-- 字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" rel="stylesheet" />
+
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              glass: {
+                light: 'rgba(255, 255, 255, 0.45)',
+                dark: 'rgba(15, 23, 42, 0.65)',
+              }
+            },
+            animation: {
+              'fade-up': 'fadeUp 0.5s ease-out forwards',
+              'zoom-out': 'zoomOut 0.6s ease-in forwards',
+              'reveal-from-point': 'revealFromPoint 0.75s ease-out forwards',
+            },
+            keyframes: {
+              fadeUp: {
+                '0%': { opacity: '0', transform: 'translateY(15px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              zoomOut: {
+                '0%': { opacity: '1', transform: 'scale(1)' },
+                '100%': { opacity: '0', transform: 'scale(0.8)', filter: 'blur(10px)' },
+              },
+              revealFromPoint: {
+                '0%': { opacity: '0', transform: 'scale(0)', filter: 'blur(18px)' },
+                '100%': { opacity: '1', transform: 'scale(1)', filter: 'blur(0)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+
+    <style>
+      :root {
+        --h-main: 45;
+        --h-sub: 210;
+        --accent-main: hsl(45, 85%, 65%);
+        --accent-sub: hsl(210, 85%, 65%);
+        --bg-color: #0a0f1a;
+        --text-color: #f1f5f9;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* WordPress 下不要依赖 body 布局，全部封装到 #kb-app */
+      body {
+        font-family: "ZCOOL XiaoWei", "STKaiti", serif !important;
+        color: var(--text-color);
+        background: #000;
+      }
+
+      /* 全屏覆盖容器：解决靠左 + 顶部黑边问题 */
+      #kb-app {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        font-family: "ZCOOL XiaoWei", "STKaiti", serif !important;
+        color: var(--text-color);
+        background: var(--bg-color);
+        cursor: none;
+      }
+
+      @media (max-width: 768px) {
+        #kb-app { cursor: auto; }
+        #cursor-dot, #cursor-ring { display: none !important; }
+      }
+
+      /* 背景 Canvas */
+      #bg-canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+
+      /* 自定义光标 */
+      #cursor-dot,
+      #cursor-ring {
+        position: fixed;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        transition: opacity 0.2s;
+      }
+      #cursor-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 0 12px rgba(255,255,255,0.9), 0 0 24px var(--accent-main);
+      }
+      #cursor-ring {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.4);
+        box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        backdrop-filter: blur(2px);
+      }
+
+      /* 玻璃拟态窗口 */
+      .glass-window {
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+      }
+
+      html.dark .glass-window {
+        background: rgba(30, 41, 59, 0.9);
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+      }
+
+      /* 主窗口起始状态：懒加载用 */
+      #main-window {
+        z-index: 2;
+        transform-origin: center center;
+      }
+      .initial-hidden {
+        opacity: 0;
+        transform: scale(0.4);
+        filter: blur(18px);
+      }
+
+      /* 滚动条隐藏但可滚动 */
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style>
+</head>
+<body class="antialiased">
+
+  <!-- 全屏 App 容器：在 WP 中会覆盖整块视窗 -->
+  <div id="kb-app">
+
+    <!-- 背景 Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- 自定义光标 -->
+    <div id="cursor-ring"></div>
+    <div id="cursor-dot"></div>
+
+    <!-- 主窗口 -->
+    <div id="main-window" class="glass-window initial-hidden w-[90%] max-w-5xl h-[650px] rounded-2xl flex flex-col overflow-hidden transition-all duration-300 relative">
+        
+        <!-- 1. 顶部状态栏 -->
+        <div class="h-16 border-b border-white/10 dark:border-slate-700/70 flex items-center justify-between px-8 select-none bg-black/5">
+            <!-- 标题 -->
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded bg-gradient-to-br from-emerald-400 to-cyan-400 flex items-center justify-center text-white shadow-md">
+                    <i class="fa fa-camera-retro"></i>
+                </div>
+                <span class="text-xl font-bold tracking-wider">一刻记忆</span>
+            </div>
+
+            <!-- 右侧按钮 -->
+            <div class="flex items-center gap-4">
+                <button onclick="toggleTheme()" class="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors" title="切换模式">
+                    <i class="fa fa-moon-o text-indigo-200 dark:hidden"></i>
+                    <i class="fa fa-sun-o hidden dark:inline text-yellow-300"></i>
+                </button>
+                <button id="close-btn" onclick="closeWindow()" class="w-9 h-9 rounded-full flex items-center justify-center text-gray-300 hover:text-red-400 hover:bg-red-500/10 dark:text-gray-300 dark:hover:bg-red-500/20 transition-all" title="退出">
+                    <i class="fa fa-times text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. 面包屑导航 -->
+        <div class="h-12 bg-white/5 dark:bg-black/20 flex items-center px-8 text-sm gap-2 backdrop-blur-sm">
+            <div id="breadcrumb-area" class="flex items-center gap-2 w-full">
+                <!-- JS生成 -->
+            </div>
+        </div>
+
+        <!-- 3. 内容显示区 (Grid) -->
+        <div id="content-grid" class="flex-1 p-8 overflow-y-auto no-scrollbar grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 content-start">
+            <!-- JS生成 -->
+        </div>
+
+        <!-- 4. 底部信息 -->
+        <div class="h-8 bg-white/5 dark:bg-black/30 flex items-center justify-between px-8 text-xs opacity-70">
+            <span id="item-count">0 items</span>
+            <span>Memory Moments · 一刻记忆</span>
+        </div>
+    </div>
+
+  </div>
+
+  <!-- 逻辑脚本 -->
+  <script>
+    /* ==================== 🛠️ 配置中心 ==================== */
+    const HOME_LINK = "https://husteread.com/index.php/aimflly/#portal";
+
+    const fileData = [
+        {
+            type: 'folder',
+            name: '回忆小录',
+            icon: 'fa-clock-o',
+            color: 'text-amber-300',
+            children: [
+                { type: 'file', name: '高中时代：走廊里的黄昏', url: '#', icon: 'fa-sun-o' },
+                { type: 'file', name: '高三那年：夜灯与试卷', url: '#', icon: 'fa-file-text-o' },
+                { type: 'file', name: '大一初见：初到校园的那一天', url: '#', icon: 'fa-university' },
+                { type: 'file', name: '第一次社团活动：紧张又开心', url: '#', icon: 'fa-users' },
+                { type: 'file', name: '某个深夜的漫步与长谈', url: '#', icon: 'fa-moon-o' }
+            ]
+        },
+        {
+            type: 'folder',
+            name: '那些活动',
+            icon: 'fa-calendar-check-o',
+            color: 'text-sky-300',
+            children: [
+                { type: 'file', name: '迎新晚会 · 舞台灯光下的自己', url: '#', icon: 'fa-star' },
+                { type: 'file', name: '读书会 · 一起翻过的书页', url: '#', icon: 'fa-book' },
+                { type: 'file', name: '社团招新 · 摊位后的故事', url: '#', icon: 'fa-handshake-o' },
+                { type: 'file', name: '期末告别 · 考完那天的合影', url: '#', icon: 'fa-camera' }
+            ]
+        },
+        {
+            type: 'folder',
+            name: '万籁生灵',
+            icon: 'fa-paw',
+            color: 'text-emerald-300',
+            children: [
+                { type: 'file', name: '校园小猫：草坪上的伸懒腰', url: '#', icon: 'fa-heart' },
+                { type: 'file', name: '窗外鸟鸣：清晨的第一声问候', url: '#', icon: 'fa-music' },
+                { type: 'file', name: '雨后天空：被冲洗过的云', url: '#', icon: 'fa-cloud' },
+                { type: 'file', name: '路边花草：不经意瞥见的颜色', url: '#', icon: 'fa-leaf' }
+            ]
+        },
+        {
+            type: 'folder',
+            name: '岁序奇观',
+            icon: 'fa-snowflake-o',
+            color: 'text-indigo-300',
+            children: [
+                { type: 'file', name: '初雪记事：落在袖口的那片雪花', url: '#', icon: 'fa-snowflake-o' },
+                { type: 'file', name: '夏夜烟火：抬头时的光', url: '#', icon: 'fa-fire' },
+                { type: 'file', name: '秋日银杏：满地金黄的校园路', url: '#', icon: 'fa-tree' },
+                { type: 'file', name: '跨年夜：零点前后的心愿', url: '#', icon: 'fa-hourglass-half' }
+            ]
+        },
+        {
+            type: 'folder',
+            name: '美食飘香',
+            icon: 'fa-cutlery',
+            color: 'text-rose-300',
+            children: [
+                { type: 'file', name: '宿舍夜宵：方便面 + 聊天', url: '#', icon: 'fa-coffee' },
+                { type: 'file', name: '食堂限定：永远排长队的窗口', url: '#', icon: 'fa-spoon' },
+                { type: 'file', name: '街角小店：只和熟人分享的馆子', url: '#', icon: 'fa-home' },
+                { type: 'file', name: '某次聚餐：照片里满满一桌菜', url: '#', icon: 'fa-smile-o' }
+            ]
+        }
+    ];
+
+    /* ==================== 🧠 文件窗口逻辑 ==================== */
+    const contentGrid = document.getElementById('content-grid');
+    const breadcrumbArea = document.getElementById('breadcrumb-area');
+    const itemCountLabel = document.getElementById('item-count');
+    const windowEl = document.getElementById('main-window');
+
+    let pathStack = []; // 路径栈
+    let hasEntered = false; // 懒加载动画是否已经触发
+
+    render();
+    setupEnterAnimation();
+    initTheme();
+
+    function render() {
+        let currentData = fileData;
+        let currentTitle = "我的电脑";
+
+        if (pathStack.length > 0) {
+            let ptr = fileData;
+            for (let idx of pathStack) {
+                currentTitle = ptr[idx].name;
+                ptr = ptr[idx].children;
+            }
+            currentData = ptr;
+        }
+
+        updateBreadcrumb(currentTitle);
+        itemCountLabel.innerText = `${currentData.length} 个项目`;
+
+        contentGrid.innerHTML = '';
+        
+        if(currentData.length === 0) {
+            contentGrid.innerHTML = `<div class="col-span-full text-center text-gray-400 mt-20 opacity-50">空文件夹</div>`;
+            return;
+        }
+
+        currentData.forEach((item, index) => {
+            const el = document.createElement('div');
+            el.className = `
+                group flex flex-col items-center justify-center p-6 rounded-xl 
+                cursor-pointer transition-all duration-300 
+                hover:-translate-y-2 hover:bg-white/10 dark:hover:bg-black/40 hover:shadow-lg
+                animate-fade-up
+            `;
+            el.style.animationDelay = `${index * 50}ms`;
+
+            const iconColor = item.type === 'folder' 
+                ? (item.color || 'text-yellow-300') 
+                : 'text-gray-400 dark:text-gray-300 group-hover:text-blue-300';
+
+            el.innerHTML = `
+                <div class="mb-4 text-5xl ${iconColor} drop-shadow-sm transition-transform duration-300 group-hover:scale-110">
+                    <i class="fa ${item.icon || 'fa-file'}"></i>
+                </div>
+                <span class="text-sm font-medium text-center text-gray-100 line-clamp-2 w-full break-words">
+                    ${item.name}
+                </span>
+            `;
+
+            el.onclick = () => {
+                if (item.type === 'folder') {
+                    pathStack.push(index);
+                    render();
+                } else {
+                    if (item.url === '#') {
+                        const tip = document.createElement('div');
+                        tip.className = 'fixed top-10 left-1/2 -translate-x-1/2 bg-black/80 text-white px-4 py-2 rounded shadow animate-fade-up z-[10000]';
+                        tip.innerText = '请在代码中配置真实链接';
+                        document.body.appendChild(tip);
+                        setTimeout(() => tip.remove(), 2000);
+                    } else {
+                        window.open(item.url, '_blank');
+                    }
+                }
+            };
+
+            contentGrid.appendChild(el);
+        });
+    }
+
+    function updateBreadcrumb(title) {
+        if (pathStack.length === 0) {
+            breadcrumbArea.innerHTML = `
+                <i class="fa fa-desktop text-gray-300"></i>
+                <span class="font-bold text-gray-100">此电脑</span>
+            `;
+        } else {
+            breadcrumbArea.innerHTML = `
+                <button onclick="goBack()" class="flex items-center gap-1 text-indigo-300 hover:underline font-bold">
+                    <i class="fa fa-arrow-left"></i> 返回
+                </button>
+                <span class="opacity-30 mx-1">/</span>
+                <i class="fa fa-folder-open text-gray-300"></i>
+                <span class="text-gray-100">${title}</span>
+            `;
+        }
+    }
+
+    function goBack() {
+        if (pathStack.length > 0) {
+            pathStack.pop();
+            render();
+        }
+    }
+
+    function closeWindow() {
+        const closeBtn = document.getElementById('close-btn');
+        if (closeBtn) {
+            const btnRect = closeBtn.getBoundingClientRect();
+            const winRect = windowEl.getBoundingClientRect();
+            const originX = btnRect.left + btnRect.width / 2 - winRect.left;
+            const originY = btnRect.top + btnRect.height / 2 - winRect.top;
+            windowEl.style.transformOrigin = `${originX}px ${originY}px`;
+        }
+
+        windowEl.classList.remove('animate-reveal-from-point');
+        windowEl.classList.add('animate-zoom-out');
+
+        setTimeout(() => {
+            window.location.href = HOME_LINK;
+        }, 550);
+    }
+
+    function toggleTheme() {
+        const html = document.documentElement;
+        const isDark = html.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+
+    function initTheme() {
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }
+
+    /* ==================== 🎬 懒加载：从鼠标点展开 ==================== */
+    function setupEnterAnimation() {
+        const enterHandler = (e) => {
+            triggerEnterFromPoint(e.clientX, e.clientY);
+            window.removeEventListener('mousemove', enterHandler);
+            window.removeEventListener('click', enterHandler);
+        };
+
+        window.addEventListener('mousemove', enterHandler, { once: false });
+        window.addEventListener('click', enterHandler, { once: false });
+
+        setTimeout(() => {
+            if (!hasEntered) {
+                const centerX = window.innerWidth / 2;
+                const centerY = window.innerHeight / 2;
+                triggerEnterFromPoint(centerX, centerY);
+            }
+        }, 1200);
+
+        windowEl.addEventListener('animationend', (e) => {
+            if (e.animationName === 'revealFromPoint') {
+                windowEl.classList.remove('initial-hidden');
+            }
+        });
+    }
+
+    function triggerEnterFromPoint(x, y) {
+        if (hasEntered) return;
+        hasEntered = true;
+
+        const rect = windowEl.getBoundingClientRect();
+        const originX = x - rect.left;
+        const originY = y - rect.top;
+
+        windowEl.style.transformOrigin = `${originX}px ${originY}px`;
+        windowEl.classList.add('animate-reveal-from-point');
+    }
+
+    /* ==================== 🌈 Canvas 背景 + 羽毛拖尾 ==================== */
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    const cursorDot = document.getElementById('cursor-dot');
+    const cursorRing = document.getElementById('cursor-ring');
+    let width, height, orbs = [], feathers = [];
+    let lastFeatherTime = 0;
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Orb {
+        constructor() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.r = Math.random() * 180 + 80;
+            this.vx = (Math.random() - 0.5) * 0.4;
+            this.vy = (Math.random() - 0.5) * 0.4;
+            const colors = ['#4f46e5', '#8b5cf6', '#06b6d4', '#eab308', '#ec4899'];
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.alpha = Math.random() * 0.5 + 0.2;
+        }
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            if (this.x < -this.r) this.x = width + this.r;
+            if (this.x > width + this.r) this.x = -this.r;
+            if (this.y < -this.r) this.y = height + this.r;
+            if (this.y > height + this.r) this.y = -this.r;
+        }
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.alpha;
+            const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.r);
+            g.addColorStop(0, 'rgba(255,255,255,0.9)');
+            g.addColorStop(0.3, this.color);
+            g.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    for (let i = 0; i < 12; i++) orbs.push(new Orb());
+
+    function createFeather(x, y) {
+        const now = performance.now();
+        if (now - lastFeatherTime < 150) return;
+        lastFeatherTime = now;
+        if (feathers.length > 40) return;
+
+        feathers.push({
+            x: x + (Math.random() - 0.5) * 10,
+            y: y + (Math.random() - 0.5) * 10,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: 0.1 + Math.random() * 0.15,
+            life: 0,
+            maxLife: 100 + Math.floor(Math.random() * 50),
+            size: 10 + Math.random() * 6,
+            angle: (Math.random() - 0.5) * 0.5,
+            va: (Math.random() - 0.5) * 0.01
+        });
+    }
+
+    function drawFeathers() {
+        for (let i = feathers.length - 1; i >= 0; i--) {
+            const f = feathers[i];
+            f.life++;
+            f.x += f.vx;
+            f.y += f.vy;
+            f.vy += 0.002;
+            f.angle += f.va;
+
+            const t = f.life / f.maxLife;
+            if (t >= 1) { feathers.splice(i, 1); continue; }
+
+            const alpha = (1 - t) * 0.7;
+            const scale = 1 - t * 0.3;
+
+            ctx.save();
+            ctx.translate(f.x, f.y + t * 10);
+            ctx.rotate(f.angle);
+
+            const w = f.size * 2.5 * scale;
+            const h = f.size * 0.8 * scale;
+
+            const grad = ctx.createLinearGradient(-w / 2, 0, w / 2, 0);
+            grad.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.1})`);
+            grad.addColorStop(0.3, `rgba(255, 255, 255, ${alpha})`);
+            grad.addColorStop(1, `rgba(255, 255, 255, 0)`);
+
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.moveTo(-w / 2, 0);
+            ctx.quadraticCurveTo(0, -h, w / 2, 0);
+            ctx.quadraticCurveTo(0, h, -w / 2, 0);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.3})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(-w / 2 + 2, 0);
+            ctx.lineTo(w / 2 - 2, 0);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+    }
+
+    window.addEventListener('mousemove', e => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        if (cursorDot && cursorRing) {
+            cursorDot.style.left = mouseX + 'px';
+            cursorDot.style.top = mouseY + 'px';
+            cursorRing.style.left = mouseX + 'px';  /* 小心别写错：这里应该是 mouseX */
+            cursorRing.style.top = mouseY + 'px';
+        }
+        createFeather(mouseX, mouseY);
+    });
+
+    function animate(timestamp) {
+        const t = timestamp || 0;
+        const shift = (t * 0.04) % (width * 2);
+
+        const grad = ctx.createLinearGradient(-width + shift, 0, shift, height);
+        grad.addColorStop(0, 'hsla(210, 80%, 16%, 1)');
+        grad.addColorStop(0.25, 'hsla(260, 80%, 20%, 1)');
+        grad.addColorStop(0.5, 'hsla(330, 80%, 22%, 1)');
+        grad.addColorStop(0.75, 'hsla(40, 85%, 24%, 1)');
+        grad.addColorStop(1, 'hsla(180, 80%, 18%, 1)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.fillStyle = 'rgba(4, 7, 20, 0.45)';
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.globalCompositeOperation = 'screen';
+        orbs.forEach(o => { o.update(); o.draw(); });
+
+        ctx.globalCompositeOperation = 'lighter';
+        drawFeathers();
+
+        ctx.globalCompositeOperation = 'source-over';
+        requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

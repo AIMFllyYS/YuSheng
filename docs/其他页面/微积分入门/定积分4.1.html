@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第一节 · 定积分的定义 - 数学笔记</title>
+    
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=ZCOOL+XiaoWei&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Light Theme */
+            --bg-primary: #f8f6f1;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f0ebe3;
+            --bg-glass: rgba(255, 255, 255, 0.85);
+            --text-primary: #2c2c2c;
+            --text-secondary: #555555;
+            --text-muted: #888888;
+            --accent-primary: #d4634a;
+            --accent-secondary: #3d7a99;
+            --accent-tertiary: #6b9b5a;
+            --accent-gold: #c9a227;
+            --border-color: rgba(0,0,0,0.08);
+            --shadow-soft: 0 4px 24px rgba(0,0,0,0.06);
+            --shadow-medium: 0 12px 48px rgba(0,0,0,0.12);
+            --shadow-glow: 0 0 40px rgba(212, 99, 74, 0.15);
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --nav-border: rgba(0,0,0,0.06);
+            --code-bg: #faf8f5;
+            --gradient-warm: linear-gradient(135deg, #fff9f0 0%, #f5ebe0 50%, #faf6f0 100%);
+            --gradient-accent: linear-gradient(135deg, #d4634a 0%, #e07b5a 100%);
+            --theorem-bg: linear-gradient(135deg, #f0f7f0 0%, #e8f5e8 100%);
+            --theorem-border: #6b9b5a;
+            --definition-bg: linear-gradient(135deg, #eef5fa 0%, #e5f0f8 100%);
+            --definition-border: #3d7a99;
+            --svg-curve: #d4634a;
+            --svg-fill: rgba(212, 99, 74, 0.25);
+            --svg-grid: #e0e0e0;
+            --svg-axis: #444;
+            --particle-color: rgba(212, 99, 74, 0.08);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --bg-tertiary: #2a2a2a;
+            --bg-glass: rgba(30, 30, 30, 0.9);
+            --text-primary: #e8e4df;
+            --text-secondary: #a8a4a0;
+            --text-muted: #6a6a6a;
+            --accent-primary: #e8836e;
+            --accent-secondary: #6aafe0;
+            --accent-tertiary: #8bc77a;
+            --accent-gold: #e0c060;
+            --border-color: rgba(255,255,255,0.08);
+            --shadow-soft: 0 4px 24px rgba(0,0,0,0.4);
+            --shadow-medium: 0 12px 48px rgba(0,0,0,0.5);
+            --shadow-glow: 0 0 60px rgba(232, 131, 110, 0.2);
+            --nav-bg: rgba(24, 24, 24, 0.98);
+            --nav-border: rgba(255,255,255,0.06);
+            --code-bg: #252525;
+            --gradient-warm: linear-gradient(135deg, #1a1614 0%, #1e1a18 50%, #181614 100%);
+            --gradient-accent: linear-gradient(135deg, #e8836e 0%, #d4634a 100%);
+            --theorem-bg: linear-gradient(135deg, #1a261a 0%, #1e2e1e 100%);
+            --theorem-border: #5a8a4a;
+            --definition-bg: linear-gradient(135deg, #1a2530 0%, #1e2a38 100%);
+            --definition-border: #4a90b8;
+            --svg-curve: #e8836e;
+            --svg-fill: rgba(232, 131, 110, 0.3);
+            --svg-grid: #333;
+            --svg-axis: #999;
+            --particle-color: rgba(232, 131, 110, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.9;
+            font-size: 17px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ========== ANIMATED BACKGROUND ========== */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: var(--gradient-warm);
+        }
+
+        .bg-gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-gradient-orb:nth-child(1) {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-primary) 0%, transparent 70%);
+            top: -200px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .bg-gradient-orb:nth-child(2) {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--accent-secondary) 0%, transparent 70%);
+            bottom: -150px;
+            left: -100px;
+            animation-delay: -7s;
+        }
+
+        .bg-gradient-orb:nth-child(3) {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--accent-gold) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -14s;
+            opacity: 0.3;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(20px, 10px) scale(1.02); }
+        }
+
+        .bg-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--border-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 60px 60px;
+            opacity: 0.5;
+        }
+
+        .bg-noise {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* ========== LAYOUT ========== */
+        .layout {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ========== NAVIGATION SIDEBAR ========== */
+        .nav-sidebar {
+            width: 300px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid var(--nav-border);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .nav-sidebar.collapsed {
+            transform: translateX(-300px);
+        }
+
+        /* Toggle Button */
+        .nav-toggle {
+            position: fixed;
+            left: 300px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 60px;
+            background: var(--nav-bg);
+            border: 1px solid var(--nav-border);
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 101;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .nav-toggle:hover {
+            width: 32px;
+            background: var(--bg-tertiary);
+        }
+
+        .nav-toggle-icon {
+            font-size: 14px;
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-sidebar.collapsed + .nav-toggle {
+            left: 0;
+        }
+
+        .nav-sidebar.collapsed + .nav-toggle .nav-toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Nav Content */
+        .nav-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 0 100px;
+        }
+
+        .nav-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .nav-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .nav-content::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
+        /* Back Button */
+        .nav-back {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 20px 24px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+            background: transparent;
+        }
+
+        .nav-back:hover {
+            background: var(--bg-tertiary);
+            color: var(--accent-primary);
+        }
+
+        .nav-back-icon {
+            font-size: 18px;
+            transition: transform 0.2s ease;
+        }
+
+        .nav-back:hover .nav-back-icon {
+            transform: translateX(-4px);
+        }
+
+        /* Directory Dropdown */
+        .nav-directory {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-directory-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .nav-directory-header:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .nav-directory-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .nav-directory-icon {
+            font-size: 16px;
+        }
+
+        .nav-directory-arrow {
+            font-size: 12px;
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-directory.open .nav-directory-arrow {
+            transform: rotate(180deg);
+        }
+
+        .nav-directory-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--bg-tertiary);
+        }
+
+        .nav-directory.open .nav-directory-list {
+            max-height: 500px;
+        }
+
+        .nav-directory-link {
+            display: block;
+            padding: 12px 24px 12px 48px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-directory-link::before {
+            content: '';
+            position: absolute;
+            left: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .nav-directory-link:hover {
+            background: rgba(0,0,0,0.05);
+            color: var(--text-primary);
+        }
+
+        .nav-directory-link:hover::before {
+            background: var(--accent-primary);
+        }
+
+        .nav-directory-link.active {
+            color: var(--accent-primary);
+            font-weight: 500;
+            background: rgba(212, 99, 74, 0.08);
+        }
+
+        .nav-directory-link.active::before {
+            background: var(--accent-primary);
+            box-shadow: 0 0 8px var(--accent-primary);
+        }
+
+        /* Section Navigation */
+        .nav-section {
+            padding: 20px 0;
+        }
+
+        .nav-section-header {
+            padding: 0 24px 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--accent-primary);
+            transform: scaleY(0);
+            transition: transform 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: rgba(212, 99, 74, 0.1);
+            color: var(--accent-primary);
+            font-weight: 500;
+        }
+
+        .nav-link.active::before {
+            transform: scaleY(1);
+        }
+
+        .nav-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            width: 24px;
+        }
+
+        /* Nav Footer */
+        .nav-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 24px;
+            background: linear-gradient(to top, var(--nav-bg) 80%, transparent);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .theme-toggle span {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .theme-icon {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover .theme-icon {
+            transform: rotate(20deg);
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            flex: 1;
+            margin-left: 300px;
+            padding: 60px 80px 120px;
+            max-width: 900px;
+            transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-sidebar.collapsed ~ .main-content {
+            margin-left: 0;
+        }
+
+        /* ========== PAGE HEADER ========== */
+        .page-header {
+            margin-bottom: 60px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .page-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: var(--gradient-accent);
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .page-title {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 38px;
+            font-weight: 400;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+            line-height: 1.3;
+            animation: titleReveal 0.8s ease forwards;
+        }
+
+        @keyframes titleReveal {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-subtitle {
+            font-size: 17px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            animation: subtitleReveal 0.8s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        @keyframes subtitleReveal {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========== SECTIONS ========== */
+        .section {
+            margin-bottom: 64px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent-primary);
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .section-title {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 26px;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-color);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--gradient-accent);
+        }
+
+        p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        /* ========== SPECIAL BLOCKS ========== */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(201, 162, 39, 0.1) 0%, rgba(201, 162, 39, 0.05) 100%);
+            border-left: 4px solid var(--accent-gold);
+            padding: 20px 24px;
+            margin: 24px 0;
+            border-radius: 0 16px 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .highlight-box::before {
+            content: '💡';
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 24px;
+            opacity: 0.3;
+        }
+
+        .theorem-box {
+            background: var(--theorem-bg);
+            border: 1px solid var(--theorem-border);
+            border-left: 4px solid var(--theorem-border);
+            padding: 24px 28px;
+            margin: 28px 0;
+            border-radius: 0 16px 16px 0;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .theorem-title {
+            font-weight: 600;
+            color: var(--accent-tertiary);
+            margin-bottom: 12px;
+            font-size: 14px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .definition-box {
+            background: var(--definition-bg);
+            border: 1px solid var(--definition-border);
+            border-left: 4px solid var(--definition-border);
+            padding: 24px 28px;
+            margin: 28px 0;
+            border-radius: 0 16px 16px 0;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .definition-title {
+            font-weight: 600;
+            color: var(--accent-secondary);
+            margin-bottom: 12px;
+            font-size: 14px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .concept-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .concept-list li {
+            padding: 12px 0 12px 36px;
+            position: relative;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .concept-list li:last-child {
+            border-bottom: none;
+        }
+
+        .concept-list li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent-primary);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* ========== MATH DISPLAY ========== */
+        .math-display {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin: 24px 0;
+            overflow-x: auto;
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+            position: relative;
+        }
+
+        .math-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-accent);
+            border-radius: 16px 16px 0 0;
+        }
+
+        /* ========== VISUALIZATION ========== */
+        .visualization-container {
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 32px;
+            margin: 40px 0;
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .visualization-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-accent);
+        }
+
+        .viz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .viz-title {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 20px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .viz-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-tertiary);
+            padding: 10px 16px;
+            border-radius: 12px;
+        }
+
+        .control-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 160px;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--gradient-accent);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(212, 99, 74, 0.4);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 16px rgba(212, 99, 74, 0.5);
+        }
+
+        .slider-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--accent-primary);
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .svg-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+        }
+
+        .viz-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .stat-card {
+            background: var(--bg-tertiary);
+            padding: 18px 20px;
+            border-radius: 14px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--accent-secondary);
+        }
+
+        /* ========== BUTTONS ========== */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Noto Serif SC', serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-accent);
+            color: white;
+            box-shadow: 0 4px 16px rgba(212, 99, 74, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(212, 99, 74, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-primary);
+            background: var(--bg-secondary);
+        }
+
+        /* ========== STEP LIST ========== */
+        .step-list {
+            counter-reset: step;
+            list-style: none;
+            padding: 0;
+            margin: 24px 0;
+        }
+
+        .step-item {
+            counter-increment: step;
+            padding: 18px 18px 18px 70px;
+            position: relative;
+            margin-bottom: 12px;
+            background: var(--bg-secondary);
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .step-item::before {
+            content: counter(step);
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(212, 99, 74, 0.3);
+        }
+
+        .step-item:hover {
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-soft);
+            transform: translateX(8px);
+        }
+
+        /* ========== COMPARISON GRID ========== */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 32px 0;
+        }
+
+        .comparison-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .comparison-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-accent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .comparison-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .comparison-n {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 8px;
+        }
+
+        .comparison-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .mini-svg-container {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ========== SUMMARY BOX ========== */
+        .summary-box {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border: 2px solid var(--accent-primary);
+            border-radius: 20px;
+            padding: 36px;
+            margin: 48px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--accent-primary) 0%, transparent 70%);
+            opacity: 0.05;
+        }
+
+        .summary-title {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 24px;
+            color: var(--accent-primary);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .summary-item {
+            padding: 16px 20px;
+            background: var(--bg-primary);
+            border-radius: 12px;
+            border-left: 3px solid var(--accent-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .summary-item:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .summary-item strong {
+            color: var(--accent-secondary);
+        }
+
+        /* ========== SCROLL PROGRESS ========== */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--border-color);
+            z-index: 1000;
+        }
+
+        .scroll-progress-bar {
+            height: 100%;
+            background: var(--gradient-accent);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1024px) {
+            .main-content {
+                padding: 60px 40px 120px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-sidebar {
+                transform: translateX(-300px);
+            }
+
+            .nav-sidebar.open {
+                transform: translateX(0);
+            }
+
+            .nav-toggle {
+                left: 0;
+            }
+
+            .nav-sidebar.open + .nav-toggle {
+                left: 300px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 80px 20px 100px;
+            }
+
+            .page-title {
+                font-size: 28px;
+            }
+
+            .section-title {
+                font-size: 22px;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .viz-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            input[type="range"] {
+                width: 100%;
+            }
+        }
+
+        /* ========== KATEX ========== */
+        .katex {
+            font-size: 1.1em;
+        }
+
+        .katex-display > .katex {
+            font-size: 1.2em;
+        }
+
+        /* ========== END SECTION ========== */
+        .end-section {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text-muted);
+        }
+
+        .end-divider {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 16px;
+        }
+
+        .end-divider::before,
+        .end-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-color), transparent);
+        }
+
+        .end-icon {
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-container">
+        <div class="bg-gradient-orb"></div>
+        <div class="bg-gradient-orb"></div>
+        <div class="bg-gradient-orb"></div>
+        <div class="bg-grid"></div>
+        <div class="bg-noise"></div>
+    </div>
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress">
+        <div class="scroll-progress-bar" id="scrollProgress"></div>
+    </div>
+
+    <div class="layout">
+        <!-- Navigation Sidebar -->
+        <nav class="nav-sidebar" id="navSidebar">
+            <div class="nav-content">
+                <!-- Back Button -->
+                <a href="https://husteread.com/index.php/tp/" class="nav-back">
+                    <span class="nav-back-icon">←</span>
+                    <span>返回</span>
+                </a>
+
+                <!-- Directory Dropdown -->
+                <div class="nav-directory" id="navDirectory">
+                    <div class="nav-directory-header" onclick="toggleDirectory()">
+                        <div class="nav-directory-title">
+                            <span class="nav-directory-icon">📁</span>
+                            <span>上级目录</span>
+                        </div>
+                        <span class="nav-directory-arrow">▼</span>
+                    </div>
+                    <div class="nav-directory-list">
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-1/" class="nav-directory-link active">第一节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-2/" class="nav-directory-link">第二节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-3/" class="nav-directory-link">第三节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-4/" class="nav-directory-link">第四节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-5/" class="nav-directory-link">第五节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-6/" class="nav-directory-link">第六节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-7/" class="nav-directory-link">第七节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-8/" class="nav-directory-link">第八节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-9/" class="nav-directory-link">第九节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-10/" class="nav-directory-link">总复习</a>
+                    </div>
+                </div>
+
+                <!-- Section Navigation -->
+                <div class="nav-section">
+                    <div class="nav-section-header">本节目录</div>
+                    <a href="#section-1" class="nav-link active">
+                        <span class="nav-number">01</span>
+                        <span>大局观：分割→求和→极限</span>
+                    </a>
+                    <a href="#section-2" class="nav-link">
+                        <span class="nav-number">02</span>
+                        <span>分割区间 [a,b]</span>
+                    </a>
+                    <a href="#section-3" class="nav-link">
+                        <span class="nav-number">03</span>
+                        <span>代表高度点 ξᵢ</span>
+                    </a>
+                    <a href="#section-4" class="nav-link">
+                        <span class="nav-number">04</span>
+                        <span>分割模长 λ</span>
+                    </a>
+                    <a href="#section-5" class="nav-link">
+                        <span class="nav-number">05</span>
+                        <span>交互可视化演示</span>
+                    </a>
+                    <a href="#section-6" class="nav-link">
+                        <span class="nav-number">06</span>
+                        <span>定积分正式定义</span>
+                    </a>
+                    <a href="#section-7" class="nav-link">
+                        <span class="nav-number">07</span>
+                        <span>ε–δ 严谨版</span>
+                    </a>
+                    <a href="#section-8" class="nav-link">
+                        <span class="nav-number">08</span>
+                        <span>本块小结</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Theme Toggle -->
+            <div class="nav-footer">
+                <div class="theme-toggle" id="themeToggle">
+                    <span>主题模式</span>
+                    <span class="theme-icon" id="themeIcon">🌙</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Nav Toggle Button -->
+        <button class="nav-toggle" id="navToggle" onclick="toggleNav()">
+            <span class="nav-toggle-icon">◀</span>
+        </button>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div class="page-badge">📘 第一节</div>
+                <h1 class="page-title">从"分割–近似求和–取极限"到定积分的正式定义</h1>
+                <p class="page-subtitle">
+                    微积分里最浪漫、最有哲思味道的概念——让你真正看懂"面积是怎么被定义出来的"
+                </p>
+            </header>
+
+            <!-- Section 1 -->
+            <section class="section" id="section-1">
+                <span class="section-number">SECTION 01</span>
+                <h2 class="section-title">大局观：定积分的灵魂</h2>
+                
+                <p>同学们，上课啦～ 咱今天要讲的是微积分里最浪漫、最有哲思味道的概念：<strong>定积分的定义</strong>。</p>
+                
+                <p>别被符号吓到，我们先从"<em>切东西 → 拼东西 → 看极限</em>"的朴素思想讲起。</p>
+
+                <div class="highlight-box">
+                    <strong>核心思想：</strong>定积分的本质不是 ∫ 符号，而是 <strong>分割 → 求和 → 极限</strong>
+                </div>
+
+                <p>很多连续量，都能用一句话概括：</p>
+
+                <div class="math-display">
+                    $$\text{总量} = \lim_{\text{分割越来越细}} \sum(\text{很多小块})$$
+                </div>
+
+                <ul class="concept-list">
+                    <li><strong>路程</strong> = 无数个"小位移"累加</li>
+                    <li><strong>面积</strong> = 无数个"窄矩形面积"累加</li>
+                    <li><strong>质量、电荷、能量、功……</strong> 全是这套玩意</li>
+                </ul>
+
+                <p>数学把这套思想抽象成了定积分。</p>
+            </section>
+
+            <!-- Section 2 -->
+            <section class="section" id="section-2">
+                <span class="section-number">SECTION 02</span>
+                <h2 class="section-title">分割区间 [a,b]：把整体切碎</h2>
+
+                <p>设 $f(x)$ 在区间 $[a,b]$ 定义。我们随便取一些分点：</p>
+
+                <div class="math-display">
+                    $$a = x_0 < x_1 < \cdots < x_n = b$$
+                </div>
+
+                <p>切成 $n$ 个小区间：</p>
+
+                <div class="math-display">
+                    $$[x_0, x_1], [x_1, x_2], \ldots, [x_{n-1}, x_n]$$
+                </div>
+
+                <p>每段长度：</p>
+
+                <div class="math-display">
+                    $$\Delta x_i = x_i - x_{i-1}$$
+                </div>
+
+                <div class="theorem-box">
+                    <div class="theorem-title">📌 关键点</div>
+                    <p>分割能多随意就多随意——可以等分、不等分、整齐切、乱切，全都允许！这种灵活性正是黎曼积分定义的优雅之处。</p>
+                </div>
+            </section>
+
+            <!-- Section 3 -->
+            <section class="section" id="section-3">
+                <span class="section-number">SECTION 03</span>
+                <h2 class="section-title">在每一小段里挑一个代表高度点 ξᵢ</h2>
+
+                <p>在每个区间随便选一个点：</p>
+
+                <div class="math-display">
+                    $$\xi_i \in [x_{i-1}, x_i]$$
+                </div>
+
+                <p>用它估计这一段曲线的"高度"：</p>
+
+                <ul class="concept-list">
+                    <li><strong>矩形底：</strong>$\Delta x_i$</li>
+                    <li><strong>矩形高：</strong>$f(\xi_i)$</li>
+                </ul>
+
+                <p>于是第 $i$ 个小矩形面积近似：</p>
+
+                <div class="math-display">
+                    $$f(\xi_i) \Delta x_i$$
+                </div>
+
+                <p>所有矩形面积加在一起：</p>
+
+                <div class="definition-box">
+                    <div class="definition-title">📐 黎曼和 (Riemann Sum)</div>
+                    <div class="math-display">
+                        $$S(T, \xi) = \sum_{i=1}^{n} f(\xi_i) \Delta x_i$$
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4 -->
+            <section class="section" id="section-4">
+                <span class="section-number">SECTION 04</span>
+                <h2 class="section-title">分割模长 λ：衡量"分得细不细"</h2>
+
+                <p>给每个分割定义"最粗的那块"长度：</p>
+
+                <div class="math-display">
+                    $$\lambda(T) = \max \Delta x_i$$
+                </div>
+
+                <ul class="concept-list">
+                    <li>$\lambda$ 越大 → 分割越粗</li>
+                    <li>$\lambda$ 越小 → 分割越细</li>
+                    <li>$\lambda \to 0$ → 所有区间都变得无限窄</li>
+                </ul>
+
+                <p>黎曼和趋不趋近某个固定值，就看 $\lambda$ 变小时的情况。</p>
+            </section>
+
+            <!-- Section 5: Interactive Visualization -->
+            <section class="section" id="section-5">
+                <span class="section-number">SECTION 05</span>
+                <h2 class="section-title">交互可视化：分割越细，黎曼和越准</h2>
+
+                <p>下面通过动态演示，让你肉眼看到：当 $n$ 增大（分割变细）时，矩形面积如何逼近曲线下方的真实面积。</p>
+
+                <div class="visualization-container">
+                    <div class="viz-header">
+                        <h3 class="viz-title">📊 中点黎曼和可视化</h3>
+                        <div class="viz-controls">
+                            <div class="control-group">
+                                <span class="control-label">n =</span>
+                                <input type="range" id="nSlider" min="2" max="100" value="4">
+                                <span class="slider-value" id="nValue">4</span>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-primary" id="animateBtn">
+                                    ▶ 自动演示
+                                </button>
+                                <button class="btn btn-secondary" id="resetBtn">
+                                    ↻ 重置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="svg-container">
+                        <svg id="mainVisualization" width="700" height="380" viewBox="0 0 700 380"></svg>
+                    </div>
+
+                    <div class="viz-stats">
+                        <div class="stat-card">
+                            <div class="stat-label">矩形数量</div>
+                            <div class="stat-value" id="statN">4</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">黎曼和 S(T,ξ)</div>
+                            <div class="stat-value" id="statSum">0.3281</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">真实积分值</div>
+                            <div class="stat-value">0.3333</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">误差</div>
+                            <div class="stat-value" id="statError">1.56%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparison Grid -->
+                <h3 style="margin: 48px 0 24px; font-family: 'ZCOOL XiaoWei', serif; font-size: 20px;">四组对比：n = 4, 10, 30, 80</h3>
+                
+                <div class="comparison-grid">
+                    <div class="comparison-card">
+                        <div class="comparison-n">n = 4</div>
+                        <div class="comparison-label">分割很粗，误差明显</div>
+                        <div class="mini-svg-container">
+                            <svg id="miniSvg4" width="180" height="90" viewBox="0 0 180 90"></svg>
+                        </div>
+                    </div>
+                    <div class="comparison-card">
+                        <div class="comparison-n">n = 10</div>
+                        <div class="comparison-label">明显更好了</div>
+                        <div class="mini-svg-container">
+                            <svg id="miniSvg10" width="180" height="90" viewBox="0 0 180 90"></svg>
+                        </div>
+                    </div>
+                    <div class="comparison-card">
+                        <div class="comparison-n">n = 30</div>
+                        <div class="comparison-label">逼近效果很好</div>
+                        <div class="mini-svg-container">
+                            <svg id="miniSvg30" width="180" height="90" viewBox="0 0 180 90"></svg>
+                        </div>
+                    </div>
+                    <div class="comparison-card">
+                        <div class="comparison-n">n = 80</div>
+                        <div class="comparison-label">几乎完美</div>
+                        <div class="mini-svg-container">
+                            <svg id="miniSvg80" width="180" height="90" viewBox="0 0 180 90"></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="theorem-box">
+                    <div class="theorem-title">💡 观察结论</div>
+                    <p>当 $n$ 从 4 增加到 80 时，矩形的"锯齿"逐渐消失，拼合图形与真实曲线下面积几乎重合。这就是 $\lambda \to 0$ 时黎曼和收敛的直观体现！</p>
+                </div>
+            </section>
+
+            <!-- Section 6 -->
+            <section class="section" id="section-6">
+                <span class="section-number">SECTION 06</span>
+                <h2 class="section-title">定积分的正式定义</h2>
+
+                <p>现在你完全能理解这个定义了：</p>
+
+                <div class="definition-box">
+                    <div class="definition-title">📜 定积分定义</div>
+                    <p>若对任意分割 $T$ 和任意代表点选择 $\xi_i$，当分割越来越细（$\lambda(T) \to 0$）时，黎曼和</p>
+                    <div class="math-display">
+                        $$S(T, \xi) = \sum f(\xi_i) \Delta x_i$$
+                    </div>
+                    <p>都收敛到同一个极限 $I$，则称 $f$ 在 $[a,b]$ 上<strong>黎曼可积</strong>，并定义</p>
+                    <div class="math-display">
+                        $$\int_a^b f(x) \, dx = I$$
+                    </div>
+                </div>
+
+                <p>这个定义意味着：</p>
+
+                <ol class="step-list">
+                    <li class="step-item">不管你怎么切</li>
+                    <li class="step-item">不管你怎么选点</li>
+                    <li class="step-item">只要够细</li>
+                    <li class="step-item">结果都会逼近同一个值 $I$</li>
+                </ol>
+
+                <p>这就是"面积"概念存在的<strong>数学本质</strong>。</p>
+            </section>
+
+            <!-- Section 7 -->
+            <section class="section" id="section-7">
+                <span class="section-number">SECTION 07</span>
+                <h2 class="section-title">ε–δ 严谨版（数学逻辑最严密的定义）</h2>
+
+                <p>说 $\displaystyle\int_a^b f(x) \, dx = I$ 等价于：</p>
+
+                <div class="definition-box">
+                    <div class="definition-title">🔬 ε–δ 语言</div>
+                    <p>对任意 $\varepsilon > 0$，存在 $\delta > 0$，使得所有满足 $\lambda(T) < \delta$ 的分割 $T$ 和任意选点构成的黎曼和都满足</p>
+                    <div class="math-display">
+                        $$|S(T, \xi) - I| < \varepsilon$$
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <strong>一句话解释：</strong>你要求多准都可以（任意小的 $\varepsilon$），我都能找到足够细的分割（对应的 $\delta$）让近似达到你的要求。
+                </div>
+            </section>
+
+            <!-- Section 8: Summary -->
+            <section class="section" id="section-8">
+                <span class="section-number">SECTION 08</span>
+                <h2 class="section-title">本块小结</h2>
+
+                <div class="summary-box">
+                    <div class="summary-title">
+                        <span>📝</span> 考试 + 直觉都必须掌握
+                    </div>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <strong>定积分的本质</strong><br>
+                            极限意义下的累积量
+                        </div>
+                        <div class="summary-item">
+                            <strong>分割 T</strong><br>
+                            把区间切成很多段
+                        </div>
+                        <div class="summary-item">
+                            <strong>代表点 ξᵢ</strong><br>
+                            每段随便选一个点
+                        </div>
+                        <div class="summary-item">
+                            <strong>黎曼和</strong><br>
+                            一堆矩形面积的和
+                        </div>
+                        <div class="summary-item">
+                            <strong>分割模长 λ</strong><br>
+                            区间是否足够细
+                        </div>
+                        <div class="summary-item">
+                            <strong>定积分定义</strong><br>
+                            λ→0 时黎曼和收敛到同一个数
+                        </div>
+                    </div>
+                </div>
+
+                <div class="end-section">
+                    <div class="end-divider">
+                        <span class="end-icon">🎉</span>
+                    </div>
+                    <p>第一节内容——图 + 文完美融合版到此正式完成！</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // ========== NAVIGATION TOGGLE ==========
+        function toggleNav() {
+            const sidebar = document.getElementById('navSidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        function toggleDirectory() {
+            const directory = document.getElementById('navDirectory');
+            directory.classList.toggle('open');
+        }
+
+        // ========== THEME TOGGLE ==========
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const html = document.documentElement;
+
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', savedTheme);
+        themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+        themeToggle.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            themeIcon.textContent = next === 'dark' ? '☀️' : '🌙';
+            
+            updateMainVisualization(parseInt(nSlider.value));
+            drawMiniVisualization('miniSvg4', 4);
+            drawMiniVisualization('miniSvg10', 10);
+            drawMiniVisualization('miniSvg30', 30);
+            drawMiniVisualization('miniSvg80', 80);
+        });
+
+        // ========== SCROLL PROGRESS ==========
+        const scrollProgressBar = document.getElementById('scrollProgress');
+        
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            scrollProgressBar.style.width = scrolled + '%';
+        });
+
+        // ========== SECTION ANIMATION ON SCROLL ==========
+        const sections = document.querySelectorAll('.section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // Update active nav link
+                    const id = entry.target.getAttribute('id');
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === '#' + id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '-10% 0px -60% 0px',
+            threshold: 0
+        });
+
+        sections.forEach(section => sectionObserver.observe(section));
+
+        // ========== VISUALIZATION ==========
+        const nSlider = document.getElementById('nSlider');
+        const nValue = document.getElementById('nValue');
+        const statN = document.getElementById('statN');
+        const statSum = document.getElementById('statSum');
+        const statError = document.getElementById('statError');
+        const animateBtn = document.getElementById('animateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        const f = (x) => x * x;
+        const trueIntegral = 1/3;
+
+        function getColors() {
+            const style = getComputedStyle(document.documentElement);
+            return {
+                curve: style.getPropertyValue('--svg-curve').trim(),
+                fill: style.getPropertyValue('--svg-fill').trim(),
+                grid: style.getPropertyValue('--svg-grid').trim(),
+                axis: style.getPropertyValue('--svg-axis').trim(),
+                bg: style.getPropertyValue('--bg-secondary').trim(),
+                text: style.getPropertyValue('--text-primary').trim()
+            };
+        }
+
+        function updateMainVisualization(n) {
+            const svg = document.getElementById('mainVisualization');
+            const colors = getColors();
+            
+            const width = 700;
+            const height = 380;
+            const margin = { top: 30, right: 40, bottom: 50, left: 60 };
+            const plotWidth = width - margin.left - margin.right;
+            const plotHeight = height - margin.top - margin.bottom;
+
+            const xScale = (x) => margin.left + x * plotWidth;
+            const yScale = (y) => height - margin.bottom - y * plotHeight;
+
+            let svgContent = '';
+
+            svgContent += `<rect width="${width}" height="${height}" fill="${colors.bg}" rx="8"/>`;
+
+            // Grid
+            for (let i = 0; i <= 10; i++) {
+                const x = xScale(i / 10);
+                const y = yScale(i / 10);
+                svgContent += `<line x1="${x}" y1="${margin.top}" x2="${x}" y2="${height - margin.bottom}" 
+                               stroke="${colors.grid}" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>`;
+                svgContent += `<line x1="${margin.left}" y1="${y}" x2="${width - margin.right}" y2="${y}" 
+                               stroke="${colors.grid}" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>`;
+            }
+
+            // Riemann sum
+            const dx = 1 / n;
+            let riemannSum = 0;
+
+            for (let i = 0; i < n; i++) {
+                const x0 = i * dx;
+                const x1 = (i + 1) * dx;
+                const midpoint = (x0 + x1) / 2;
+                const h = f(midpoint);
+                riemannSum += h * dx;
+
+                const rectX = xScale(x0);
+                const rectY = yScale(h);
+                const rectWidth = xScale(x1) - xScale(x0);
+                const rectHeight = yScale(0) - yScale(h);
+
+                svgContent += `<rect x="${rectX}" y="${rectY}" width="${rectWidth}" height="${rectHeight}" 
+                               fill="${colors.fill}" stroke="${colors.curve}" stroke-width="1.5" rx="1"/>`;
+            }
+
+            // Curve
+            let pathD = `M ${xScale(0)} ${yScale(f(0))}`;
+            for (let i = 1; i <= 100; i++) {
+                const x = i / 100;
+                pathD += ` L ${xScale(x)} ${yScale(f(x))}`;
+            }
+            svgContent += `<path d="${pathD}" fill="none" stroke="${colors.curve}" stroke-width="3" stroke-linecap="round"/>`;
+
+            // Axes
+            svgContent += `<line x1="${margin.left}" y1="${yScale(0)}" x2="${width - margin.right}" y2="${yScale(0)}" 
+                           stroke="${colors.axis}" stroke-width="2"/>`;
+            svgContent += `<line x1="${xScale(0)}" y1="${margin.top}" x2="${xScale(0)}" y2="${height - margin.bottom}" 
+                           stroke="${colors.axis}" stroke-width="2"/>`;
+
+            // Labels
+            svgContent += `<text x="${width - margin.right + 15}" y="${yScale(0) + 5}" 
+                           fill="${colors.axis}" font-size="16" font-family="serif" font-style="italic">x</text>`;
+            svgContent += `<text x="${xScale(0) - 5}" y="${margin.top - 10}" 
+                           fill="${colors.axis}" font-size="16" font-family="serif" font-style="italic">y</text>`;
+
+            for (let i = 0; i <= 10; i += 2) {
+                const x = i / 10;
+                svgContent += `<text x="${xScale(x)}" y="${yScale(0) + 22}" 
+                               fill="${colors.axis}" font-size="12" text-anchor="middle" font-family="monospace">${x.toFixed(1)}</text>`;
+            }
+            for (let i = 2; i <= 10; i += 2) {
+                const y = i / 10;
+                svgContent += `<text x="${xScale(0) - 12}" y="${yScale(y) + 4}" 
+                               fill="${colors.axis}" font-size="12" text-anchor="end" font-family="monospace">${y.toFixed(1)}</text>`;
+            }
+
+            // Title
+            svgContent += `<text x="${width/2}" y="22" fill="${colors.text}" font-size="14" 
+                           text-anchor="middle" font-family="'JetBrains Mono', monospace">
+                           f(x) = x² 在 [0, 1] 上的中点黎曼和，n = ${n}</text>`;
+
+            svg.innerHTML = svgContent;
+
+            statN.textContent = n;
+            statSum.textContent = riemannSum.toFixed(4);
+            const error = Math.abs(riemannSum - trueIntegral) / trueIntegral * 100;
+            statError.textContent = error.toFixed(2) + '%';
+        }
+
+        function drawMiniVisualization(svgId, n) {
+            const svg = document.getElementById(svgId);
+            const colors = getColors();
+            
+            const width = 180;
+            const height = 90;
+            const margin = { top: 8, right: 8, bottom: 8, left: 8 };
+            const plotWidth = width - margin.left - margin.right;
+            const plotHeight = height - margin.top - margin.bottom;
+
+            const xScale = (x) => margin.left + x * plotWidth;
+            const yScale = (y) => height - margin.bottom - y * plotHeight;
+
+            let svgContent = '';
+
+            const dx = 1 / n;
+
+            for (let i = 0; i < n; i++) {
+                const x0 = i * dx;
+                const x1 = (i + 1) * dx;
+                const midpoint = (x0 + x1) / 2;
+                const h = f(midpoint);
+
+                const rectX = xScale(x0);
+                const rectY = yScale(h);
+                const rectWidth = xScale(x1) - xScale(x0);
+                const rectHeight = yScale(0) - yScale(h);
+
+                svgContent += `<rect x="${rectX}" y="${rectY}" width="${rectWidth}" height="${rectHeight}" 
+                               fill="${colors.fill}" stroke="${colors.curve}" stroke-width="0.5"/>`;
+            }
+
+            let pathD = `M ${xScale(0)} ${yScale(f(0))}`;
+            for (let i = 1; i <= 50; i++) {
+                const x = i / 50;
+                pathD += ` L ${xScale(x)} ${yScale(f(x))}`;
+            }
+            svgContent += `<path d="${pathD}" fill="none" stroke="${colors.curve}" stroke-width="2"/>`;
+
+            svgContent += `<line x1="${margin.left}" y1="${yScale(0)}" x2="${width - margin.right}" y2="${yScale(0)}" 
+                           stroke="${colors.axis}" stroke-width="1"/>`;
+
+            svg.innerHTML = svgContent;
+        }
+
+        nSlider.addEventListener('input', (e) => {
+            const n = parseInt(e.target.value);
+            nValue.textContent = n;
+            updateMainVisualization(n);
+        });
+
+        let animationId = null;
+        let isAnimating = false;
+
+        animateBtn.addEventListener('click', () => {
+            if (isAnimating) {
+                isAnimating = false;
+                animateBtn.innerHTML = '▶ 自动演示';
+                if (animationId) clearTimeout(animationId);
+                return;
+            }
+
+            isAnimating = true;
+            animateBtn.innerHTML = '⏸ 暂停';
+            let currentN = 2;
+            
+            function animate() {
+                if (!isAnimating) return;
+                
+                nSlider.value = currentN;
+                nValue.textContent = currentN;
+                updateMainVisualization(currentN);
+                
+                currentN++;
+                if (currentN > 100) {
+                    isAnimating = false;
+                    animateBtn.innerHTML = '▶ 自动演示';
+                    return;
+                }
+                
+                animationId = setTimeout(() => requestAnimationFrame(animate), 60);
+            }
+            
+            animate();
+        });
+
+        resetBtn.addEventListener('click', () => {
+            isAnimating = false;
+            animateBtn.innerHTML = '▶ 自动演示';
+            if (animationId) clearTimeout(animationId);
+            nSlider.value = 4;
+            nValue.textContent = 4;
+            updateMainVisualization(4);
+        });
+
+        // Initialize
+        updateMainVisualization(4);
+        drawMiniVisualization('miniSvg4', 4);
+        drawMiniVisualization('miniSvg10', 10);
+        drawMiniVisualization('miniSvg30', 30);
+        drawMiniVisualization('miniSvg80', 80);
+
+        // ========== KATEX ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError: false
+            });
+        });
+    </script>
+</body>
+</html>
