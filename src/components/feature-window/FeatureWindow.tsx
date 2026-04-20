@@ -41,20 +41,6 @@ export function FeatureWindow({
     return { items: cursor, currentTitle };
   }, [data, pathStack]);
 
-  useEffect(() => {
-    if (localStorage.theme === "dark" || (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    const html = document.documentElement;
-    const isDark = html.classList.toggle("dark");
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  };
-
   const closeWindow = () => {
     const win = windowRef.current;
     if (win) {
@@ -150,15 +136,6 @@ export function FeatureWindow({
             <span className="text-xl font-bold tracking-wider">{title}</span>
           </div>
           <div className="flex items-center gap-4">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors"
-              title="切换模式"
-            >
-              <i className="fa fa-moon-o text-indigo-200 dark:hidden" />
-              <i className="fa fa-sun-o hidden dark:inline text-yellow-300" />
-            </button>
             <button
               type="button"
               id="feature-close-btn"
