@@ -5,9 +5,8 @@ import { useEffect, useRef } from "react";
 type Feather = { x: number; y: number; vx: number; vy: number; age: number; life: number; size: number; angle: number; va: number };
 type Orb = { x: number; y: number; r: number; vx: number; vy: number; color: string; alpha: number };
 
-const MAX_FEATHERS = 56;
-const MIN_SPAWN_STEP = 12;
-const MAX_SPAWN_INTERVAL = 90;
+const MAX_FEATHERS = 40;
+const MIN_SPAWN_STEP = 100; // 增大距离，减少数量
 
 export function BackgroundCanvas() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -79,28 +78,37 @@ export function BackgroundCanvas() {
         const t = f.age / f.life;
         const alpha = (1 - t) * 0.72;
         const scale = 1 - t * 0.36;
-        const w = f.size * 2.5 * scale;
-        const h = f.size * 0.82 * scale;
+        const w = f.size * 3.5 * scale;
+        const h = f.size * 1.5 * scale;
         ctx.save();
         ctx.translate(f.x, f.y + t * 10);
-        ctx.rotate(f.angle);
-        const grad = ctx.createLinearGradient(-w / 2, 0, w / 2, 0);
-        grad.addColorStop(0, `rgba(255,255,255,${alpha * 0.1})`);
-        grad.addColorStop(0.28, `rgba(255,255,255,${alpha})`);
+        // 使羽毛略带自然飘落倾角
+        ctx.rotate(f.angle + Math.PI / 4);
+        
+        // 更具质感的渐变
+        const grad = ctx.createLinearGradient(-w / 2, -h / 2, w / 2, h / 2);
+        grad.addColorStop(0, `rgba(255,255,255,${alpha * 0.9})`);
+        grad.addColorStop(0.5, `rgba(255,255,255,${alpha * 0.4})`);
         grad.addColorStop(1, "rgba(255,255,255,0)");
+        
         ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.moveTo(-w / 2, 0);
-        ctx.quadraticCurveTo(0, -h, w / 2, 0);
-        ctx.quadraticCurveTo(0, h, -w / 2, 0);
-        ctx.closePath();
-        ctx.fill();
-        ctx.strokeStyle = `rgba(255,255,255,${alpha * 0.33})`;
+        // 拟真羽毛的 SVG Path (调整比例匹配 w/h)
+        const scaleX = w / 24;
+        const scaleY = h / 24;
+        ctx.scale(scaleX, scaleY);
+        
+        // 渲染逼真羽毛路径
+        const featherPath = new Path2D("M20.66 2.34a2 2 0 00-2.83 0L3.05 17.12a1 1 0 00-.28.84l.65 3.9a1 1 0 001.16.82l3.92-.85a1 1 0 00.74-.4l14.42-16.27a2 2 0 000-2.82zm-4.24 4.24L7.52 15.5l-1.41-1.41 8.9-8.9a1 1 0 011.41 1.41zm-1.42-2.83l1.42 1.42-2.83 2.83-1.42-1.42 2.83-2.83zM5.3 18.7l1.06-1.06 1.41 1.41-1.06 1.06-1.41-1.41z");
+        
+        ctx.fill(featherPath);
+        
+        // 羽轴发光效果
+        ctx.shadowColor = `rgba(255,255,255,${alpha * 0.5})`;
+        ctx.shadowBlur = 8;
+        ctx.strokeStyle = `rgba(255,255,255,${alpha * 0.8})`;
         ctx.lineWidth = 0.5;
-        ctx.beginPath();
-        ctx.moveTo(-w / 2 + 2, 0);
-        ctx.lineTo(w / 2 - 2, 0);
-        ctx.stroke();
+        ctx.stroke(featherPath);
+        
         ctx.restore();
       }
     };
@@ -116,14 +124,12 @@ export function BackgroundCanvas() {
 
       const dx = tx - px, dy = ty - py;
       const dist = Math.hypot(dx, dy);
-      const now = performance.now();
-      if (dist > MIN_SPAWN_STEP || now - lastSpawn > MAX_SPAWN_INTERVAL) {
+      if (dist > MIN_SPAWN_STEP) {
         const steps = Math.max(1, Math.floor(dist / MIN_SPAWN_STEP));
         for (let i = 1; i <= steps; i++) {
           const r = i / steps;
           spawnFeather(px + dx * r, py + dy * r, pvx, pvy);
         }
-        lastSpawn = now;
       }
 
       if (cursorDot && cursorRing) {
