@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BackgroundCanvas } from "@/components/effects/BackgroundCanvas";
+import { CursorGlow } from "@/components/effects/CursorGlow";
 import type { FeatureItem } from "@/data/features";
 
 type Props = {
@@ -120,8 +121,7 @@ export function FeatureWindow({
   return (
     <div id="kb-app" className={`feature-kb ${closing ? "pointer-events-none" : ""}`}>
       <BackgroundCanvas />
-      <div id="cursor-ring" />
-      <div id="cursor-dot" />
+      <CursorGlow />
 
       <div
         id="main-window"

@@ -1,14 +1,5 @@
-import { FeatureWindow } from "@/components/feature-window/FeatureWindow";
-import { memoryData } from "@/data/features";
+import { FeaturePage } from "@/components/feature-window/FeaturePage";
 
 export default function MemoryPage() {
-  return (
-    <FeatureWindow
-      title="一刻记忆"
-      subtitle="Memory Moments · 一刻记忆"
-      headerIcon="fa-camera-retro"
-      headerGradientClass="from-emerald-400 to-cyan-400"
-      data={memoryData}
-    />
-  );
+  return <FeaturePage slug="memory" />;
 }
