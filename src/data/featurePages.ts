@@ -1,5 +1,5 @@
 import type { FeatureItem } from "@/data/features";
-import { memoryData, notesData, revelationData, shareData } from "@/data/features";
+import { memoryData, notesData, revelationData, shareData, appsData, waveData } from "@/data/features";
 
 export type FeaturePageConfig = {
   title: string;
@@ -9,7 +9,7 @@ export type FeaturePageConfig = {
   data: FeatureItem[];
 };
 
-export const FEATURE_PAGE_CONFIG: Record<"memory" | "notes" | "share" | "revelation", FeaturePageConfig> = {
+export const FEATURE_PAGE_CONFIG: Record<"memory" | "notes" | "share" | "revelation" | "apps" | "wave", FeaturePageConfig> = {
   memory: {
     title: "一刻记忆",
     subtitle: "Memory Moments · 一刻记忆",
@@ -37,5 +37,19 @@ export const FEATURE_PAGE_CONFIG: Record<"memory" | "notes" | "share" | "revelat
     headerIcon: "fa-lightbulb-o",
     headerGradientClass: "from-indigo-500 to-violet-500",
     data: revelationData,
+  },
+  apps: {
+    title: "我的应用",
+    subtitle: "My Apps Center",
+    headerIcon: "fa-layer-group",
+    headerGradientClass: "from-purple-500 to-pink-500",
+    data: appsData,
+  },
+  wave: {
+    title: "致敬树林",
+    subtitle: "Tribute to the Grove · 致敬树林",
+    headerIcon: "fa-tree",
+    headerGradientClass: "from-emerald-500 to-lime-400",
+    data: waveData,
   },
 };

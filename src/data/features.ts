@@ -258,3 +258,146 @@ export const revelationData: FeatureItem[] = [
     ],
   },
 ];
+
+export const appsData: FeatureItem[] = [
+  {
+    type: "folder",
+    name: "学习工具",
+    icon: "fa-graduation-cap",
+    color: "text-indigo-300",
+    children: [
+      { type: "file", name: "Anki 记忆卡片", url: "#", icon: "fa-clone" },
+      { type: "file", name: "Notion 学习空间", url: "#", icon: "fa-sticky-note" },
+      { type: "file", name: "Obsidian 知识库", url: "#", icon: "fa-database" },
+    ],
+  },
+  {
+    type: "folder",
+    name: "写作与笔记",
+    icon: "fa-pencil-square-o",
+    color: "text-rose-300",
+    children: [
+      { type: "file", name: "每日日记本", url: "#", icon: "fa-book" },
+      { type: "file", name: "读书卡片模版", url: "#", icon: "fa-id-card" },
+      { type: "file", name: "Markdown 编辑器", url: "#", icon: "fa-file-code-o" },
+    ],
+  },
+  {
+    type: "folder",
+    name: "编程与开发",
+    icon: "fa-code",
+    color: "text-emerald-300",
+    children: [
+      { type: "file", name: "VS Code 启动器", url: "#", icon: "fa-file-code-o" },
+      { type: "file", name: "GitHub 仓库入口", url: "#", icon: "fa-github" },
+      { type: "file", name: "在线运行环境", url: "#", icon: "fa-terminal" },
+    ],
+  },
+  {
+    type: "folder",
+    name: "效率与计划",
+    icon: "fa-tasks",
+    color: "text-amber-300",
+    children: [
+      { type: "file", name: "待办清单（To-Do）", url: "#", icon: "fa-check-square-o" },
+      { type: "file", name: "番茄钟（Pomodoro）", url: "#", icon: "fa-clock-o" },
+      { type: "file", name: "日程日历视图", url: "#", icon: "fa-calendar" },
+    ],
+  },
+  {
+    type: "folder",
+    name: "影音与娱乐",
+    icon: "fa-play-circle",
+    color: "text-yellow-300",
+    children: [
+      { type: "file", name: "音乐播放器", url: "#", icon: "fa-music" },
+      { type: "file", name: "播客 / B 站收藏", url: "#", icon: "fa-youtube-play" },
+      { type: "file", name: "观影清单", url: "#", icon: "fa-film" },
+    ],
+  },
+  {
+    type: "folder",
+    name: "校园 & 生活",
+    icon: "fa-university",
+    color: "text-sky-300",
+    children: [
+      { type: "file", name: "教务系统入口", url: "#", icon: "fa-graduation-cap" },
+      { type: "file", name: "图书馆检索", url: "#", icon: "fa-book" },
+      { type: "file", name: "校园网登录页", url: "#", icon: "fa-wifi" },
+    ],
+  },
+  {
+    type: "folder",
+    name: "创意与设计",
+    icon: "fa-paint-brush",
+    color: "text-purple-300",
+    children: [
+      { type: "file", name: "在线白板工具", url: "#", icon: "fa-object-group" },
+      { type: "file", name: "思维导图", url: "#", icon: "fa-sitemap" },
+      { type: "file", name: "配色 / 字体工具", url: "#", icon: "fa-tint" },
+    ],
+  },
+];
+
+export const waveData: FeatureItem[] = [
+  {
+    type: "folder",
+    name: "希望者联盟",
+    icon: "fa-lightbulb-o",
+    color: "text-amber-300",
+    children: [
+      { type: "file", name: "起点宣言：我们想成为什么样的大人", url: "#", icon: "fa-quote-left" },
+      { type: "file", name: "四年成长路线图：树成林计划草稿", url: "#", icon: "fa-road" },
+      { type: "file", name: "自救手册：迷茫时期的行动清单", url: "#", icon: "fa-life-ring" },
+      { type: "file", name: "小小愿望单：想一起完成的 10 件事", url: "#", icon: "fa-star-half-o" },
+    ],
+  },
+  {
+    type: "folder",
+    name: "浪前前哨站",
+    icon: "fa-compass",
+    color: "text-sky-300",
+    children: [
+      { type: "file", name: "前哨日志：这一周的灵感摘录", url: "#", icon: "fa-pencil-square-o" },
+      { type: "file", name: "共读书单：一起翻过的那些书页", url: "#", icon: "fa-book" },
+      { type: "file", name: "练习与任务：完成情况记录", url: "#", icon: "fa-check-square" },
+      { type: "file", name: "问与答：我们抛出的那些问题", url: "#", icon: "fa-question-circle" },
+    ],
+  },
+  {
+    type: "folder",
+    name: "战友们",
+    icon: "fa-users",
+    color: "text-emerald-300",
+    children: [
+      { type: "file", name: "战友名册：一起走过这段路的人", url: "#", icon: "fa-id-badge" },
+      { type: "file", name: "故事合集：他们的片段与转折", url: "#", icon: "fa-bookmark" },
+      { type: "file", name: "生日与纪念日：不想错过的日子", url: "#", icon: "fa-birthday-cake" },
+      { type: "file", name: "写给战友的一封信", url: "#", icon: "fa-envelope-open-o" },
+    ],
+  },
+  {
+    type: "folder",
+    name: "分浪忆",
+    icon: "fa-wave-square",
+    color: "text-indigo-300",
+    children: [
+      { type: "file", name: "开营那天：按下“开始”的瞬间", url: "#", icon: "fa-play-circle" },
+      { type: "file", name: "第一次交作业的夜晚", url: "#", icon: "fa-moon-o" },
+      { type: "file", name: "差点想放弃的那个时刻", url: "#", icon: "fa-exclamation-circle" },
+      { type: "file", name: "回望时最感谢的一件小事", url: "#", icon: "fa-heart-o" },
+    ],
+  },
+  {
+    type: "folder",
+    name: "其他时节",
+    icon: "fa-leaf",
+    color: "text-rose-300",
+    children: [
+      { type: "file", name: "暑假特刊：在家也在成长的日子", url: "#", icon: "fa-sun-o" },
+      { type: "file", name: "期末大战周：图书馆里的长夜", url: "#", icon: "fa-clock-o" },
+      { type: "file", name: "实习与打工记：试着走进社会的你", url: "#", icon: "fa-briefcase" },
+      { type: "file", name: "路上的风景：车窗外一闪而过的画面", url: "#", icon: "fa-camera" },
+    ],
+  },
+];

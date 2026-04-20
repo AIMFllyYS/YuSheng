@@ -6,7 +6,6 @@ type Feather = { x: number; y: number; vx: number; vy: number; age: number; life
 type Orb = { x: number; y: number; r: number; vx: number; vy: number; color: string; alpha: number };
 
 const MAX_FEATHERS = 40;
-const MIN_SPAWN_STEP = 100; // 增大距离，减少数量
 
 export function BackgroundCanvas() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -24,23 +23,25 @@ export function BackgroundCanvas() {
     const orbColors = ["#4f46e5", "#8b5cf6", "#06b6d4", "#eab308", "#ec4899"];
 
     let width = 0, height = 0, raf = 0, lastTs = 0;
-    let px = 0, py = 0, tx = 0, ty = 0, pvx = 0, pvy = 0, lastSpawn = 0;
+    let px = 0, py = 0, tx = 0, ty = 0;
+    let lastFeatherTime = 0;
 
-    const spawnFeather = (x: number, y: number, speedX: number, speedY: number) => {
-      if (feathers.length >= MAX_FEATHERS) feathers.shift();
-      const speed = Math.hypot(speedX, speedY);
-      const dirX = speed > 0.0001 ? speedX / speed : 0;
-      const dirY = speed > 0.0001 ? speedY / speed : 1;
+    const createFeather = (x: number, y: number) => {
+      const now = performance.now();
+      if (now - lastFeatherTime < 150) return;
+      lastFeatherTime = now;
+      if (feathers.length > MAX_FEATHERS) return;
+
       feathers.push({
-        x: x - dirX * 8 + (Math.random() - 0.5) * 6,
-        y: y - dirY * 8 + (Math.random() - 0.5) * 6,
-        vx: speedX * 0.12 + (Math.random() - 0.5) * 0.25,
-        vy: speedY * 0.12 + 0.1 + Math.random() * 0.12,
-        age: 0,
-        life: 650 + Math.random() * 350,
-        size: 8 + Math.random() * 7,
-        angle: Math.atan2(speedY || 0.1, speedX || 0.1) + (Math.random() - 0.5) * 0.5,
-        va: (Math.random() - 0.5) * 0.002,
+        x: x + (Math.random() - 0.5) * 10,
+        y: y + (Math.random() - 0.5) * 10,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: 0.1 + Math.random() * 0.15,
+        age: 0, // using age as life
+        life: 100 + Math.floor(Math.random() * 50), // using life as maxLife
+        size: 10 + Math.random() * 6,
+        angle: (Math.random() - 0.5) * 0.5,
+        va: (Math.random() - 0.5) * 0.01,
       });
     };
 
@@ -55,60 +56,61 @@ export function BackgroundCanvas() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    const onMove = (e: MouseEvent) => { tx = e.clientX; ty = e.clientY; };
+    const onMove = (e: MouseEvent) => { 
+      tx = e.clientX; 
+      ty = e.clientY; 
+      createFeather(e.clientX, e.clientY);
+    };
     const onPointer = (e: PointerEvent) => {
       const events = e.getCoalescedEvents?.() ?? [e];
       const last = events[events.length - 1]!;
       tx = last.clientX;
       ty = last.clientY;
+      createFeather(tx, ty);
     };
 
-    const drawFeathers = (dtMs: number) => {
-      const dt = dtMs / 1000;
+    const drawFeathers = () => {
       for (let i = feathers.length - 1; i >= 0; i--) {
         const f = feathers[i]!;
-        f.age += dtMs;
-        if (f.age >= f.life) { feathers.splice(i, 1); continue; }
-        f.vy += 0.45 * dt;
-        f.vx *= 1 - Math.min(0.45 * dt, 0.12);
-        f.vy *= 1 - Math.min(0.28 * dt, 0.08);
-        f.x += f.vx * dtMs * 0.12;
-        f.y += f.vy * dtMs * 0.12;
-        f.angle += f.va * dtMs;
+        f.age++;
+        f.x += f.vx;
+        f.y += f.vy;
+        f.vy += 0.002;
+        f.angle += f.va;
+
         const t = f.age / f.life;
-        const alpha = (1 - t) * 0.72;
-        const scale = 1 - t * 0.36;
-        const w = f.size * 3.5 * scale;
-        const h = f.size * 1.5 * scale;
+        if (t >= 1) { feathers.splice(i, 1); continue; }
+
+        const alpha = (1 - t) * 0.7;
+        const scale = 1 - t * 0.3;
+
         ctx.save();
         ctx.translate(f.x, f.y + t * 10);
-        // 使羽毛略带自然飘落倾角
-        ctx.rotate(f.angle + Math.PI / 4);
-        
-        // 更具质感的渐变
-        const grad = ctx.createLinearGradient(-w / 2, -h / 2, w / 2, h / 2);
-        grad.addColorStop(0, `rgba(255,255,255,${alpha * 0.9})`);
-        grad.addColorStop(0.5, `rgba(255,255,255,${alpha * 0.4})`);
-        grad.addColorStop(1, "rgba(255,255,255,0)");
-        
+        ctx.rotate(f.angle);
+
+        const w = f.size * 2.5 * scale;
+        const h = f.size * 0.8 * scale;
+
+        const grad = ctx.createLinearGradient(-w / 2, 0, w / 2, 0);
+        grad.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.1})`);
+        grad.addColorStop(0.3, `rgba(255, 255, 255, ${alpha})`);
+        grad.addColorStop(1, `rgba(255, 255, 255, 0)`);
+
         ctx.fillStyle = grad;
-        // 拟真羽毛的 SVG Path (调整比例匹配 w/h)
-        const scaleX = w / 24;
-        const scaleY = h / 24;
-        ctx.scale(scaleX, scaleY);
-        
-        // 渲染逼真羽毛路径
-        const featherPath = new Path2D("M20.66 2.34a2 2 0 00-2.83 0L3.05 17.12a1 1 0 00-.28.84l.65 3.9a1 1 0 001.16.82l3.92-.85a1 1 0 00.74-.4l14.42-16.27a2 2 0 000-2.82zm-4.24 4.24L7.52 15.5l-1.41-1.41 8.9-8.9a1 1 0 011.41 1.41zm-1.42-2.83l1.42 1.42-2.83 2.83-1.42-1.42 2.83-2.83zM5.3 18.7l1.06-1.06 1.41 1.41-1.06 1.06-1.41-1.41z");
-        
-        ctx.fill(featherPath);
-        
-        // 羽轴发光效果
-        ctx.shadowColor = `rgba(255,255,255,${alpha * 0.5})`;
-        ctx.shadowBlur = 8;
-        ctx.strokeStyle = `rgba(255,255,255,${alpha * 0.8})`;
+        ctx.beginPath();
+        ctx.moveTo(-w / 2, 0);
+        ctx.quadraticCurveTo(0, -h, w / 2, 0);
+        ctx.quadraticCurveTo(0, h, -w / 2, 0);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.3})`;
         ctx.lineWidth = 0.5;
-        ctx.stroke(featherPath);
-        
+        ctx.beginPath();
+        ctx.moveTo(-w / 2 + 2, 0);
+        ctx.lineTo(w / 2 - 2, 0);
+        ctx.stroke();
+
         ctx.restore();
       }
     };
@@ -119,18 +121,6 @@ export function BackgroundCanvas() {
       const smooth = Math.min(dtMs / 16.7, 2);
       px += (tx - px) * Math.min(0.35 * smooth, 0.95);
       py += (ty - py) * Math.min(0.35 * smooth, 0.95);
-      pvx = tx - px;
-      pvy = ty - py;
-
-      const dx = tx - px, dy = ty - py;
-      const dist = Math.hypot(dx, dy);
-      if (dist > MIN_SPAWN_STEP) {
-        const steps = Math.max(1, Math.floor(dist / MIN_SPAWN_STEP));
-        for (let i = 1; i <= steps; i++) {
-          const r = i / steps;
-          spawnFeather(px + dx * r, py + dy * r, pvx, pvy);
-        }
-      }
 
       if (cursorDot && cursorRing) {
         cursorDot.style.left = `${px}px`; cursorDot.style.top = `${py}px`;
@@ -167,7 +157,7 @@ export function BackgroundCanvas() {
       }
       ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = "lighter";
-      drawFeathers(dtMs);
+      drawFeathers();
       ctx.globalCompositeOperation = "source-over";
       raf = requestAnimationFrame(animate);
     };

@@ -9,10 +9,11 @@ import type { FeatureItem } from "@/data/features";
 type Props = {
   title: string;
   subtitle: string;
-  /** Font Awesome 4 图标名，如 `fa-book` */
   headerIcon: string;
   headerGradientClass?: string;
   data: FeatureItem[];
+  onClose: () => void;
+  openFeature: (slug: string) => void;
 };
 
 export function FeatureWindow({
@@ -21,8 +22,9 @@ export function FeatureWindow({
   headerIcon,
   headerGradientClass = "from-purple-500 to-pink-500",
   data,
+  onClose,
+  openFeature,
 }: Props) {
-  const router = useRouter();
   const [pathStack, setPathStack] = useState<number[]>([]);
   const [toast, setToast] = useState("");
   const [closing, setClosing] = useState(false);
@@ -68,10 +70,10 @@ export function FeatureWindow({
       win.classList.add("animate-zoom-out");
       setClosing(true);
       setTimeout(() => {
-        router.push("/");
+        onClose();
       }, 300);
     } else {
-      router.push("/");
+      onClose();
     }
   };
 
@@ -132,9 +134,8 @@ export function FeatureWindow({
   }, []);
 
   return (
-    <div id="kb-app" className={`feature-kb ${closing ? "pointer-events-none" : ""}`}>
-      <BackgroundCanvas />
-      <CursorGlow />
+    <div className={`fixed inset-0 z-50 flex items-center justify-center ${closing ? "pointer-events-none" : ""}`}>
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={closeWindow} />
 
       <div
         id="main-window"
@@ -182,28 +183,28 @@ export function FeatureWindow({
             
             <div className="p-4 space-y-1 pt-0">
               <div className="text-xs font-bold text-gray-400 mb-2 px-2">此电脑</div>
-              <button type="button" onClick={() => router.push("/features/notes")} className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm flex items-center gap-3 transition-colors ${title === "个人笔记库" ? "bg-white/20 font-bold shadow-inner text-white" : ""}`}>
+              <button type="button" onClick={() => openFeature("notes")} className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm flex items-center gap-3 transition-colors ${title === "个人笔记库" ? "bg-white/20 font-bold shadow-inner text-white" : ""}`}>
                 <i className="fa fa-book w-4 text-center text-pink-400" /> <span>个人笔记库</span>
               </button>
-              <button type="button" onClick={() => router.push("/features/memory")} className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm flex items-center gap-3 transition-colors ${title === "一刻记忆" ? "bg-white/20 font-bold shadow-inner text-white" : ""}`}>
+              <button type="button" onClick={() => openFeature("memory")} className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm flex items-center gap-3 transition-colors ${title === "一刻记忆" ? "bg-white/20 font-bold shadow-inner text-white" : ""}`}>
                 <i className="fa fa-hourglass-half w-4 text-center text-emerald-400" /> <span>一刻记忆</span>
               </button>
-              <button type="button" onClick={() => router.push("/features/share")} className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm flex items-center gap-3 transition-colors ${title === "开源共享" ? "bg-white/20 font-bold shadow-inner text-white" : ""}`}>
+              <button type="button" onClick={() => openFeature("share")} className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm flex items-center gap-3 transition-colors ${title === "开源共享" ? "bg-white/20 font-bold shadow-inner text-white" : ""}`}>
                 <i className="fa fa-share-alt w-4 text-center text-yellow-400" /> <span>开源共享</span>
               </button>
-              <button type="button" onClick={() => router.push("/features/revelation")} className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm flex items-center gap-3 transition-colors ${title === "启示录导航" ? "bg-white/20 font-bold shadow-inner text-white" : ""}`}>
+              <button type="button" onClick={() => openFeature("revelation")} className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm flex items-center gap-3 transition-colors ${title === "启示录导航" ? "bg-white/20 font-bold shadow-inner text-white" : ""}`}>
                 <i className="fa fa-lightbulb-o w-4 text-center text-indigo-400" /> <span>启示录导航</span>
               </button>
             </div>
 
             <div className="p-4 space-y-1 pt-0">
               <div className="text-xs font-bold text-gray-400 mb-2 px-2">外部应用</div>
-              <a href="https://husteread.com/index.php/aimflly-apps/" target="_blank" rel="noopener noreferrer" className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm flex items-center gap-3 transition-colors">
+              <button type="button" onClick={() => openFeature("apps")} className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm flex items-center gap-3 transition-colors ${title === "我的应用" ? "bg-white/20 font-bold shadow-inner text-white" : ""}`}>
                 <i className="fa fa-layer-group w-4 text-center text-purple-400" /> <span>我的应用</span>
-              </a>
-              <a href="https://husteread.com/index.php/aimflly-wave/" target="_blank" rel="noopener noreferrer" className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm flex items-center gap-3 transition-colors">
+              </button>
+              <button type="button" onClick={() => openFeature("wave")} className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm flex items-center gap-3 transition-colors ${title === "致敬树林" ? "bg-white/20 font-bold shadow-inner text-white" : ""}`}>
                 <i className="fa fa-tree w-4 text-center text-green-400" /> <span>致敬树林</span>
-              </a>
+              </button>
               <a href="https://space.bilibili.com/3546949376543207" target="_blank" rel="noopener noreferrer" className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm flex items-center gap-3 transition-colors">
                 <i className="fa fa-video-camera w-4 text-center text-red-400" /> <span>羽升日记</span>
               </a>

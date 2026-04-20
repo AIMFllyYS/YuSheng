@@ -8,6 +8,9 @@ import { HomePageSections } from "@/components/home/HomePageSections";
 import { JourneyOverlay } from "@/components/home/JourneyOverlay";
 import { VideoOverlay } from "@/components/home/VideoOverlay";
 
+import { FeatureWindow } from "@/components/feature-window/FeatureWindow";
+import { FEATURE_PAGE_CONFIG, type FeaturePageConfig } from "@/data/featurePages";
+
 const THEME_KEY = "aimflly_theme";
 
 const ALLOWED_PAGES = ["home", "about", "portal", "stories", "insight", "interactive", "music"] as const;
@@ -18,8 +21,15 @@ export function HomeClient() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [journeyOpen, setJourneyOpen] = useState(false);
   const [videoOpen, setVideoOpen] = useState(false);
+  const [featureOpen, setFeatureOpen] = useState(false);
+  const [featureSlug, setFeatureSlug] = useState<keyof typeof FEATURE_PAGE_CONFIG | "">("");
   const [themeLight, setThemeLight] = useState(false);
   const videoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const openFeature = useCallback((slug: string) => {
+    setFeatureSlug(slug as keyof typeof FEATURE_PAGE_CONFIG);
+    setFeatureOpen(true);
+  }, []);
 
   const clearVideoTimeout = useCallback(() => {
     if (videoTimeoutRef.current) {
@@ -100,6 +110,14 @@ export function HomeClient() {
 
       <JourneyOverlay open={journeyOpen} onClose={() => setJourneyOpen(false)} />
 
+      {featureOpen && featureSlug && FEATURE_PAGE_CONFIG[featureSlug] && (
+        <FeatureWindow
+          {...FEATURE_PAGE_CONFIG[featureSlug]}
+          onClose={() => setFeatureOpen(false)}
+          openFeature={openFeature}
+        />
+      )}
+
       <nav className="fixed w-full z-50 top-0 p-4">
         <div className="max-w-6xl mx-auto flex justify-between items-center glass-card px-6 py-3 rounded-full">
           <button type="button" onClick={() => goPage("home")} className="text-2xl font-bold font-art tracking-widest text-gradient">
@@ -179,6 +197,7 @@ export function HomeClient() {
           openJourney={() => setJourneyOpen(true)}
           onAvatarEnter={showVideo}
           onAvatarLeave={hideVideo}
+          openFeature={openFeature}
         />
       </main>
 
