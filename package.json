@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "AIMFlly personal intro site powered by Next.js",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 6190",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 6190",
     "lint": "eslint ."
   },
   "keywords": [],
