@@ -3,6 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { JOURNEY_NODES, JOURNEY_STAR_DECORATIONS, JOURNEY_TREE_DECORATIONS } from "@/components/home/journey/journeyData";
 import { JourneyNode } from "@/components/home/journey/JourneyNode";
+import { RoadmapView } from "./journey/RoadmapView";
+import { CalendarView } from "./journey/CalendarView";
+
+type ViewMode = 'journey' | 'roadmap' | 'calendar';
 
 type Props = { open: boolean; onClose: () => void };
 
@@ -17,6 +21,7 @@ export function JourneyOverlay({ open, onClose }: Props) {
   const viewY = useRef(0);
   const currentScale = useRef(1);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [mode, setMode] = useState<ViewMode>('journey');
 
   const updateViewportTransform = useCallback(() => {
     if (viewportRef.current) viewportRef.current.style.transform = `translate(${viewX.current}px, ${viewY.current}px) scale(${currentScale.current})`;
@@ -49,7 +54,7 @@ export function JourneyOverlay({ open, onClose }: Props) {
   useEffect(() => { if (open) resetJourneyView(); }, [open, resetJourneyView]);
 
   useEffect(() => {
-    if (!open || !containerRef.current) return;
+    if (!open || !containerRef.current || mode !== 'journey') return;
     const container = containerRef.current;
     const startDrag = (x: number, y: number) => { isDragging.current = true; container.style.cursor = "grabbing"; startX.current = x; startY.current = y; };
     const dragTo = (x: number, y: number) => {
@@ -92,7 +97,17 @@ export function JourneyOverlay({ open, onClose }: Props) {
   return (
     <div id="journey-page" className="show">
       <div id="journey-close" onClick={onClose}><i className="fas fa-times" /></div>
-      <div id="journey-canvas-container" ref={containerRef}>
+      
+      {/* View Mode Switcher */}
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 z-[210] flex bg-black/40 backdrop-blur-md rounded-full p-1 border border-white/10">
+        <button type="button" onClick={() => setMode('journey')} className={`px-4 md:px-6 py-2 rounded-full text-xs md:text-sm transition-all ${mode === 'journey' ? 'bg-white/20 text-white font-bold' : 'text-gray-400 hover:text-white'}`}>回忆轨迹</button>
+        <button type="button" onClick={() => setMode('roadmap')} className={`px-4 md:px-6 py-2 rounded-full text-xs md:text-sm transition-all ${mode === 'roadmap' ? 'bg-white/20 text-white font-bold' : 'text-gray-400 hover:text-white'}`}>星图路线</button>
+        <button type="button" onClick={() => setMode('calendar')} className={`px-4 md:px-6 py-2 rounded-full text-xs md:text-sm transition-all ${mode === 'calendar' ? 'bg-white/20 text-white font-bold' : 'text-gray-400 hover:text-white'}`}>日月规划</button>
+      </div>
+
+      {mode === 'journey' && (
+        <>
+          <div id="journey-canvas-container" ref={containerRef}>
         <div id="journey-viewport" ref={viewportRef}>
           <svg id="path-svg" viewBox="0 0 3000 2000">
             <defs><linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="#fbbf24" /><stop offset="50%" stopColor="#f472b6" /><stop offset="100%" stopColor="#60a5fa" /></linearGradient></defs>
@@ -119,6 +134,11 @@ export function JourneyOverlay({ open, onClose }: Props) {
         </svg>
         <div className="minimap-viewport" id="minimap-viewport" ref={minimapVpRef} />
       </div>
+        </>
+      )}
+
+      {mode === 'roadmap' && <RoadmapView />}
+      {mode === 'calendar' && <CalendarView />}
     </div>
   );
 }
