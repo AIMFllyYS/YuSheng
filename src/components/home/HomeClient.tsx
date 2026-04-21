@@ -10,6 +10,7 @@ import { VideoOverlay } from "@/components/home/VideoOverlay";
 
 import { FeatureWindow } from "@/components/feature-window/FeatureWindow";
 import { FEATURE_PAGE_CONFIG, type FeaturePageConfig } from "@/data/featurePages";
+import { GlobalToolkit } from "./GlobalToolkit";
 
 const THEME_KEY = "aimflly_theme";
 
@@ -200,6 +201,8 @@ export function HomeClient() {
           openFeature={openFeature}
         />
       </main>
+
+      <GlobalToolkit goPage={goPage} toggleTheme={toggleTheme} themeLight={themeLight} />
 
       <footer className="text-center py-6 text-gray-500 text-xs relative z-10 glass-card mx-4 mb-4 rounded-xl">
         <p>&copy; 2025 AIMflly-羽升. All Rights Reserved.</p>

@@ -71,3 +71,40 @@ html.dark .glass-window-feature{background:rgba(30,41,59,.9);border:1px solid rg
 .animate-zoom-out{animation:zoomOut .3s cubic-bezier(0, 0, 0, 1) forwards}
 .animate-reveal-from-point{animation:revealFromPoint .4s cubic-bezier(0, 0, 0, 1) forwards}
 .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+
+/* cmdk custom styles */
+.cmdk-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  color: var(--text-color);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+.cmdk-item[data-selected="true"] {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--accent-main);
+}
+.light-theme .cmdk-item[data-selected="true"] {
+  background: rgba(0, 0, 0, 0.05);
+}
+.cmdk-item:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+.light-theme .cmdk-item:active {
+  background: rgba(0, 0, 0, 0.1);
+}
+.cmdk-list::-webkit-scrollbar {
+  width: 4px;
+}
+.cmdk-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+.light-theme .cmdk-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+}
