@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>点光生日快乐 ｜ Sunlight读书会</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- 手写体 & 正文字体 -->
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --accent-main:#facc15;   /* 金色 */
+      --accent-sub:#60a5fa;   /* 蓝色 */
+      --bg-1:#020617;
+      --bg-2:#0f172a;
+    }
+    body{
+      font-family:"Noto Serif SC",serif;
+      background: radial-gradient(circle at top,#1e293b 0,#020617 60%);
+      color:#e5e7eb;
+      overflow-x:hidden;
+    }
+    .font-art{font-family:"Ma Shan Zheng",cursive;}
+    .glass{
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      background:rgba(15,23,42,0.7);
+      border:1px solid rgba(148,163,184,.5);
+      border-radius:1.25rem;
+      box-shadow:0 18px 45px rgba(15,23,42,0.9);
+    }
+    .text-gradient{
+      background:linear-gradient(120deg,var(--accent-main),#fff,var(--accent-sub));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    /* 气球 */
+    .balloon{
+      position:absolute;
+      bottom:-120px;
+      width:46px;
+      height:60px;
+      border-radius:50% 50% 50% 50%;
+      background:radial-gradient(circle at 30% 20%,#fff,rgba(250,204,21,1));
+      animation:floatUp 14s linear infinite;
+      opacity:.7;
+    }
+    .balloon::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      bottom:-70px;
+      width:2px;
+      height:70px;
+      background:rgba(248,250,252,.4);
+    }
+    @keyframes floatUp{
+      0%{transform:translateY(0) translateX(0);}
+      100%{transform:translateY(-120vh) translateX(-30px);}
+    }
+
+    /* 狗头像摇耳朵 */
+    .dog-avatar{
+      position:relative;
+      overflow:hidden;
+      border-radius:999px;
+      border:3px solid rgba(248,250,252,.7);
+      box-shadow:0 20px 60px rgba(15,23,42,.9);
+      cursor:pointer;
+      transition:transform .4s ease, box-shadow .4s ease;
+    }
+    .dog-avatar:hover{
+      transform:translateY(-6px) scale(1.03);
+      box-shadow:0 25px 80px rgba(15,23,42,1);
+    }
+    .ear-wiggle{
+      animation:ear 1s ease-in-out infinite alternate;
+      transform-origin:20% 0;
+    }
+    @keyframes ear{
+      from{transform:rotate(0deg);}
+      to{transform:rotate(-12deg);}
+    }
+
+    /* 回忆路径样式  */
+    .road-wrapper{
+      position:relative;
+      width:100%;
+      max-width:1120px;
+      margin:0 auto;
+      padding-top:40px;
+    }
+    .road-svg{
+      width:100%;
+      max-height:320px;
+      pointer-events:none;
+    }
+    .road-path{
+      fill:none;
+      stroke:url(#roadGradient);
+      stroke-width:8;
+      stroke-linecap:round;
+      stroke-dasharray:20 10;
+      filter:drop-shadow(0 0 14px rgba(250,204,21,.45));
+    }
+    .road-path-glow{
+      fill:none;
+      stroke:rgba(250,204,21,.15);
+      stroke-width:40;
+      filter:blur(12px);
+    }
+    .road-node{
+      position:absolute;
+      transform:translate(-50%,-50%);
+      cursor:pointer;
+      transition:transform .25s ease, z-index .25s;
+      z-index:5;
+    }
+    .road-node:hover{
+      transform:translate(-50%,-50%) scale(1.05);
+      z-index:10;
+    }
+    .node-dot{
+      width:70px;
+      height:70px;
+      border-radius:999px;
+      background:linear-gradient(135deg,rgba(15,23,42,.9),rgba(30,64,175,.9));
+      border:2px solid rgba(248,250,252,.4);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:
+        0 0 20px rgba(37,99,235,.5),
+        inset 0 0 16px rgba(15,23,42,.9);
+      font-size:1.8rem;
+    }
+    .node-year{
+      position:absolute;
+      top:-26px;
+      left:50%;
+      transform:translateX(-50%);
+      font-size:.7rem;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--accent-main);
+    }
+    .node-title{
+      position:absolute;
+      bottom:-30px;
+      left:50%;
+      transform:translateX(-50%);
+      font-size:.9rem;
+      white-space:nowrap;
+    }
+    .node-card{
+      position:absolute;
+      top:92px;
+      left:50%;
+      transform:translateX(-50%) scale(.93);
+      width:270px;
+      padding:16px 18px;
+      border-radius:16px;
+      background:rgba(15,23,42,.96);
+      border:1px solid rgba(148,163,184,.7);
+      box-shadow:0 18px 40px rgba(15,23,42,.95);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .3s ease, transform .3s ease;
+      font-size:.8rem;
+      line-height:1.6;
+    }
+    .road-node.active .node-card{
+      opacity:1;
+      pointer-events:auto;
+      transform:translateX(-50%) scale(1);
+    }
+    .node-card h4{
+      font-family:"Ma Shan Zheng",cursive;
+      font-size:1.3rem;
+      margin-bottom:.35rem;
+      color:var(--accent-main);
+    }
+    .node-close{
+      position:absolute;
+      top:8px;
+      right:10px;
+      width:22px;
+      height:22px;
+      border-radius:999px;
+      background:rgba(15,23,42,.9);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font-size:.7rem;
+      transition:background .2s ease;
+    }
+    .node-close:hover{background:rgba(30,64,175,.9);}
+
+    /* 祝福墙滚动区域 */
+    .scrollbar::-webkit-scrollbar{width:4px;}
+    .scrollbar::-webkit-scrollbar-track{background:transparent;}
+    .scrollbar::-webkit-scrollbar-thumb{
+      background:rgba(148,163,184,.6);
+      border-radius:999px;
+    }
+
+    /* 打字机标题 */
+    .typing{
+      border-right:2px solid rgba(248,250,252,.8);
+      white-space:nowrap;
+      overflow:hidden;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- 一些气球 -->
+  <div class="balloon left-10"  style="animation-delay:0s;"></div>
+  <div class="balloon left-1/3" style="animation-delay:3s;background:radial-gradient(circle at 30% 20%,#fff,#60a5fa);"></div>
+  <div class="balloon left-1/2" style="animation-delay:1s;background:radial-gradient(circle at 30% 20%,#fff,#fb7185);"></div>
+  <div class="balloon right-16" style="animation-delay:5s;background:radial-gradient(circle at 30% 20%,#fff,#4ade80);"></div>
+
+  <header class="pt-6 pb-4 px-5 md:px-10">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 glass px-5 py-3">
+      <div class="flex items-center gap-3">
+        <span class="text-xl">📚</span>
+        <div>
+          <div class="text-xs uppercase tracking-[0.3em] text-gray-400">Sunlight Reading Club</div>
+          <div class="font-art text-lg text-gradient leading-none">点光 · 生日特别企划</div>
+        </div>
+      </div>
+      <div class="hidden sm:flex flex-col text-right text-xs text-gray-400">
+        <span>社会学视角下的小小祝福</span>
+        <span>修学储能 · 先博后渊</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="px-5 md:px-10 pb-14">
+    <div class="max-w-6xl mx-auto space-y-10">
+
+      <!-- 顶部生日区 -->
+      <section class="glass p-6 md:p-8 grid md:grid-cols-[260px,1fr] gap-6 items-center">
+        <!-- 狗头像 -->
+        <div class="flex flex-col items-center gap-3">
+          <div class="dog-avatar w-52 h-52 relative group">
+            <!-- 这里把 src 换成你的小狗头像路径就好 -->
+            <img src="dog-avatar.jpg" alt="点光的小狗头像"
+                 class="w-full h-full object-cover">
+            <!-- 左耳朵小贴纸 -->
+            <span class="ear-wiggle absolute -left-2 -top-1 text-3xl">🐾</span>
+            <span class="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs bg-black/60">
+              点光 · 汪欣悦
+            </span>
+          </div>
+          <button id="dogBtn"
+                  class="mt-1 inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs border border-yellow-300/70 bg-black/30 hover:bg-yellow-500/20 transition">
+            <span>戳戳小狗</span> <i class="fa-solid fa-bone"></i>
+          </button>
+          <p id="dogBubble"
+             class="text-xs text-center text-yellow-100/90 min-h-[2.2rem] px-2">
+          </p>
+        </div>
+
+        <!-- 右侧文案 -->
+        <div class="space-y-3 md:space-y-4">
+          <h1 id="typingTitle"
+              class="typing text-gradient text-3xl md:text-4xl font-art leading-relaxed">
+            点光生日快乐呀！
+          </h1>
+
+          <p class="text-sm text-gray-200 leading-relaxed">
+            今天，Sunlight 读书会悄悄为我们的会长
+            <span class="font-semibold text-yellow-300">汪欣悦</span> 打开一页「生日专属的网页」。
+            你用社会学的眼睛看世界，相信理想可以通过一点一滴的努力，让更多人感到被看见、被理解，
+            那就是属于你的「天下大同」。
+          </p>
+
+          <p class="text-sm text-gray-200 leading-relaxed">
+            在读书会，大家叫你 <span class="text-sky-300 font-semibold">点光</span>。
+            你用行动把很多细碎的琐事串成温暖的秩序：
+            从招新到面试，从观影到推文，
+            为每一次活动控场、打灯、收尾，
+            像小狗狗一样忠诚又热情，守在大家的身边。
+          </p>
+
+          <div class="flex flex-wrap gap-3 text-xs">
+            <span class="px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-400/40">
+              签名：修学储能 · 先博后渊
+            </span>
+            <span class="px-3 py-1 rounded-full bg-sky-500/10 border border-sky-400/40">
+              专业：社会学
+            </span>
+            <span class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-400/40 flex items-center gap-1">
+              <span>喜好：小狗狗</span> <span>🐶</span>
+            </span>
+          </div>
+
+          <div class="border-t border-slate-600/70 pt-3 mt-3 text-xs text-gray-300 leading-relaxed">
+            <p>
+              今天开始，这个小网页就当作 Sunlight 读书会送给你的「电子相册」：
+              下面有一路走来的足迹，也有写给未来的期待。
+              愿你每一次抬头，都能看到被点亮的一束小光。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 小互动：祝福墙 & 幸运签 -->
+      <section class="grid lg:grid-cols-[minmax(0,2fr),minmax(0,1.4fr)] gap-6">
+        <!-- 祝福墙 -->
+        <div class="glass p-5 md:p-6 flex flex-col gap-3">
+          <div class="flex items-center justify-between mb-1">
+            <h2 class="font-art text-xl">
+              🎂 读书会祝福墙
+            </h2>
+            <button id="exportBtn"
+                    class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] border border-slate-400/60 hover:bg-slate-600/40">
+              <i class="fa-solid fa-download text-xs"></i>
+              导出本地祝福
+            </button>
+          </div>
+          <p class="text-xs text-gray-400">
+            每个人可以在这里写一句祝福（只保存在本地浏览器），以后打开网页，还能看到当时的那一串文字。
+          </p>
+
+          <div class="grid md:grid-cols-[2fr,3fr] gap-3 mt-1">
+            <div class="flex flex-col gap-2 text-xs">
+              <input id="blessName" type="text"
+                     class="w-full rounded-lg bg-slate-900/70 border border-slate-500/70 px-3 py-1.5 focus:outline-none focus:border-yellow-400/90"
+                     placeholder="你的昵称 / 小组（可选）">
+              <textarea id="blessText" rows="3"
+                        class="w-full rounded-lg bg-slate-900/70 border border-slate-500/70 px-3 py-2 focus:outline-none focus:border-yellow-400/90"
+                        placeholder="写一句想对 点光 说的话吧～"></textarea>
+              <button id="blessBtn"
+                      class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] border border-yellow-300/80 bg-yellow-500/15 hover:bg-yellow-400/25 transition">
+                <i class="fa-solid fa-paper-plane text-xs"></i> 投递到祝福墙
+              </button>
+            </div>
+            <div class="glass border border-slate-500/70 bg-slate-900/60 p-3 text-xs h-40 md:h-44 overflow-y-auto scrollbar"
+                 id="blessWall">
+              <div class="text-center text-gray-500/80 py-3 text-[11px]">
+                这里会慢慢被大家的祝福填满 🌟
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 幸运签 -->
+        <div class="glass p-5 md:p-6 flex flex-col gap-3">
+          <div class="flex items-center justify-between mb-1">
+            <h2 class="font-art text-xl">
+              ✨ 今日幸运签 for 点光
+            </h2>
+          </div>
+          <p class="text-xs text-gray-400">
+            随机抽一条「生日限定小签文」，送给会长，也送给每一个在读书会一起前进的人。
+          </p>
+          <div class="mt-2 flex flex-col gap-3">
+            <div id="fortuneBox"
+                 class="glass bg-gradient-to-r from-yellow-500/10 via-sky-500/10 to-pink-500/10 border border-yellow-300/60 text-xs px-4 py-3 rounded-2xl min-h-[70px] flex items-center">
+              点击下面的按钮抽一签～
+            </div>
+            <button id="fortuneBtn"
+                    class="self-start inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs bg-sky-500/20 border border-sky-300/70 hover:bg-sky-400/25 transition">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              摇一摇签筒
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 回忆路径 -->
+      <section class="glass p-6 md:p-8 space-y-5">
+        <div class="flex items-center justify-between gap-3 mb-2">
+          <div>
+            <h2 class="font-art text-2xl flex items-center gap-2">
+              <span>📍 Sunlight 读书会 · 回忆小路</span>
+            </h2>
+            <p class="text-xs text-gray-400 mt-1">
+              点击每一个节点，可以展开那一天的故事。中间有一个节点可以直接跳转到
+              <a href="https://husteread.com/#activities" target="_blank"
+                 class="text-sky-300 underline decoration-dotted">线上读书分享记录</a>。
+            </p>
+          </div>
+          <span class="hidden sm:inline text-[11px] text-gray-500 border border-slate-500/70 rounded-full px-3 py-1">
+            从 2025.10.19 百团大战，到你生日这一天
+          </span>
+        </div>
+
+        <div class="road-wrapper mt-2">
+          <!-- 路径 SVG -->
+          <svg class="road-svg" viewBox="0 0 1000 320" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="roadGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"  stop-color="#facc15"/>
+                <stop offset="50%" stop-color="#fb7185"/>
+                <stop offset="100%" stop-color="#60a5fa"/>
+              </linearGradient>
+            </defs>
+            <path class="road-path-glow"
+                  d="M40,250 C180,280 240,200 340,190 S520,180 620,150 S780,100 880,120 S960,170 990,150"/>
+            <path class="road-path"
+                  d="M40,250 C180,280 240,200 340,190 S520,180 620,150 S780,100 880,120 S960,170 990,150"/>
+          </svg>
+
+          <!-- 节点：位置用百分比控制 -->
+          <!-- 1. 百团大战 & 接任会长 -->
+          <div class="road-node" data-id="n1" style="left:9%;top:72%;">
+            <div class="node-year">2025-10-19</div>
+            <div class="node-dot">🎈</div>
+            <div class="node-title font-art">百团大战</div>
+            <div class="node-card">
+              <div class="node-close"><i class="fa-solid fa-xmark"></i></div>
+              <h4>读书会，新会长</h4>
+              <p>
+                校园百团大战的展位前，人声鼎沸。Sunlight 的小桌子上堆着书签、报名表，
+                还有你写的那句宣言——「以书为媒，让思想在喻园生长」。
+              </p>
+              <p class="mt-1.5">
+                那天起，你正式接过会长的火炬：
+                不只是职位的更迭，更是把「点光」的温度，铺在一个个后来者来来往往的脚步里。
+              </p>
+            </div>
+          </div>
+
+          <!-- 2. 11.04 面试 -->
+          <div class="road-node" data-id="n2" style="left:26%;top:54%;">
+            <div class="node-year">2025-11-04</div>
+            <div class="node-dot">📝</div>
+            <div class="node-title font-art">读书会面试</div>
+            <div class="node-card">
+              <div class="node-close"><i class="fa-solid fa-xmark"></i></div>
+              <h4>「欢迎来到书页之间」</h4>
+              <p>
+                面试教室里，桌上摊着报名表，墙上贴着你画的小提示。
+                每一位走进来的新同学，都被你温柔地引导着说出自己与书的故事。
+              </p>
+              <p class="mt-1.5">
+                你认真记录每一双眼睛里的光，
+                在社会学的语境里，那些都是「个体经验」；
+                在读书会的语境里，那些也构成了「共同记忆」。
+              </p>
+            </div>
+          </div>
+
+          <!-- 3. 11.06 换届大会 -->
+          <div class="road-node" data-id="n3" style="left:39%;top:49%;">
+            <div class="node-year">2025-11-06</div>
+            <div class="node-dot">📜</div>
+            <div class="node-title font-art">换届大会</div>
+            <div class="node-card">
+              <div class="node-close"><i class="fa-solid fa-xmark"></i></div>
+              <h4>新的 Sunlight 篇章</h4>
+              <p>
+                换届大会上，2025 级的成员坐满了教室。
+                一张张熟悉或陌生的脸，组成了「新一届 Sunlight 读书会」。
+              </p>
+              <p class="mt-1.5">
+                那天的 PPT 上写着「Sunlight 2.0」，
+                你在台前介绍每一个干事、每一个小组，
+                把责任拆成细细碎碎的小格子，然后交到大家手里。
+              </p>
+            </div>
+          </div>
+
+          <!-- 4. 线上读书分享 & husteread 活动页 -->
+          <div class="road-node" data-id="n4" style="left:52%;top:56%;">
+            <div class="node-year">2025-11起</div>
+            <div class="node-dot">🌐</div>
+            <div class="node-title font-art">每日线上分享</div>
+            <div class="node-card">
+              <div class="node-close"><i class="fa-solid fa-xmark"></i></div>
+              <h4>「日更」的阅读光点</h4>
+              <p>
+                每天晚上，群里会多出一条分享：
+                有人截图，有人拍照，有人打一长段文字。
+                这就是 Sunlight 的「在线自习室」。
+              </p>
+              <p class="mt-1.5">
+                后来，你把这些记录整理成
+                <a href="https://husteread.com/#activities" target="_blank"
+                   class="text-sky-300 underline decoration-dotted">
+                  husteread.com 的活动时间线
+                </a>，
+                让阅读这件事，真正有了可以回头看的轨迹。
+              </p>
+            </div>
+          </div>
+
+          <!-- 5. 小网站诞生 -->
+          <div class="road-node" data-id="n5" style="left:64%;top:41%;">
+            <div class="node-year">2025-11</div>
+            <div class="node-dot">💻</div>
+            <div class="node-title font-art">网站上线</div>
+            <div class="node-card">
+              <div class="node-close"><i class="fa-solid fa-xmark"></i></div>
+              <h4>husteread.com 出生啦</h4>
+              <p>
+                那个晚上，你和技术小伙伴一起讨论「配色、导航、栏目」，
+                试着把一个社团的灵魂塞进一个小小的网址里。
+              </p>
+              <p class="mt-1.5">
+                从此以后，Sunlight 有了自己的「线上家」：
+                读书活动、笔记、回忆、照片，都可以慢慢往里面搬。
+              </p>
+            </div>
+          </div>
+
+          <!-- 6. 11.16 观影 头脑特工队 -->
+          <div class="road-node" data-id="n6" style="left:77%;top:35%;">
+            <div class="node-year">2025-11-16</div>
+            <div class="node-dot">🎬</div>
+            <div class="node-title font-art">共观《头脑特工队》</div>
+            <div class="node-card">
+              <div class="node-close"><i class="fa-solid fa-xmark"></i></div>
+              <h4>情绪与记忆的小实验</h4>
+              <p>
+                一群人窝在同一间教室里，看着大屏幕上七彩斑斓的情绪小人。
+                你从社会学和心理学的角度抛了几个问题，
+                让「观影」变成了一次关于成长的讨论。
+              </p>
+              <p class="mt-1.5">
+                有人笑，有人哭，有人回想起自己的童年，
+                而你则在角落里确认设备、调节进度、收拾现场，
+                悄悄守护着这场情绪与记忆的实验。
+              </p>
+            </div>
+          </div>
+
+          <!-- 7. 12.05 Sunlight 第二周 & 推文通过 -->
+          <div class="road-node" data-id="n7" style="left:89%;top:47%;">
+            <div class="node-year">2025-12-05</div>
+            <div class="node-dot">☀️</div>
+            <div class="node-title font-art">Sunlight 第二周</div>
+            <div class="node-card">
+              <div class="node-close"><i class="fa-solid fa-xmark"></i></div>
+              <h4>推文上线，故事写下去</h4>
+              <p>
+                Sunlight 读书会的第二周，你们的公众号推文正式通过审核。
+                图文里有活动记录，也有你仔细斟酌过的句子。
+              </p>
+              <p class="mt-1.5">
+                这一刻，Sunlight 不再只是「群里的一个社团」，
+                而是被写进了更大的校园记忆里。
+                你把自己藏到作者栏背后，却让更多人看见了这个名字。
+              </p>
+            </div>
+          </div>
+
+          <!-- 8. 未来愿景 -->
+          <div class="road-node" data-id="n8" style="left:97%;top:50%;">
+            <div class="node-year">未来</div>
+            <div class="node-dot">🌟</div>
+            <div class="node-title font-art">繁荣的 Sunlight</div>
+            <div class="node-card">
+              <div class="node-close"><i class="fa-solid fa-xmark"></i></div>
+              <h4>每一个人都发光</h4>
+              <p>
+                未来的 Sunlight，或许会有更多的栏目、更多的活动、
+                更多彼此鼓励的夜晚。
+              </p>
+              <p class="mt-1.5">
+                愿每一位成员都能在这里找到自己的「独特收获」——
+                有人学会表达，有人学会倾听，有人学会合作，
+                而你，也可以安心地把「会长」这个角色，
+                一点一点交给下一位温柔而坚定的继任者。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-6 text-sm text-gray-200 leading-relaxed">
+          这一条不算很长的小路，记录的是 Sunlight 读书会从「交接」到「生长」的一段时间。
+          对很多人来说，这可能只是大学生活里的一章；
+          但对我们来说，你认真安排的每一场活动、每一次签到、每一份名单，
+          都让这条路有了清晰的纹理。
+        </p>
+        <p class="text-sm text-yellow-100 leading-relaxed">
+          谢谢你，作为会长一直在背后控场，让活动可以「正常进行」，让每一场聚会都有落地的仪式感。
+          也希望你在未来的日子里，可以多给自己留一点空间——
+          像小狗狗一样，在阳光下打个滚，抬头的时候，发现自己也一直被很多束光照着。
+        </p>
+      </section>
+
+      <!-- 尾声祝福 -->
+      <section class="glass p-5 md:p-6 text-center space-y-3">
+        <h2 class="font-art text-2xl text-gradient">点光 · 生日快乐</h2>
+        <p class="text-sm text-gray-200 leading-relaxed max-w-2xl mx-auto">
+          愿你在社会学的世界里看见更多真实的人，
+          在读书会的日常里收集更多温柔的瞬间，
+          在小狗狗的眼睛里看见最简单的快乐。
+        </p>
+        <p class="text-xs text-gray-400">
+          —— 来自 Sunlight 读书会全体成员的网页祝福
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="pb-6 text-center text-[11px] text-gray-500">
+    <p>Made with 🐶 & 📚 & ☀️</p>
+  </footer>
+
+  <script>
+    // 简单打字机效果
+    (function(){
+      const el = document.getElementById("typingTitle");
+      const text = el.textContent.trim();
+      el.textContent = "";
+      let i = 0;
+      const timer = setInterval(()=>{
+        el.textContent = text.slice(0, i++);
+        if(i > text.length) clearInterval(timer);
+      },100);
+    })();
+
+    // 小狗互动
+    const dogLines = [
+      "汪！今天是会长的生日，所有小狗都批准放假一天～",
+      "点光收到来自 Sunlight 的摸摸头 (´▽`ʃ♡ƪ)",
+      "修学储能中……先接受一大堆祝福再说！",
+      "愿天下有书可读，也愿你被温柔以待～"
+    ];
+    document.getElementById("dogBtn").addEventListener("click", ()=>{
+      const bubble = document.getElementById("dogBubble");
+      const line = dogLines[Math.floor(Math.random()*dogLines.length)];
+      bubble.textContent = line;
+      bubble.style.opacity = 0;
+      setTimeout(()=>{bubble.style.opacity = 1;},50);
+    });
+
+    // 祝福墙：本地存储
+    const BLESS_KEY = "sunlight_birthday_bless";
+    function loadBless(){
+      const wall = document.getElementById("blessWall");
+      let arr = [];
+      try{
+        arr = JSON.parse(localStorage.getItem(BLESS_KEY)||"[]");
+      }catch(e){}
+      wall.innerHTML = "";
+      if(arr.length===0){
+        wall.innerHTML = '<div class="text-center text-gray-500/80 py-3 text-[11px]">这里会慢慢被大家的祝福填满 🌟</div>';
+        return;
+      }
+      arr.slice(0,30).forEach(item=>{
+        const div = document.createElement("div");
+        div.className = "mb-2 last:mb-0 bg-slate-800/70 rounded-lg px-3 py-2 border-l-2 border-yellow-300/70";
+        div.innerHTML = '<div class="text-[10px] text-gray-400 mb-0.5">'
+          +(item.name?('<span class="font-semibold text-gray-200 mr-1">'+item.name+'</span> · '):"")
+          + item.time +
+          '</div><div class="text-xs text-gray-100 leading-relaxed">'+item.text.replace(/\n/g,"<br>")+'</div>';
+        wall.appendChild(div);
+      });
+    }
+    loadBless();
+
+    document.getElementById("blessBtn").addEventListener("click", ()=>{
+      const name = document.getElementById("blessName").value.trim();
+      const text = document.getElementById("blessText").value.trim();
+      if(!text){
+        alert("写点什么再投递呀～");
+        return;
+      }
+      let arr = [];
+      try{arr = JSON.parse(localStorage.getItem(BLESS_KEY)||"[]");}catch(e){}
+      arr.unshift({
+        name,
+        text,
+        time:new Date().toLocaleString()
+      });
+      localStorage.setItem(BLESS_KEY, JSON.stringify(arr));
+      document.getElementById("blessText").value = "";
+      loadBless();
+    });
+
+    // 导出本地祝福（给你自己用）
+    document.getElementById("exportBtn").addEventListener("click", ()=>{
+      let data = localStorage.getItem(BLESS_KEY)||"[]";
+      const blob = new Blob([data],{type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "sunlight_blessings.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // 幸运签
+    const fortunes = [
+      "今天的读书会，会长不用控场，只负责收礼物和微笑～",
+      "你为大家准备了那么多次活动，这一次世界为你准备一整天的温柔。",
+      "社会学里的人与人连接，在 Sunlight 变成了一次次真实的相遇。",
+      "愿你在忙碌的筹备之外，也记得给自己留一杯热饮、一段散步。",
+      "今天所有延迟的推文，都在排队祝你生日快乐。",
+      "小狗说：会长今天的所有计划都自动升级为「快乐优先级」。"
+    ];
+    document.getElementById("fortuneBtn").addEventListener("click",()=>{
+      const box = document.getElementById("fortuneBox");
+      const t = fortunes[Math.floor(Math.random()*fortunes.length)];
+      box.style.opacity = 0;
+      setTimeout(()=>{
+        box.innerHTML = '<span class="block text-[11px] text-yellow-300 mb-1">『Birthday Fortune』</span>'+t;
+        box.style.opacity = 1;
+      },200);
+    });
+
+    // 回忆路径节点交互
+    document.querySelectorAll(".road-node").forEach(node=>{
+      node.addEventListener("click", (e)=>{
+        // 关闭其他
+        document.querySelectorAll(".road-node").forEach(n=>{
+          if(n!==node) n.classList.remove("active");
+        });
+        node.classList.toggle("active");
+        e.stopPropagation();
+      });
+      const closeBtn = node.querySelector(".node-close");
+      closeBtn.addEventListener("click", (e)=>{
+        node.classList.remove("active");
+        e.stopPropagation();
+      });
+    });
+
+    // 点击空白处关闭所有节点
+    document.addEventListener("click",()=>{
+      document.querySelectorAll(".road-node").forEach(n=>n.classList.remove("active"));
+    });
+  </script>
+</body>
+</html>

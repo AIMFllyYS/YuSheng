@@ -1,0 +1,2088 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>总复习 · 定积分知识体系全景 - 数学笔记</title>
+    
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=ZCOOL+XiaoWei&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<style>
+/* ========== SCOPED STYLES - AMBER/GOLD THEME ========== */
+.math-notes-app {
+    --mn-bg-primary: #fffbeb;
+    --mn-bg-secondary: #ffffff;
+    --mn-bg-tertiary: #fef3c7;
+    --mn-bg-glass: rgba(255, 255, 255, 0.95);
+    --mn-text-primary: #451a03;
+    --mn-text-secondary: #78350f;
+    --mn-text-muted: #b45309;
+    --mn-accent-primary: #d97706;
+    --mn-accent-secondary: #f59e0b;
+    --mn-accent-tertiary: #8b5cf6;
+    --mn-accent-rose: #e11d48;
+    --mn-accent-teal: #14b8a6;
+    --mn-accent-blue: #3b82f6;
+    --mn-border-color: rgba(217, 119, 6, 0.12);
+    --mn-shadow-soft: 0 4px 24px rgba(217, 119, 6, 0.08);
+    --mn-shadow-medium: 0 12px 48px rgba(217, 119, 6, 0.15);
+    --mn-nav-bg: rgba(255, 255, 255, 0.98);
+    --mn-svg-curve: #d97706;
+    --mn-svg-curve2: #8b5cf6;
+    --mn-svg-fill: rgba(217, 119, 6, 0.25);
+    --mn-svg-fill2: rgba(139, 92, 246, 0.25);
+    --mn-svg-grid: #fef3c7;
+    --mn-svg-axis: #78350f;
+}
+
+.math-notes-app[data-theme="dark"] {
+    --mn-bg-primary: #1c1407;
+    --mn-bg-secondary: #261c0a;
+    --mn-bg-tertiary: #352710;
+    --mn-bg-glass: rgba(38, 28, 10, 0.98);
+    --mn-text-primary: #fef3c7;
+    --mn-text-secondary: #fcd34d;
+    --mn-text-muted: #f59e0b;
+    --mn-accent-primary: #fbbf24;
+    --mn-accent-secondary: #fcd34d;
+    --mn-accent-tertiary: #a78bfa;
+    --mn-accent-rose: #fb7185;
+    --mn-accent-teal: #2dd4bf;
+    --mn-accent-blue: #60a5fa;
+    --mn-border-color: rgba(251, 191, 36, 0.15);
+    --mn-shadow-soft: 0 4px 24px rgba(0,0,0,0.4);
+    --mn-shadow-medium: 0 12px 48px rgba(0,0,0,0.5);
+    --mn-nav-bg: rgba(28, 20, 7, 0.98);
+    --mn-svg-curve: #fbbf24;
+    --mn-svg-curve2: #a78bfa;
+    --mn-svg-fill: rgba(251, 191, 36, 0.3);
+    --mn-svg-fill2: rgba(167, 139, 250, 0.3);
+    --mn-svg-grid: #352710;
+    --mn-svg-axis: #fcd34d;
+}
+
+.math-notes-app,
+.math-notes-app * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box !important;
+}
+
+.math-notes-app {
+    font-family: 'Noto Serif SC', 'SimSun', serif !important;
+    background: var(--mn-bg-primary) !important;
+    color: var(--mn-text-primary) !important;
+    line-height: 1.9 !important;
+    font-size: 17px !important;
+    position: relative !important;
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* ========== BACKGROUND ========== */
+.math-notes-app .mn-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.math-notes-app .mn-bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.3;
+    animation: mnFloat 24s ease-in-out infinite;
+}
+
+.math-notes-app .mn-bg-orb:nth-child(1) {
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, var(--mn-accent-primary) 0%, transparent 70%);
+    top: -130px;
+    right: -50px;
+}
+
+.math-notes-app .mn-bg-orb:nth-child(2) {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--mn-accent-secondary) 0%, transparent 70%);
+    bottom: -150px;
+    left: -70px;
+    animation-delay: -7s;
+}
+
+.math-notes-app .mn-bg-orb:nth-child(3) {
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, var(--mn-accent-tertiary) 0%, transparent 70%);
+    top: 50%;
+    left: 55%;
+    animation-delay: -15s;
+    opacity: 0.2;
+}
+
+@keyframes mnFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(20px, -25px) scale(1.03); }
+    66% { transform: translate(-15px, 15px) scale(0.97); }
+}
+
+.math-notes-app .mn-bg-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(var(--mn-border-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--mn-border-color) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.5;
+}
+
+/* ========== LAYOUT ========== */
+.math-notes-app .mn-layout {
+    display: flex;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+}
+
+/* ========== FIXED SIDEBAR ========== */
+.math-notes-app .mn-sidebar {
+    width: 280px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    background: var(--mn-nav-bg);
+    border-right: 1px solid var(--mn-border-color);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    box-shadow: var(--mn-shadow-soft);
+}
+
+.math-notes-app .mn-sidebar.collapsed {
+    transform: translateX(-280px);
+}
+
+.math-notes-app .mn-sidebar-toggle {
+    position: fixed;
+    left: 280px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 60px;
+    background: var(--mn-nav-bg);
+    border: 1px solid var(--mn-border-color);
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    transition: all 0.3s ease;
+}
+
+.math-notes-app .mn-sidebar.collapsed + .mn-sidebar-toggle {
+    left: 0;
+}
+
+.math-notes-app .mn-sidebar-toggle:hover {
+    width: 32px;
+    background: var(--mn-bg-tertiary);
+}
+
+.math-notes-app .mn-sidebar-toggle span {
+    font-size: 14px;
+    color: var(--mn-text-muted);
+    transition: transform 0.3s ease;
+}
+
+.math-notes-app .mn-sidebar.collapsed + .mn-sidebar-toggle span {
+    transform: rotate(180deg);
+}
+
+.math-notes-app .mn-sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 90px;
+}
+
+.math-notes-app .mn-sidebar-content::-webkit-scrollbar { width: 4px; }
+.math-notes-app .mn-sidebar-content::-webkit-scrollbar-thumb { background: var(--mn-border-color); border-radius: 2px; }
+
+/* Back & Directory */
+.math-notes-app .mn-back {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 20px;
+    color: var(--mn-text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 15px;
+    border-bottom: 1px solid var(--mn-border-color);
+    transition: all 0.2s ease;
+}
+
+.math-notes-app .mn-back:hover {
+    background: var(--mn-bg-tertiary);
+    color: var(--mn-accent-primary) !important;
+}
+
+.math-notes-app .mn-directory {
+    border-bottom: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-directory-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    user-select: none;
+}
+
+.math-notes-app .mn-directory-header:hover {
+    background: var(--mn-bg-tertiary);
+}
+
+.math-notes-app .mn-directory-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--mn-text-primary);
+}
+
+.math-notes-app .mn-directory-arrow {
+    font-size: 12px;
+    color: var(--mn-text-muted);
+    transition: transform 0.3s ease;
+}
+
+.math-notes-app .mn-directory.open .mn-directory-arrow {
+    transform: rotate(180deg);
+}
+
+.math-notes-app .mn-directory-list {
+    max-height: 0;
+    overflow: hidden;
+    background: var(--mn-bg-tertiary);
+    transition: max-height 0.3s ease;
+}
+
+.math-notes-app .mn-directory.open .mn-directory-list {
+    max-height: 400px;
+}
+
+.math-notes-app .mn-directory-link {
+    display: block !important;
+    padding: 10px 20px 10px 44px;
+    color: var(--mn-text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 14px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.math-notes-app .mn-directory-link::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--mn-border-color);
+    transition: background 0.2s ease;
+}
+
+.math-notes-app .mn-directory-link:hover {
+    background: rgba(217, 119, 6, 0.05);
+    color: var(--mn-text-primary) !important;
+}
+
+.math-notes-app .mn-directory-link:hover::before {
+    background: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-directory-link.active {
+    color: var(--mn-accent-primary) !important;
+    font-weight: 500;
+    background: rgba(217, 119, 6, 0.08);
+}
+
+.math-notes-app .mn-directory-link.active::before {
+    background: var(--mn-accent-primary);
+}
+
+/* Section Nav */
+.math-notes-app .mn-section-nav {
+    padding: 16px 0;
+}
+
+.math-notes-app .mn-section-header {
+    padding: 0 20px 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--mn-text-muted);
+    font-weight: 600;
+}
+
+.math-notes-app .mn-nav-link {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: var(--mn-text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.math-notes-app .mn-nav-link:hover {
+    background: var(--mn-bg-tertiary);
+    color: var(--mn-text-primary) !important;
+}
+
+.math-notes-app .mn-nav-link.active {
+    background: rgba(217, 119, 6, 0.1);
+    color: var(--mn-accent-primary) !important;
+    font-weight: 500;
+    border-left-color: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-nav-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--mn-text-muted);
+    width: 22px;
+}
+
+/* Sidebar Footer */
+.math-notes-app .mn-sidebar-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 20px;
+    background: var(--mn-nav-bg);
+    border-top: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--mn-bg-tertiary);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.math-notes-app .mn-theme-toggle:hover {
+    border-color: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-theme-toggle span { font-size: 14px; color: var(--mn-text-secondary); }
+.math-notes-app .mn-theme-icon { font-size: 18px; }
+
+/* ========== MAIN CONTENT ========== */
+.math-notes-app .mn-main {
+    flex: 1;
+    margin-left: 280px;
+    padding: 50px 60px 100px;
+    max-width: calc(280px + 880px);
+    min-width: 0;
+    transition: margin-left 0.3s ease;
+}
+
+.math-notes-app .mn-sidebar.collapsed ~ .mn-main {
+    margin-left: 0;
+}
+
+/* ========== PAGE HEADER ========== */
+.math-notes-app .mn-page-header {
+    margin-bottom: 50px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    color: white !important;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-page-title {
+    font-family: 'ZCOOL XiaoWei', serif !important;
+    font-size: 34px !important;
+    font-weight: 400 !important;
+    color: var(--mn-text-primary) !important;
+    margin: 0 0 14px 0 !important;
+    padding: 0 !important;
+    line-height: 1.3 !important;
+    border: none !important;
+}
+
+.math-notes-app .mn-page-subtitle {
+    font-size: 16px;
+    color: var(--mn-text-secondary);
+    margin: 0;
+    max-width: 600px;
+}
+
+/* ========== SECTIONS ========== */
+.math-notes-app .mn-section {
+    margin-bottom: 56px;
+}
+
+.math-notes-app .mn-section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--mn-accent-primary);
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.math-notes-app .mn-section-title {
+    font-family: 'ZCOOL XiaoWei', serif !important;
+    font-size: 24px !important;
+    font-weight: 400 !important;
+    color: var(--mn-text-primary) !important;
+    margin: 0 0 20px 0 !important;
+    padding: 0 0 10px 0 !important;
+    border-bottom: 2px solid var(--mn-border-color) !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    position: relative;
+}
+
+.math-notes-app .mn-section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+}
+
+.math-notes-app p {
+    margin: 0 0 18px 0 !important;
+    padding: 0 !important;
+    text-align: justify;
+    color: var(--mn-text-primary);
+}
+
+/* ========== SPECIAL BLOCKS ========== */
+.math-notes-app .mn-highlight {
+    background: linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+    border-left: 4px solid var(--mn-accent-primary);
+    padding: 18px 22px;
+    margin: 22px 0;
+    border-radius: 0 14px 14px 0;
+    position: relative;
+}
+
+.math-notes-app .mn-highlight::before {
+    content: '💡';
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 22px;
+    opacity: 0.3;
+}
+
+.math-notes-app .mn-theorem {
+    background: linear-gradient(135deg, rgba(217, 119, 6, 0.08) 0%, rgba(245, 158, 11, 0.04) 100%);
+    border: 1px solid rgba(217, 119, 6, 0.2);
+    border-left: 4px solid var(--mn-accent-primary);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-theorem-title {
+    font-weight: 600;
+    color: var(--mn-accent-primary);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-definition {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0.04) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-left: 4px solid var(--mn-accent-tertiary);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-definition-title {
+    font-weight: 600;
+    color: var(--mn-accent-tertiary);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-example {
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.08) 0%, rgba(20, 184, 166, 0.04) 100%);
+    border: 1px solid rgba(20, 184, 166, 0.2);
+    border-left: 4px solid var(--mn-accent-teal);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-example-title {
+    font-weight: 600;
+    color: var(--mn-accent-teal);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-warning {
+    background: linear-gradient(135deg, rgba(225, 29, 72, 0.08) 0%, rgba(225, 29, 72, 0.04) 100%);
+    border: 1px solid rgba(225, 29, 72, 0.2);
+    border-left: 4px solid var(--mn-accent-rose);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-warning-title {
+    font-weight: 600;
+    color: var(--mn-accent-rose);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-list {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 18px 0 !important;
+}
+
+.math-notes-app .mn-list li {
+    padding: 10px 0 10px 32px !important;
+    position: relative;
+    border-bottom: 1px dashed var(--mn-border-color);
+    margin: 0 !important;
+}
+
+.math-notes-app .mn-list li:last-child { border-bottom: none; }
+
+.math-notes-app .mn-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--mn-accent-primary);
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* ========== MATH DISPLAY ========== */
+.math-notes-app .mn-math {
+    background: var(--mn-bg-secondary);
+    border: 1px solid var(--mn-border-color);
+    border-radius: 14px;
+    padding: 22px 28px;
+    margin: 22px 0;
+    overflow-x: auto;
+    text-align: center;
+    position: relative;
+}
+
+.math-notes-app .mn-math::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    border-radius: 14px 14px 0 0;
+}
+
+.math-notes-app .katex-display { margin: 0 !important; }
+
+/* ========== VISUALIZATION ========== */
+.math-notes-app .mn-viz {
+    background: var(--mn-bg-glass);
+    border: 1px solid var(--mn-border-color);
+    border-radius: 18px;
+    padding: 28px;
+    margin: 36px 0;
+    box-shadow: var(--mn-shadow-soft);
+    position: relative;
+}
+
+.math-notes-app .mn-viz::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    border-radius: 18px 18px 0 0;
+}
+
+.math-notes-app .mn-viz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.math-notes-app .mn-viz-title {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 18px;
+    color: var(--mn-text-primary);
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+.math-notes-app .mn-svg-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
+    padding: 16px;
+    background: var(--mn-bg-secondary);
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
+.math-notes-app .mn-svg-container svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ========== TIMELINE ========== */
+.math-notes-app .mn-timeline {
+    position: relative;
+    padding-left: 30px;
+    margin: 30px 0;
+}
+
+.math-notes-app .mn-timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--mn-accent-primary), var(--mn-accent-secondary), var(--mn-accent-tertiary));
+    border-radius: 2px;
+}
+
+.math-notes-app .mn-timeline-item {
+    position: relative;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    background: var(--mn-bg-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -26px;
+    top: 24px;
+    width: 14px;
+    height: 14px;
+    background: linear-gradient(135deg, var(--mn-accent-primary), var(--mn-accent-secondary));
+    border-radius: 50%;
+    border: 3px solid var(--mn-bg-primary);
+}
+
+.math-notes-app .mn-timeline-num {
+    position: absolute;
+    left: -30px;
+    top: 20px;
+    width: 22px;
+    height: 22px;
+    background: var(--mn-accent-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.math-notes-app .mn-timeline-title {
+    font-weight: 600;
+    color: var(--mn-accent-primary);
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+.math-notes-app .mn-timeline-content {
+    font-size: 14px;
+    color: var(--mn-text-secondary);
+    line-height: 1.7;
+}
+
+.math-notes-app .mn-timeline-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.math-notes-app .mn-keyword {
+    background: var(--mn-bg-tertiary);
+    color: var(--mn-accent-primary);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* ========== TOPIC TABLE ========== */
+.math-notes-app .mn-topic-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+}
+
+.math-notes-app .mn-topic-table th {
+    background: linear-gradient(135deg, var(--mn-accent-primary), var(--mn-accent-secondary));
+    color: white;
+    padding: 14px 16px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.math-notes-app .mn-topic-table th:first-child {
+    border-radius: 10px 0 0 0;
+}
+
+.math-notes-app .mn-topic-table th:last-child {
+    border-radius: 0 10px 0 0;
+}
+
+.math-notes-app .mn-topic-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--mn-border-color);
+    vertical-align: top;
+}
+
+.math-notes-app .mn-topic-table tr:nth-child(even) {
+    background: var(--mn-bg-tertiary);
+}
+
+.math-notes-app .mn-topic-table tr:last-child td:first-child {
+    border-radius: 0 0 0 10px;
+}
+
+.math-notes-app .mn-topic-table tr:last-child td:last-child {
+    border-radius: 0 0 10px 0;
+}
+
+/* ========== MISTAKE CARD ========== */
+.math-notes-app .mn-mistake-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+}
+
+.math-notes-app .mn-mistake-card {
+    background: var(--mn-bg-secondary);
+    border: 1px solid var(--mn-border-color);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.math-notes-app .mn-mistake-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--mn-accent-rose);
+}
+
+.math-notes-app .mn-mistake-num {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    background: var(--mn-accent-rose);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.math-notes-app .mn-mistake-title {
+    font-weight: 600;
+    color: var(--mn-accent-rose);
+    margin-bottom: 10px;
+    padding-right: 40px;
+}
+
+.math-notes-app .mn-mistake-desc {
+    font-size: 14px;
+    color: var(--mn-text-secondary);
+    line-height: 1.6;
+}
+
+/* ========== STUDY PLAN ========== */
+.math-notes-app .mn-plan-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin: 24px 0;
+}
+
+.math-notes-app .mn-plan-day {
+    background: var(--mn-bg-secondary);
+    border: 1px solid var(--mn-border-color);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.math-notes-app .mn-plan-day:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--mn-shadow-medium);
+    border-color: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-plan-day.active {
+    background: linear-gradient(135deg, var(--mn-accent-primary), var(--mn-accent-secondary));
+    color: white;
+    border-color: transparent;
+}
+
+.math-notes-app .mn-plan-day-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-plan-day.active .mn-plan-day-num {
+    color: white;
+}
+
+.math-notes-app .mn-plan-day-label {
+    font-size: 12px;
+    color: var(--mn-text-muted);
+    margin-top: 4px;
+}
+
+.math-notes-app .mn-plan-day.active .mn-plan-day-label {
+    color: rgba(255,255,255,0.8);
+}
+
+.math-notes-app .mn-plan-content {
+    background: var(--mn-bg-tertiary);
+    border-radius: 14px;
+    padding: 20px;
+    margin-top: 16px;
+    min-height: 120px;
+}
+
+/* ========== CELEBRATION ========== */
+.math-notes-app .mn-celebration {
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 50%, var(--mn-accent-tertiary) 100%);
+    border-radius: 24px;
+    padding: 50px 40px;
+    margin: 60px 0;
+    text-align: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.math-notes-app .mn-celebration-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.math-notes-app .mn-confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    opacity: 0;
+}
+
+.math-notes-app .mn-celebration-title {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 36px;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+}
+
+.math-notes-app .mn-celebration-subtitle {
+    font-size: 18px;
+    opacity: 0.9;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 1;
+}
+
+.math-notes-app .mn-celebration-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 36px;
+    background: white;
+    color: var(--mn-accent-primary);
+    border: none;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+    font-family: 'Noto Serif SC', serif;
+}
+
+.math-notes-app .mn-celebration-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.math-notes-app .mn-celebration-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+}
+
+.math-notes-app .mn-celebration-stat {
+    text-align: center;
+}
+
+.math-notes-app .mn-celebration-stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 42px;
+    font-weight: 600;
+}
+
+.math-notes-app .mn-celebration-stat-label {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-top: 4px;
+}
+
+/* Progress Ring */
+.math-notes-app .mn-progress-ring {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 30px;
+    position: relative;
+    z-index: 1;
+}
+
+.math-notes-app .mn-progress-ring svg {
+    transform: rotate(-90deg);
+}
+
+.math-notes-app .mn-progress-ring-bg {
+    fill: none;
+    stroke: rgba(255,255,255,0.2);
+    stroke-width: 12;
+}
+
+.math-notes-app .mn-progress-ring-fill {
+    fill: none;
+    stroke: white;
+    stroke-width: 12;
+    stroke-linecap: round;
+    stroke-dasharray: 565;
+    stroke-dashoffset: 565;
+    transition: stroke-dashoffset 2s ease;
+}
+
+.math-notes-app .mn-progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    font-weight: 600;
+}
+
+/* ========== SUMMARY ========== */
+.math-notes-app .mn-summary {
+    background: linear-gradient(135deg, var(--mn-bg-secondary) 0%, var(--mn-bg-tertiary) 100%);
+    border: 2px solid var(--mn-accent-primary);
+    border-radius: 18px;
+    padding: 32px;
+    margin: 40px 0;
+}
+
+.math-notes-app .mn-summary-title {
+    font-family: 'ZCOOL XiaoWei', serif !important;
+    font-size: 22px !important;
+    color: var(--mn-accent-primary) !important;
+    margin: 0 0 20px 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.math-notes-app .mn-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+}
+
+.math-notes-app .mn-summary-item {
+    padding: 14px 18px;
+    background: var(--mn-bg-primary);
+    border-radius: 10px;
+    border-left: 3px solid var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-summary-item strong {
+    color: var(--mn-accent-primary);
+}
+
+/* ========== END ========== */
+.math-notes-app .mn-end {
+    text-align: center;
+    padding: 36px 0;
+    color: var(--mn-text-muted);
+}
+
+.math-notes-app .mn-end-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.math-notes-app .mn-end-divider::before,
+.math-notes-app .mn-end-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--mn-border-color), transparent);
+}
+
+.math-notes-app .mn-end-icon { font-size: 22px; }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 900px) {
+    .math-notes-app .mn-main { padding: 40px 30px 80px; }
+    .math-notes-app .mn-page-title { font-size: 28px !important; }
+    .math-notes-app .mn-section-title { font-size: 22px !important; }
+    .math-notes-app .mn-celebration-title { font-size: 28px; }
+}
+
+@media (max-width: 768px) {
+    .math-notes-app .mn-sidebar {
+        transform: translateX(-280px);
+    }
+    .math-notes-app .mn-sidebar.open {
+        transform: translateX(0);
+    }
+    .math-notes-app .mn-sidebar-toggle {
+        left: 0;
+    }
+    .math-notes-app .mn-sidebar.open + .mn-sidebar-toggle {
+        left: 280px;
+    }
+    .math-notes-app .mn-main {
+        margin-left: 0;
+        padding: 30px 20px 60px;
+    }
+    .math-notes-app .mn-topic-table {
+        font-size: 12px;
+    }
+    .math-notes-app .mn-celebration-stats {
+        gap: 20px;
+    }
+}
+
+.math-notes-app .katex { font-size: 1.1em; }
+.math-notes-app .katex-display > .katex { font-size: 1.15em; }
+
+/* Confetti animation */
+@keyframes confettiFall {
+    0% {
+        opacity: 1;
+        transform: translateY(-100px) rotate(0deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(400px) rotate(720deg);
+    }
+}
+
+.math-notes-app .mn-confetti.animate {
+    animation: confettiFall 3s ease-out forwards;
+}
+</style>
+
+<div class="math-notes-app" id="mathNotesApp">
+    <!-- Background -->
+    <div class="mn-bg">
+        <div class="mn-bg-orb"></div>
+        <div class="mn-bg-orb"></div>
+        <div class="mn-bg-orb"></div>
+        <div class="mn-bg-grid"></div>
+    </div>
+
+    <div class="mn-layout">
+        <!-- Fixed Sidebar -->
+        <nav class="mn-sidebar" id="mnSidebar">
+            <div class="mn-sidebar-content">
+                <a href="https://husteread.com/index.php/tp/" class="mn-back">
+                    <span>←</span>
+                    <span>返回</span>
+                </a>
+
+                <div class="mn-directory" id="mnDirectory">
+                    <div class="mn-directory-header">
+                        <div class="mn-directory-title">
+                            <span>📁</span>
+                            <span>上级目录</span>
+                        </div>
+                        <span class="mn-directory-arrow">▼</span>
+                    </div>
+                    <div class="mn-directory-list">
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-1/" class="mn-directory-link">第一节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-2/" class="mn-directory-link">第二节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-3/" class="mn-directory-link">第三节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-4/" class="mn-directory-link">第四节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-5/" class="mn-directory-link">第五节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-6/" class="mn-directory-link">第六节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-7/" class="mn-directory-link">第七节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-8/" class="mn-directory-link">第八节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-9/" class="mn-directory-link">第九节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-10/" class="mn-directory-link active">总复习</a>
+                    </div>
+                </div>
+
+                <div class="mn-section-nav">
+                    <div class="mn-section-header">本节目录</div>
+                    <a href="#sec-1" class="mn-nav-link active"><span class="mn-nav-num">01</span>全章主线图</a>
+                    <a href="#sec-2" class="mn-nav-link"><span class="mn-nav-num">02</span>知识点大纲</a>
+                    <a href="#sec-3" class="mn-nav-link"><span class="mn-nav-num">03</span>典型题型</a>
+                    <a href="#sec-4" class="mn-nav-link"><span class="mn-nav-num">04</span>易错点集锦</a>
+                    <a href="#sec-5" class="mn-nav-link"><span class="mn-nav-num">05</span>考前冲刺</a>
+                    <a href="#sec-6" class="mn-nav-link"><span class="mn-nav-num">06</span>🎉 学习完成</a>
+                </div>
+            </div>
+
+            <div class="mn-sidebar-footer">
+                <div class="mn-theme-toggle" id="mnThemeToggle">
+                    <span>主题模式</span>
+                    <span class="mn-theme-icon" id="mnThemeIcon">🌙</span>
+                </div>
+            </div>
+        </nav>
+
+        <button class="mn-sidebar-toggle" id="mnSidebarToggle">
+            <span>◀</span>
+        </button>
+
+        <!-- Main Content -->
+        <main class="mn-main">
+            <header class="mn-page-header">
+                <div class="mn-badge">🏆 总复习</div>
+                <h1 class="mn-page-title">定积分知识体系全景</h1>
+                <p class="mn-page-subtitle">复习大纲 · 题型清单 · 易错点总结 · 考前冲刺指南</p>
+            </header>
+
+            <!-- Section 1: 全章主线图 -->
+            <section class="mn-section" id="sec-1">
+                <span class="mn-section-num">SECTION 01</span>
+                <h2 class="mn-section-title">全章主线：定积分这一章到底在干啥？</h2>
+                
+                <div class="mn-highlight">
+                    <strong>🎯 一句话版本：</strong>
+                    <p style="font-size:18px;margin-top:10px;">从"<strong>面积 = 无数小矩形和的极限</strong>"出发，搭建了一整套：</p>
+                    <p style="text-align:center;font-size:16px;color:var(--mn-accent-primary);margin:15px 0;">
+                        定义 → 可积性 → 性质 → 微积分基本定理 → 计算技巧 → 应用 → 广义积分 → 级数联系
+                    </p>
+                </div>
+
+                <!-- 交互式时间线 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 知识体系时间线</h3>
+                    </div>
+                    <div class="mn-svg-container">
+                        <svg id="timelineSvg" viewBox="0 0 700 400" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+                </div>
+
+                <div class="mn-timeline">
+                    <div class="mn-timeline-item">
+                        <div class="mn-timeline-num">1</div>
+                        <div class="mn-timeline-title">黎曼积分定义</div>
+                        <div class="mn-timeline-content">
+                            分割区间 → 选点 → 黎曼和 $S(T,\xi) = \sum f(\xi_i)\Delta x_i$ → 分割模长 $\lambda \to 0$ → 极限存在 ⇒ 积分存在
+                        </div>
+                        <div class="mn-timeline-keywords">
+                            <span class="mn-keyword">分割–近似–极限</span>
+                            <span class="mn-keyword">带符号面积</span>
+                        </div>
+                    </div>
+
+                    <div class="mn-timeline-item">
+                        <div class="mn-timeline-num">2</div>
+                        <div class="mn-timeline-title">可积性判定</div>
+                        <div class="mn-timeline-content">
+                            达布上和/下和 $U(T), L(T)$ → 振幅 $\omega_i = M_i - m_i$ → 连续函数、单调有界函数一定可积
+                        </div>
+                        <div class="mn-timeline-keywords">
+                            <span class="mn-keyword">sup/inf</span>
+                            <span class="mn-keyword">振幅 ω</span>
+                            <span class="mn-keyword">一致连续</span>
+                        </div>
+                    </div>
+
+                    <div class="mn-timeline-item">
+                        <div class="mn-timeline-num">3</div>
+                        <div class="mn-timeline-title">定积分的性质</div>
+                        <div class="mn-timeline-content">
+                            线性 → 区间可加 → 大/小比较 → 绝对值估计 → 积分第一中值定理
+                        </div>
+                        <div class="mn-timeline-keywords">
+                            <span class="mn-keyword">线性</span>
+                            <span class="mn-keyword">可加性</span>
+                            <span class="mn-keyword">中值定理</span>
+                        </div>
+                    </div>
+
+                    <div class="mn-timeline-item">
+                        <div class="mn-timeline-num">4</div>
+                        <div class="mn-timeline-title">微积分基本定理（FTC）</div>
+                        <div class="mn-timeline-content">
+                            积分函数 $F(x) = \int_a^x f(t)dt$ → $F'(x) = f(x)$（FTC I）→ $\int_a^b f = F(b) - F(a)$（FTC II）
+                        </div>
+                        <div class="mn-timeline-keywords">
+                            <span class="mn-keyword">面积函数的导数=高度</span>
+                            <span class="mn-keyword">牛顿-莱布尼兹</span>
+                        </div>
+                    </div>
+
+                    <div class="mn-timeline-item">
+                        <div class="mn-timeline-num">5</div>
+                        <div class="mn-timeline-title">定积分的计算</div>
+                        <div class="mn-timeline-content">
+                            换元法（链式法则反向）→ 分部积分（乘积求导反向）→ 奇偶性 & 对称区间
+                        </div>
+                        <div class="mn-timeline-keywords">
+                            <span class="mn-keyword">换元</span>
+                            <span class="mn-keyword">分部</span>
+                            <span class="mn-keyword">对称性</span>
+                        </div>
+                    </div>
+
+                    <div class="mn-timeline-item">
+                        <div class="mn-timeline-num">6</div>
+                        <div class="mn-timeline-title">几何与物理应用</div>
+                        <div class="mn-timeline-content">
+                            面积、两曲线间面积 → 弧长 $L = \int\sqrt{1+f'^2}dx$ → 旋转体体积（圆盘法、壳层法）
+                        </div>
+                        <div class="mn-timeline-keywords">
+                            <span class="mn-keyword">弧长</span>
+                            <span class="mn-keyword">体积</span>
+                            <span class="mn-keyword">物理应用</span>
+                        </div>
+                    </div>
+
+                    <div class="mn-timeline-item">
+                        <div class="mn-timeline-num">7</div>
+                        <div class="mn-timeline-title">广义定积分</div>
+                        <div class="mn-timeline-content">
+                            无穷区间 → 端点奇点 → p-型积分 → 比较判别 → 绝对/条件收敛
+                        </div>
+                        <div class="mn-timeline-keywords">
+                            <span class="mn-keyword">极限兜底</span>
+                            <span class="mn-keyword">无穷区间</span>
+                            <span class="mn-keyword">端点奇点</span>
+                        </div>
+                    </div>
+
+                    <div class="mn-timeline-item">
+                        <div class="mn-timeline-num">8</div>
+                        <div class="mn-timeline-title">积分判别法 & 级数</div>
+                        <div class="mn-timeline-content">
+                            $\sum a_n$ 和 $\int f$ 的同敛散 → p-级数、$\frac{1}{n(\ln n)^p}$ 级数敛散性
+                        </div>
+                        <div class="mn-timeline-keywords">
+                            <span class="mn-keyword">Integral Test</span>
+                            <span class="mn-keyword">p-级数</span>
+                            <span class="mn-keyword">同敛散</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 核心感觉</div>
+                    <p style="text-align:center;font-size:18px;font-weight:500;">所有东西都绕着"<strong>极限 + 累积</strong>"转！</p>
+                </div>
+            </section>
+
+            <!-- Section 2: 知识点复习大纲 -->
+            <section class="mn-section" id="sec-2">
+                <span class="mn-section-num">SECTION 02</span>
+                <h2 class="mn-section-title">知识点复习大纲（按板块整理）</h2>
+
+                <!-- 板块1：定义 -->
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 板块1：黎曼定积分的定义与直观</div>
+                    <ul class="mn-list">
+                        <li><strong>分割</strong>：$a = x_0 < x_1 < \cdots < x_n = b$，$\Delta x_i = x_i - x_{i-1}$</li>
+                        <li><strong>选点</strong>：$\xi_i \in [x_{i-1}, x_i]$</li>
+                        <li><strong>黎曼和</strong>：$S(T,\xi) = \sum_{i=1}^n f(\xi_i)\Delta x_i$</li>
+                        <li><strong>分割模长</strong>：$\lambda(T) = \max \Delta x_i$</li>
+                        <li><strong>定义</strong>：若存在 $I$ 使得 $\lambda(T) \to 0$ 时 $S(T,\xi) \to I$，则 $\int_a^b f(x)dx = I$</li>
+                        <li><strong>几何意义</strong>：带符号面积（上方正、下方负）</li>
+                    </ul>
+                </div>
+
+                <!-- 板块2：可积性 -->
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 板块2：可积性判定</div>
+                    <ul class="mn-list">
+                        <li><strong>上/下确界</strong>：$M_i = \sup f(x)$，$m_i = \inf f(x)$（$x \in [x_{i-1}, x_i]$）</li>
+                        <li><strong>上和/下和</strong>：$U(T) = \sum M_i\Delta x_i$，$L(T) = \sum m_i\Delta x_i$</li>
+                        <li><strong>振幅</strong>：$\omega_i = M_i - m_i$，$U(T) - L(T) = \sum\omega_i\Delta x_i$</li>
+                        <li><strong>达布判据</strong>：若 $\lambda(T) \to 0$ 时 $U(T) - L(T) \to 0$，则可积</li>
+                        <li><strong>重要结论</strong>：闭区间上的连续函数、单调有界函数一定黎曼可积；可积函数必有界</li>
+                    </ul>
+                </div>
+
+                <!-- 板块3：性质 -->
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 板块3：定积分的基本性质</div>
+                    <div class="mn-math">$$\int_a^b(\alpha f + \beta g) = \alpha\int_a^b f + \beta\int_a^b g \quad \text{（线性）}$$</div>
+                    <div class="mn-math">$$\int_a^b f = \int_a^c f + \int_c^b f \quad \text{（区间可加）}$$</div>
+                    <div class="mn-math">$$f \geq 0 \Rightarrow \int_a^b f \geq 0 \quad;\quad f \geq g \Rightarrow \int_a^b f \geq \int_a^b g$$</div>
+                    <div class="mn-math">$$\left|\int_a^b f\right| \leq \int_a^b|f| \quad \text{（绝对值估计）}$$</div>
+                    <div class="mn-math">$$\int_a^b f(x)dx = f(\xi)(b-a) \quad \text{（积分第一中值定理）}$$</div>
+                </div>
+
+                <!-- 板块4：FTC -->
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 板块4：微积分基本定理与原函数</div>
+                    <ul class="mn-list">
+                        <li><strong>积分函数</strong>：$F(x) = \int_a^x f(t)dt$ 总是连续</li>
+                        <li><strong>FTC I</strong>：若 $f$ 连续，则 $F'(x) = f(x)$</li>
+                        <li><strong>FTC II（牛顿-莱布尼兹）</strong>：若 $F' = f$，则 $\int_a^b f(x)dx = F(b) - F(a)$</li>
+                        <li><strong>不定积分</strong>：$\int f(x)dx = F(x) + C$</li>
+                    </ul>
+                </div>
+
+                <!-- 板块5：计算方法 -->
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 板块5：定积分的计算方法</div>
+                    <p><strong>换元法</strong>（识别 $f(g(x))g'(x)$ 结构）：</p>
+                    <div class="mn-math">$$\int_a^b f(\varphi(x))\varphi'(x)dx = \int_{\varphi(a)}^{\varphi(b)}f(u)du$$</div>
+                    <p><strong>分部积分法</strong>（乘积结构：幂×指数、幂×三角、ln×其它）：</p>
+                    <div class="mn-math">$$\int_a^b u\,dv = [uv]_a^b - \int_a^b v\,du$$</div>
+                    <p><strong>对称性技巧</strong>（区间 $[-a, a]$）：</p>
+                    <div class="mn-math">$$\text{偶函数：}\int_{-a}^a f = 2\int_0^a f \quad;\quad \text{奇函数：}\int_{-a}^a f = 0$$</div>
+                </div>
+
+                <!-- 板块6：应用 -->
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 板块6：面积、弧长与体积</div>
+                    <ul class="mn-list">
+                        <li><strong>带符号面积</strong>：$\int_a^b f(x)dx$（上正下负）</li>
+                        <li><strong>几何面积</strong>：$S = \int_a^b|f(x)|dx$ 或两曲线间 $S = \int_a^b[f(x) - g(x)]dx$</li>
+                        <li><strong>弧长</strong>：$L = \int_a^b\sqrt{1 + [f'(x)]^2}dx$</li>
+                        <li><strong>旋转体体积（圆盘法）</strong>：$V = \pi\int_a^b[f(x)]^2dx$</li>
+                        <li><strong>壳层法</strong>：$V = 2\pi\int_a^b x\cdot f(x)dx$</li>
+                    </ul>
+                </div>
+
+                <!-- 板块7：广义积分 -->
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 板块7：广义（反常）定积分</div>
+                    <p><strong>无穷区间</strong>：</p>
+                    <div class="mn-math">$$\int_a^{+\infty}f(x)dx := \lim_{R\to+\infty}\int_a^R f(x)dx$$</div>
+                    <p><strong>端点奇点</strong>：</p>
+                    <div class="mn-math">$$\int_0^1 f(x)dx := \lim_{\varepsilon\to 0^+}\int_\varepsilon^1 f(x)dx$$</div>
+                    <p><strong>p-型积分</strong>：</p>
+                    <div class="mn-math">$$\int_1^{+\infty}\frac{1}{x^p}dx: \begin{cases} p>1 \text{ 收敛} \\ p\leq 1 \text{ 发散} \end{cases} \quad \int_0^1\frac{1}{x^p}dx: \begin{cases} p<1 \text{ 收敛} \\ p\geq 1 \text{ 发散} \end{cases}$$</div>
+                </div>
+
+                <!-- 板块8：级数 -->
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 板块8：积分判别法与级数</div>
+                    <p><strong>条件</strong>：$f$ 在 $[1,+\infty)$ 上连续、非负、单调递减，$a_n = f(n)$</p>
+                    <p><strong>结论</strong>：$\sum_{n=1}^{\infty}a_n$ 与 $\int_1^{+\infty}f(x)dx$ <strong>同敛散</strong></p>
+                    <p><strong>应用</strong>：</p>
+                    <ul class="mn-list">
+                        <li>p-级数 $\sum\frac{1}{n^p}$：$p>1$ 收敛，$p\leq 1$ 发散</li>
+                        <li>$\sum\frac{1}{n(\ln n)^p}$：$p>1$ 收敛，$p\leq 1$ 发散</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 3: 典型题型 -->
+            <section class="mn-section" id="sec-3">
+                <span class="mn-section-num">SECTION 03</span>
+                <h2 class="mn-section-title">典型题型总表</h2>
+
+                <table class="mn-topic-table">
+                    <thead>
+                        <tr>
+                            <th style="width:20%;">题型</th>
+                            <th style="width:35%;">识别特征</th>
+                            <th style="width:45%;">方法要点</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>① 基础计算</strong></td>
+                            <td>区间有限；被积函数是多项式、简单三角、指数等</td>
+                            <td>直接找原函数 → 牛顿-莱布尼兹公式<br>例：$\int_0^1 x^2 dx$，$\int_0^\pi \sin x\,dx$</td>
+                        </tr>
+                        <tr>
+                            <td><strong>② 换元积分</strong></td>
+                            <td>形如 $f(g(x))g'(x)$；含复合函数结构</td>
+                            <td>令 $u = g(x)$，变上下限<br>例：$\int_0^1 2xe^{x^2}dx$</td>
+                        </tr>
+                        <tr>
+                            <td><strong>③ 分部积分</strong></td>
+                            <td>乘积结构：幂×指数、幂×三角、ln×其它</td>
+                            <td>选 u（导完简单）、选 dv（易积分）<br>例：$\int_0^\pi x\sin x\,dx$</td>
+                        </tr>
+                        <tr>
+                            <td><strong>④ 对称性</strong></td>
+                            <td>区间 $[-a, a]$；含奇偶函数</td>
+                            <td>先判奇偶：奇→0，偶→2倍<br>例：$\int_{-1}^1(x^3 + x^2)dx$</td>
+                        </tr>
+                        <tr>
+                            <td><strong>⑤ 面积题</strong></td>
+                            <td>求曲线与坐标轴/两曲线围成面积</td>
+                            <td>画图 → 确定上下 → $\int(上-下)dx$<br>⚠️ 函数变号要分段或取绝对值</td>
+                        </tr>
+                        <tr>
+                            <td><strong>⑥ 弧长/体积</strong></td>
+                            <td>求曲线长度、旋转体体积</td>
+                            <td>弧长：$\int\sqrt{1+f'^2}dx$<br>体积：$\pi\int f^2 dx$（圆盘法）</td>
+                        </tr>
+                        <tr>
+                            <td><strong>⑦ 广义积分</strong></td>
+                            <td>上下限有 $\pm\infty$；端点有奇点</td>
+                            <td>写成极限形式 → 比较 p-型积分<br>例：$\int_1^\infty\frac{1}{x^2}dx = \lim_{R\to\infty}\int_1^R...$</td>
+                        </tr>
+                        <tr>
+                            <td><strong>⑧ 级数判别</strong></td>
+                            <td>$a_n = f(n)$，f 像光滑函数</td>
+                            <td>积分判别法：$\sum a_n$ 与 $\int f$ 同敛散<br>常与 p-型比较结合</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Section 4: 易错点 -->
+            <section class="mn-section" id="sec-4">
+                <span class="mn-section-num">SECTION 04</span>
+                <h2 class="mn-section-title">易错点 / 送命点集锦</h2>
+
+                <div class="mn-mistake-grid">
+                    <div class="mn-mistake-card">
+                        <div class="mn-mistake-num">1</div>
+                        <div class="mn-mistake-title">"定积分 = 面积"用错场景</div>
+                        <div class="mn-mistake-desc">
+                            函数有负值时，$\int f$ 是<strong>净面积</strong>，不是"总面积"！<br>
+                            真正几何面积要用 $\int|f|$ 或分段处理。
+                        </div>
+                    </div>
+
+                    <div class="mn-mistake-card">
+                        <div class="mn-mistake-num">2</div>
+                        <div class="mn-mistake-title">奇偶函数判错 / 区间不对称</div>
+                        <div class="mn-mistake-desc">
+                            只有 $[-a, a]$ 对称区间才能用奇偶性！<br>
+                            $[0,a]$、$[1,2]$ 这种不能乱说"奇函数积分为0"。
+                        </div>
+                    </div>
+
+                    <div class="mn-mistake-card">
+                        <div class="mn-mistake-num">3</div>
+                        <div class="mn-mistake-title">分部积分选错 u / dv</div>
+                        <div class="mn-mistake-desc">
+                            选 u 导完更复杂，越积越糊！<br>
+                            经验：对 $x^n e^x$、$x^n\sin x$、$x^n\ln x$，优先把幂或 ln 当 u。
+                        </div>
+                    </div>
+
+                    <div class="mn-mistake-card">
+                        <div class="mn-mistake-num">4</div>
+                        <div class="mn-mistake-title">广义积分忘写极限</div>
+                        <div class="mn-mistake-desc">
+                            对 $\int_0^1\frac{1}{\sqrt{x}}dx$ 直接写 $[\sqrt{x}]_0^1$ 不严谨！<br>
+                            要写 $\lim_{\varepsilon\to 0^+}\int_\varepsilon^1...$
+                        </div>
+                    </div>
+
+                    <div class="mn-mistake-card">
+                        <div class="mn-mistake-num">5</div>
+                        <div class="mn-mistake-title">p-型结果记反</div>
+                        <div class="mn-mistake-desc">
+                            建议刻意记：<br>
+                            $[1,\infty)$：p>1 收敛，p≤1 发散<br>
+                            $(0,1]$：p<1 收敛，p≥1 发散<br>
+                            <strong>对"1"两侧的方向千万别搞混！</strong>
+                        </div>
+                    </div>
+
+                    <div class="mn-mistake-card">
+                        <div class="mn-mistake-num">6</div>
+                        <div class="mn-mistake-title">积分判别法条件没检查</div>
+                        <div class="mn-mistake-desc">
+                            f ≥ 0、单调递减、连续是必要条件！<br>
+                            不是随便一个 f 就能用积分判别法。
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mn-warning">
+                    <div class="mn-warning-title">⚠️ 考试前请重点复习这些易错点！</div>
+                    <p>这些都是历年考试中学生频繁失分的地方。建议把每个错误类型都找一道例题做一遍，确保不会再犯。</p>
+                </div>
+            </section>
+
+            <!-- Section 5: 考前冲刺 -->
+            <section class="mn-section" id="sec-5">
+                <span class="mn-section-num">SECTION 05</span>
+                <h2 class="mn-section-title">考前一周复习建议</h2>
+
+                <p>按照这个"7天冲刺计划"来安排你的复习：</p>
+
+                <div class="mn-plan-grid" id="planGrid">
+                    <div class="mn-plan-day active" data-day="1">
+                        <div class="mn-plan-day-num">1-2</div>
+                        <div class="mn-plan-day-label">基础知识</div>
+                    </div>
+                    <div class="mn-plan-day" data-day="2">
+                        <div class="mn-plan-day-num">3</div>
+                        <div class="mn-plan-day-label">计算技巧</div>
+                    </div>
+                    <div class="mn-plan-day" data-day="3">
+                        <div class="mn-plan-day-num">4</div>
+                        <div class="mn-plan-day-label">几何应用</div>
+                    </div>
+                    <div class="mn-plan-day" data-day="4">
+                        <div class="mn-plan-day-num">5</div>
+                        <div class="mn-plan-day-label">广义积分</div>
+                    </div>
+                    <div class="mn-plan-day" data-day="5">
+                        <div class="mn-plan-day-num">6</div>
+                        <div class="mn-plan-day-label">级数+综合</div>
+                    </div>
+                    <div class="mn-plan-day" data-day="6">
+                        <div class="mn-plan-day-num">7</div>
+                        <div class="mn-plan-day-label">错题+导图</div>
+                    </div>
+                </div>
+
+                <div class="mn-plan-content" id="planContent">
+                    <div id="plan1" class="plan-detail">
+                        <h4 style="color:var(--mn-accent-primary);margin-bottom:10px;">📚 Day 1-2：基础知识 + 性质回顾</h4>
+                        <ul class="mn-list">
+                            <li>把定积分定义、可积性、基本性质、FTC 都<strong>再写一遍</strong></li>
+                            <li>做几道基础计算题，找回手感</li>
+                            <li>重点理解：黎曼和的极限、积分中值定理</li>
+                        </ul>
+                    </div>
+                    <div id="plan2" class="plan-detail" style="display:none;">
+                        <h4 style="color:var(--mn-accent-primary);margin-bottom:10px;">🔧 Day 3：计算技巧专题</h4>
+                        <ul class="mn-list">
+                            <li>集中做 <strong>换元 + 分部 + 奇偶对称</strong> 一套题</li>
+                            <li>目标：看到题就知道用哪种方法</li>
+                            <li>特别注意：换元后上下限的变换、分部积分 u/dv 的选择</li>
+                        </ul>
+                    </div>
+                    <div id="plan3" class="plan-detail" style="display:none;">
+                        <h4 style="color:var(--mn-accent-primary);margin-bottom:10px;">📐 Day 4：几何应用专题</h4>
+                        <ul class="mn-list">
+                            <li>面积、两曲线间面积、弧长、旋转体体积</li>
+                            <li>至少每类做 <strong>2-3 题</strong>，对公式写熟</li>
+                            <li>画图技巧：先画草图确定积分区间和上下曲线</li>
+                        </ul>
+                    </div>
+                    <div id="plan4" class="plan-detail" style="display:none;">
+                        <h4 style="color:var(--mn-accent-primary);margin-bottom:10px;">♾️ Day 5：广义积分 + p-型 + 比较判别</h4>
+                        <ul class="mn-list">
+                            <li>专门刷：$\int_1^\infty 1/x^p$、$\int_0^1 1/x^p$、$\int 1/(x\ln^p x)$ 这类</li>
+                            <li>每道题都写清楚"<strong>先定义成极限，再算极限</strong>"</li>
+                            <li>练习比较判别法：找上界/下界与 p-型比较</li>
+                        </ul>
+                    </div>
+                    <div id="plan5" class="plan-detail" style="display:none;">
+                        <h4 style="color:var(--mn-accent-primary);margin-bottom:10px;">🔗 Day 6：级数与积分判别 + 综合题</h4>
+                        <ul class="mn-list">
+                            <li>做"级数收敛性 + 积分判别"的题目</li>
+                            <li>再做前面所有内容混合的<strong>综合题</strong></li>
+                            <li>例如：有广义积分、有换元、有比较判别的大题</li>
+                        </ul>
+                    </div>
+                    <div id="plan6" class="plan-detail" style="display:none;">
+                        <h4 style="color:var(--mn-accent-primary);margin-bottom:10px;">✅ Day 7：整理错题 + 画思维导图</h4>
+                        <ul class="mn-list">
+                            <li>把一周内任何做错的题<strong>分类</strong>：概念错 / 判别条件用错 / 计算粗心</li>
+                            <li>自己画一张"<strong>定积分总导图</strong>"</li>
+                            <li>最后过一遍易错点清单，确保心中有数</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: 庆祝完成 -->
+            <section class="mn-section" id="sec-6">
+                <span class="mn-section-num">SECTION 06</span>
+                <h2 class="mn-section-title">🎉 恭喜完成学习！</h2>
+
+                <div class="mn-celebration" id="celebration">
+                    <div class="mn-celebration-bg" id="confettiContainer"></div>
+                    
+                    <div class="mn-progress-ring" id="progressRing">
+                        <svg width="200" height="200">
+                            <circle class="mn-progress-ring-bg" cx="100" cy="100" r="90"/>
+                            <circle class="mn-progress-ring-fill" id="progressCircle" cx="100" cy="100" r="90"/>
+                        </svg>
+                        <div class="mn-progress-text" id="progressText">0%</div>
+                    </div>
+                    
+                    <h2 class="mn-celebration-title">定积分章节全部完成！</h2>
+                    <p class="mn-celebration-subtitle">从黎曼和到积分判别法，你已经走过了完整的学习旅程</p>
+                    
+                    <button class="mn-celebration-btn" id="celebrateBtn">
+                        <span>🎊</span>
+                        <span>点击庆祝一下！</span>
+                    </button>
+
+                    <div class="mn-celebration-stats">
+                        <div class="mn-celebration-stat">
+                            <div class="mn-celebration-stat-value" id="statSections">10</div>
+                            <div class="mn-celebration-stat-label">章节完成</div>
+                        </div>
+                        <div class="mn-celebration-stat">
+                            <div class="mn-celebration-stat-value" id="statFormulas">50+</div>
+                            <div class="mn-celebration-stat-label">核心公式</div>
+                        </div>
+                        <div class="mn-celebration-stat">
+                            <div class="mn-celebration-stat-value" id="statConcepts">8</div>
+                            <div class="mn-celebration-stat-label">知识板块</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 互动式成就展示 -->
+                <div class="mn-viz" style="margin-top:40px;">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">🏅 你的学习成就</h3>
+                    </div>
+                    <div class="mn-svg-container">
+                        <svg id="achievementSvg" viewBox="0 0 700 300" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+                    <p style="text-align:center;font-size:14px;color:var(--mn-text-muted);margin-top:12px;">点击每个模块查看掌握要点！</p>
+                </div>
+
+                <div class="mn-summary">
+                    <h3 class="mn-summary-title"><span>🎓</span> 定积分大章完美收官</h3>
+                    <div class="mn-summary-grid">
+                        <div class="mn-summary-item">
+                            <strong>核心思想</strong><br>
+                            分割–近似–极限<br>
+                            连续累积 = 积分
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>灵魂公式</strong><br>
+                            $\int_a^b f = F(b) - F(a)$<br>
+                            微积分基本定理
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>计算三板斧</strong><br>
+                            换元、分部、对称<br>
+                            熟能生巧
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>应用公式</strong><br>
+                            弧长、体积、面积<br>
+                            几何直觉
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>广义积分</strong><br>
+                            极限兜底<br>
+                            p-型判别
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>级数桥梁</strong><br>
+                            积分判别法<br>
+                            连续⇔离散
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mn-end">
+                    <div class="mn-end-divider"><span class="mn-end-icon">🏆</span></div>
+                    <p style="font-size:18px;color:var(--mn-accent-primary);font-weight:500;">
+                        定积分 · 10块讲完版 · 完美闭环
+                    </p>
+                    <p style="margin-top:10px;">祝你考试顺利，逢考必过！💪</p>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    
+    var app = document.getElementById('mathNotesApp');
+    if (!app) return;
+    
+    // ========== SIDEBAR ==========
+    var sidebar = document.getElementById('mnSidebar');
+    var sidebarToggle = document.getElementById('mnSidebarToggle');
+    
+    sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+    });
+    
+    var directory = document.getElementById('mnDirectory');
+    var directoryHeader = directory.querySelector('.mn-directory-header');
+    directoryHeader.addEventListener('click', function() {
+        directory.classList.toggle('open');
+    });
+    
+    // ========== THEME ==========
+    var themeToggle = document.getElementById('mnThemeToggle');
+    var themeIcon = document.getElementById('mnThemeIcon');
+    
+    var savedTheme = localStorage.getItem('mn-theme') || 'light';
+    app.setAttribute('data-theme', savedTheme);
+    themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+    
+    themeToggle.addEventListener('click', function() {
+        var current = app.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        app.setAttribute('data-theme', next);
+        localStorage.setItem('mn-theme', next);
+        themeIcon.textContent = next === 'dark' ? '☀️' : '🌙';
+        redrawAll();
+    });
+    
+    // ========== NAV LINKS ==========
+    var navLinks = app.querySelectorAll('.mn-nav-link');
+    navLinks.forEach(function(link) {
+        link.addEventListener('click', function() {
+            navLinks.forEach(function(l) { l.classList.remove('active'); });
+            this.classList.add('active');
+        });
+    });
+    
+    // ========== HELPERS ==========
+    function getColors() {
+        var style = getComputedStyle(app);
+        return {
+            curve: style.getPropertyValue('--mn-svg-curve').trim() || '#d97706',
+            curve2: style.getPropertyValue('--mn-svg-curve2').trim() || '#8b5cf6',
+            fill: style.getPropertyValue('--mn-svg-fill').trim() || 'rgba(217,119,6,0.25)',
+            fill2: style.getPropertyValue('--mn-svg-fill2').trim() || 'rgba(139,92,246,0.25)',
+            grid: style.getPropertyValue('--mn-svg-grid').trim() || '#fef3c7',
+            axis: style.getPropertyValue('--mn-svg-axis').trim() || '#78350f',
+            bg: style.getPropertyValue('--mn-bg-secondary').trim() || '#ffffff',
+            text: style.getPropertyValue('--mn-text-primary').trim() || '#451a03',
+            primary: style.getPropertyValue('--mn-accent-primary').trim() || '#d97706',
+            secondary: style.getPropertyValue('--mn-accent-secondary').trim() || '#f59e0b',
+            tertiary: style.getPropertyValue('--mn-accent-tertiary').trim() || '#8b5cf6',
+            teal: style.getPropertyValue('--mn-accent-teal').trim() || '#14b8a6',
+            rose: style.getPropertyValue('--mn-accent-rose').trim() || '#e11d48',
+            blue: style.getPropertyValue('--mn-accent-blue').trim() || '#3b82f6'
+        };
+    }
+    
+    // ========== STUDY PLAN INTERACTION ==========
+    var planDays = document.querySelectorAll('.mn-plan-day');
+    var planDetails = document.querySelectorAll('.plan-detail');
+    
+    planDays.forEach(function(day) {
+        day.addEventListener('click', function() {
+            var dayNum = this.getAttribute('data-day');
+            
+            planDays.forEach(function(d) { d.classList.remove('active'); });
+            this.classList.add('active');
+            
+            planDetails.forEach(function(detail) { detail.style.display = 'none'; });
+            document.getElementById('plan' + dayNum).style.display = 'block';
+        });
+    });
+    
+    // ========== TIMELINE SVG ==========
+    function drawTimeline() {
+        var svg = document.getElementById('timelineSvg');
+        var colors = getColors();
+        var width = 700, height = 400;
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Define 8 nodes in a flowing path
+        var nodes = [
+            {x: 80, y: 60, label: '定义', icon: '📖'},
+            {x: 200, y: 100, label: '可积性', icon: '✓'},
+            {x: 320, y: 60, label: '性质', icon: '📋'},
+            {x: 440, y: 100, label: 'FTC', icon: '⚡'},
+            {x: 560, y: 60, label: '计算', icon: '🔧'},
+            {x: 620, y: 160, label: '应用', icon: '📐'},
+            {x: 500, y: 240, label: '广义', icon: '♾️'},
+            {x: 350, y: 300, label: '级数', icon: '∑'}
+        ];
+        
+        // Draw connecting path
+        var pathD = 'M ' + nodes[0].x + ' ' + nodes[0].y;
+        for (var i = 1; i < nodes.length; i++) {
+            var prev = nodes[i-1];
+            var curr = nodes[i];
+            var midX = (prev.x + curr.x) / 2;
+            pathD += ' Q ' + midX + ' ' + prev.y + ' ' + curr.x + ' ' + curr.y;
+        }
+        
+        content += '<path d="'+pathD+'" fill="none" stroke="url(#timelineGrad)" stroke-width="4" stroke-linecap="round"/>';
+        
+        // Gradient
+        content += '<defs><linearGradient id="timelineGrad" x1="0%" y1="0%" x2="100%" y2="100%">';
+        content += '<stop offset="0%" style="stop-color:'+colors.primary+'"/>';
+        content += '<stop offset="50%" style="stop-color:'+colors.secondary+'"/>';
+        content += '<stop offset="100%" style="stop-color:'+colors.tertiary+'"/>';
+        content += '</linearGradient></defs>';
+        
+        // Draw nodes
+        nodes.forEach(function(node, i) {
+            content += '<circle cx="'+node.x+'" cy="'+node.y+'" r="28" fill="'+colors.bg+'" stroke="'+colors.primary+'" stroke-width="3"/>';
+            content += '<text x="'+node.x+'" y="'+(node.y-5)+'" fill="'+colors.text+'" font-size="18" text-anchor="middle">'+node.icon+'</text>';
+            content += '<text x="'+node.x+'" y="'+(node.y+45)+'" fill="'+colors.text+'" font-size="12" text-anchor="middle" font-weight="500">'+node.label+'</text>';
+        });
+        
+        // Title
+        content += '<text x="350" y="380" fill="'+colors.primary+'" font-size="14" text-anchor="middle" font-weight="600">定积分知识流程图</text>';
+        
+        svg.innerHTML = content;
+    }
+    
+    // ========== ACHIEVEMENT SVG ==========
+    function drawAchievement() {
+        var svg = document.getElementById('achievementSvg');
+        var colors = getColors();
+        var width = 700, height = 300;
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // 8 achievement badges
+        var badges = [
+            {x: 90, y: 80, label: '定义', color: colors.primary, score: 100},
+            {x: 220, y: 80, label: '可积性', color: colors.secondary, score: 100},
+            {x: 350, y: 80, label: '性质', color: colors.tertiary, score: 100},
+            {x: 480, y: 80, label: 'FTC', color: colors.teal, score: 100},
+            {x: 610, y: 80, label: '计算', color: colors.blue, score: 100},
+            {x: 155, y: 200, label: '应用', color: colors.rose, score: 100},
+            {x: 350, y: 200, label: '广义积分', color: colors.primary, score: 100},
+            {x: 545, y: 200, label: '级数', color: colors.tertiary, score: 100}
+        ];
+        
+        badges.forEach(function(badge, i) {
+            // Hexagon shape
+            var size = 45;
+            var points = [];
+            for (var j = 0; j < 6; j++) {
+                var angle = (j * 60 - 30) * Math.PI / 180;
+                points.push((badge.x + size * Math.cos(angle)) + ',' + (badge.y + size * Math.sin(angle)));
+            }
+            
+            content += '<polygon points="'+points.join(' ')+'" fill="'+badge.color+'" opacity="0.15" stroke="'+badge.color+'" stroke-width="2"/>';
+            content += '<text x="'+badge.x+'" y="'+(badge.y+5)+'" fill="'+badge.color+'" font-size="14" text-anchor="middle" font-weight="600">✓</text>';
+            content += '<text x="'+badge.x+'" y="'+(badge.y+65)+'" fill="'+colors.text+'" font-size="12" text-anchor="middle">'+badge.label+'</text>';
+            content += '<text x="'+badge.x+'" y="'+(badge.y+80)+'" fill="'+badge.color+'" font-size="11" text-anchor="middle" font-family="JetBrains Mono">'+badge.score+'%</text>';
+        });
+        
+        svg.innerHTML = content;
+    }
+    
+    // ========== CELEBRATION ==========
+    var celebrateBtn = document.getElementById('celebrateBtn');
+    var progressCircle = document.getElementById('progressCircle');
+    var progressText = document.getElementById('progressText');
+    var confettiContainer = document.getElementById('confettiContainer');
+    var celebrated = false;
+    
+    function animateProgress() {
+        var circumference = 2 * Math.PI * 90; // r = 90
+        progressCircle.style.strokeDasharray = circumference;
+        progressCircle.style.strokeDashoffset = circumference;
+        
+        setTimeout(function() {
+            progressCircle.style.strokeDashoffset = 0;
+        }, 100);
+        
+        // Animate percentage
+        var current = 0;
+        var target = 100;
+        var duration = 2000;
+        var start = Date.now();
+        
+        function updateProgress() {
+            var elapsed = Date.now() - start;
+            var progress = Math.min(elapsed / duration, 1);
+            current = Math.round(progress * target);
+            progressText.textContent = current + '%';
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateProgress);
+            }
+        }
+        updateProgress();
+    }
+    
+    function createConfetti() {
+        var confettiColors = ['#d97706', '#f59e0b', '#8b5cf6', '#14b8a6', '#e11d48', '#3b82f6'];
+        
+        for (var i = 0; i < 50; i++) {
+            var confetti = document.createElement('div');
+            confetti.className = 'mn-confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.top = '-20px';
+            confetti.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+            confetti.style.width = (Math.random() * 10 + 5) + 'px';
+            confetti.style.height = (Math.random() * 10 + 5) + 'px';
+            confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+            confetti.style.animationDelay = (Math.random() * 2) + 's';
+            confettiContainer.appendChild(confetti);
+            
+            setTimeout(function(el) {
+                el.classList.add('animate');
+            }, 10, confetti);
+        }
+        
+        // Clean up after animation
+        setTimeout(function() {
+            confettiContainer.innerHTML = '';
+        }, 5000);
+    }
+    
+    // Animate progress on page load (after a delay)
+    setTimeout(animateProgress, 500);
+    
+    celebrateBtn.addEventListener('click', function() {
+        createConfetti();
+        
+        // Button feedback
+        this.innerHTML = '<span>🎉</span><span>太棒了！</span>';
+        this.style.transform = 'scale(1.1)';
+        
+        setTimeout(function() {
+            celebrateBtn.innerHTML = '<span>🎊</span><span>再来一次！</span>';
+            celebrateBtn.style.transform = 'scale(1)';
+        }, 1500);
+    });
+    
+    // ========== REDRAW ALL ==========
+    function redrawAll() {
+        drawTimeline();
+        drawAchievement();
+    }
+    
+    // ========== INIT ==========
+    drawTimeline();
+    drawAchievement();
+    
+    // ========== KATEX ==========
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'function') {
+            renderMathInElement(app, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError: false
+            });
+        } else {
+            setTimeout(initKaTeX, 100);
+        }
+    }
+    initKaTeX();
+})();
+</script>
+
+</body>
+</html

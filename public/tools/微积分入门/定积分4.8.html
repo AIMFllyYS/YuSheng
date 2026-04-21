@@ -1,0 +1,2197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第八节 · 广义（反常）定积分 - 数学笔记</title>
+    
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=ZCOOL+XiaoWei&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<style>
+/* ========== SCOPED STYLES - EMERALD/TEAL THEME ========== */
+.math-notes-app {
+    --mn-bg-primary: #f0fdf4;
+    --mn-bg-secondary: #ffffff;
+    --mn-bg-tertiary: #dcfce7;
+    --mn-bg-glass: rgba(255, 255, 255, 0.95);
+    --mn-text-primary: #14532d;
+    --mn-text-secondary: #166534;
+    --mn-text-muted: #4d7c5f;
+    --mn-accent-primary: #059669;
+    --mn-accent-secondary: #10b981;
+    --mn-accent-tertiary: #f59e0b;
+    --mn-accent-rose: #e11d48;
+    --mn-accent-blue: #3b82f6;
+    --mn-border-color: rgba(5, 150, 105, 0.12);
+    --mn-shadow-soft: 0 4px 24px rgba(5, 150, 105, 0.08);
+    --mn-shadow-medium: 0 12px 48px rgba(5, 150, 105, 0.15);
+    --mn-nav-bg: rgba(255, 255, 255, 0.98);
+    --mn-svg-curve: #059669;
+    --mn-svg-curve2: #f59e0b;
+    --mn-svg-fill: rgba(5, 150, 105, 0.25);
+    --mn-svg-fill2: rgba(245, 158, 11, 0.25);
+    --mn-svg-grid: #d1fae5;
+    --mn-svg-axis: #166534;
+    --mn-svg-diverge: #e11d48;
+    --mn-svg-converge: #059669;
+}
+
+.math-notes-app[data-theme="dark"] {
+    --mn-bg-primary: #0f1f17;
+    --mn-bg-secondary: #162820;
+    --mn-bg-tertiary: #1e3a2c;
+    --mn-bg-glass: rgba(22, 40, 32, 0.98);
+    --mn-text-primary: #ecfdf5;
+    --mn-text-secondary: #a7f3d0;
+    --mn-text-muted: #6ee7b7;
+    --mn-accent-primary: #34d399;
+    --mn-accent-secondary: #6ee7b7;
+    --mn-accent-tertiary: #fbbf24;
+    --mn-accent-rose: #fb7185;
+    --mn-accent-blue: #60a5fa;
+    --mn-border-color: rgba(52, 211, 153, 0.15);
+    --mn-shadow-soft: 0 4px 24px rgba(0,0,0,0.4);
+    --mn-shadow-medium: 0 12px 48px rgba(0,0,0,0.5);
+    --mn-nav-bg: rgba(15, 31, 23, 0.98);
+    --mn-svg-curve: #34d399;
+    --mn-svg-curve2: #fbbf24;
+    --mn-svg-fill: rgba(52, 211, 153, 0.3);
+    --mn-svg-fill2: rgba(251, 191, 36, 0.3);
+    --mn-svg-grid: #1e3a2c;
+    --mn-svg-axis: #a7f3d0;
+    --mn-svg-diverge: #fb7185;
+    --mn-svg-converge: #34d399;
+}
+
+.math-notes-app,
+.math-notes-app * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box !important;
+}
+
+.math-notes-app {
+    font-family: 'Noto Serif SC', 'SimSun', serif !important;
+    background: var(--mn-bg-primary) !important;
+    color: var(--mn-text-primary) !important;
+    line-height: 1.9 !important;
+    font-size: 17px !important;
+    position: relative !important;
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* ========== BACKGROUND ========== */
+.math-notes-app .mn-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.math-notes-app .mn-bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.3;
+    animation: mnFloat 24s ease-in-out infinite;
+}
+
+.math-notes-app .mn-bg-orb:nth-child(1) {
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, var(--mn-accent-primary) 0%, transparent 70%);
+    top: -130px;
+    right: -50px;
+}
+
+.math-notes-app .mn-bg-orb:nth-child(2) {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--mn-accent-secondary) 0%, transparent 70%);
+    bottom: -150px;
+    left: -70px;
+    animation-delay: -7s;
+}
+
+.math-notes-app .mn-bg-orb:nth-child(3) {
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, var(--mn-accent-tertiary) 0%, transparent 70%);
+    top: 50%;
+    left: 55%;
+    animation-delay: -15s;
+    opacity: 0.2;
+}
+
+@keyframes mnFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(20px, -25px) scale(1.03); }
+    66% { transform: translate(-15px, 15px) scale(0.97); }
+}
+
+.math-notes-app .mn-bg-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(var(--mn-border-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--mn-border-color) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.5;
+}
+
+/* ========== LAYOUT ========== */
+.math-notes-app .mn-layout {
+    display: flex;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+}
+
+/* ========== FIXED SIDEBAR ========== */
+.math-notes-app .mn-sidebar {
+    width: 280px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    background: var(--mn-nav-bg);
+    border-right: 1px solid var(--mn-border-color);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    box-shadow: var(--mn-shadow-soft);
+}
+
+.math-notes-app .mn-sidebar.collapsed {
+    transform: translateX(-280px);
+}
+
+.math-notes-app .mn-sidebar-toggle {
+    position: fixed;
+    left: 280px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 60px;
+    background: var(--mn-nav-bg);
+    border: 1px solid var(--mn-border-color);
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    transition: all 0.3s ease;
+}
+
+.math-notes-app .mn-sidebar.collapsed + .mn-sidebar-toggle {
+    left: 0;
+}
+
+.math-notes-app .mn-sidebar-toggle:hover {
+    width: 32px;
+    background: var(--mn-bg-tertiary);
+}
+
+.math-notes-app .mn-sidebar-toggle span {
+    font-size: 14px;
+    color: var(--mn-text-muted);
+    transition: transform 0.3s ease;
+}
+
+.math-notes-app .mn-sidebar.collapsed + .mn-sidebar-toggle span {
+    transform: rotate(180deg);
+}
+
+.math-notes-app .mn-sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 90px;
+}
+
+.math-notes-app .mn-sidebar-content::-webkit-scrollbar { width: 4px; }
+.math-notes-app .mn-sidebar-content::-webkit-scrollbar-thumb { background: var(--mn-border-color); border-radius: 2px; }
+
+/* Back & Directory */
+.math-notes-app .mn-back {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 20px;
+    color: var(--mn-text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 15px;
+    border-bottom: 1px solid var(--mn-border-color);
+    transition: all 0.2s ease;
+}
+
+.math-notes-app .mn-back:hover {
+    background: var(--mn-bg-tertiary);
+    color: var(--mn-accent-primary) !important;
+}
+
+.math-notes-app .mn-directory {
+    border-bottom: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-directory-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    user-select: none;
+}
+
+.math-notes-app .mn-directory-header:hover {
+    background: var(--mn-bg-tertiary);
+}
+
+.math-notes-app .mn-directory-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--mn-text-primary);
+}
+
+.math-notes-app .mn-directory-arrow {
+    font-size: 12px;
+    color: var(--mn-text-muted);
+    transition: transform 0.3s ease;
+}
+
+.math-notes-app .mn-directory.open .mn-directory-arrow {
+    transform: rotate(180deg);
+}
+
+.math-notes-app .mn-directory-list {
+    max-height: 0;
+    overflow: hidden;
+    background: var(--mn-bg-tertiary);
+    transition: max-height 0.3s ease;
+}
+
+.math-notes-app .mn-directory.open .mn-directory-list {
+    max-height: 400px;
+}
+
+.math-notes-app .mn-directory-link {
+    display: block !important;
+    padding: 10px 20px 10px 44px;
+    color: var(--mn-text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 14px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.math-notes-app .mn-directory-link::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--mn-border-color);
+    transition: background 0.2s ease;
+}
+
+.math-notes-app .mn-directory-link:hover {
+    background: rgba(5, 150, 105, 0.05);
+    color: var(--mn-text-primary) !important;
+}
+
+.math-notes-app .mn-directory-link:hover::before {
+    background: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-directory-link.active {
+    color: var(--mn-accent-primary) !important;
+    font-weight: 500;
+    background: rgba(5, 150, 105, 0.08);
+}
+
+.math-notes-app .mn-directory-link.active::before {
+    background: var(--mn-accent-primary);
+}
+
+/* Section Nav */
+.math-notes-app .mn-section-nav {
+    padding: 16px 0;
+}
+
+.math-notes-app .mn-section-header {
+    padding: 0 20px 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--mn-text-muted);
+    font-weight: 600;
+}
+
+.math-notes-app .mn-nav-link {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: var(--mn-text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.math-notes-app .mn-nav-link:hover {
+    background: var(--mn-bg-tertiary);
+    color: var(--mn-text-primary) !important;
+}
+
+.math-notes-app .mn-nav-link.active {
+    background: rgba(5, 150, 105, 0.1);
+    color: var(--mn-accent-primary) !important;
+    font-weight: 500;
+    border-left-color: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-nav-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--mn-text-muted);
+    width: 22px;
+}
+
+/* Sidebar Footer */
+.math-notes-app .mn-sidebar-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 20px;
+    background: var(--mn-nav-bg);
+    border-top: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--mn-bg-tertiary);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.math-notes-app .mn-theme-toggle:hover {
+    border-color: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-theme-toggle span { font-size: 14px; color: var(--mn-text-secondary); }
+.math-notes-app .mn-theme-icon { font-size: 18px; }
+
+/* ========== MAIN CONTENT ========== */
+.math-notes-app .mn-main {
+    flex: 1;
+    margin-left: 280px;
+    padding: 50px 60px 100px;
+    max-width: calc(280px + 880px);
+    min-width: 0;
+    transition: margin-left 0.3s ease;
+}
+
+.math-notes-app .mn-sidebar.collapsed ~ .mn-main {
+    margin-left: 0;
+}
+
+/* ========== PAGE HEADER ========== */
+.math-notes-app .mn-page-header {
+    margin-bottom: 50px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    color: white !important;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-page-title {
+    font-family: 'ZCOOL XiaoWei', serif !important;
+    font-size: 34px !important;
+    font-weight: 400 !important;
+    color: var(--mn-text-primary) !important;
+    margin: 0 0 14px 0 !important;
+    padding: 0 !important;
+    line-height: 1.3 !important;
+    border: none !important;
+}
+
+.math-notes-app .mn-page-subtitle {
+    font-size: 16px;
+    color: var(--mn-text-secondary);
+    margin: 0;
+    max-width: 600px;
+}
+
+/* ========== SECTIONS ========== */
+.math-notes-app .mn-section {
+    margin-bottom: 56px;
+}
+
+.math-notes-app .mn-section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--mn-accent-primary);
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.math-notes-app .mn-section-title {
+    font-family: 'ZCOOL XiaoWei', serif !important;
+    font-size: 24px !important;
+    font-weight: 400 !important;
+    color: var(--mn-text-primary) !important;
+    margin: 0 0 20px 0 !important;
+    padding: 0 0 10px 0 !important;
+    border-bottom: 2px solid var(--mn-border-color) !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    position: relative;
+}
+
+.math-notes-app .mn-section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+}
+
+.math-notes-app p {
+    margin: 0 0 18px 0 !important;
+    padding: 0 !important;
+    text-align: justify;
+    color: var(--mn-text-primary);
+}
+
+/* ========== SPECIAL BLOCKS ========== */
+.math-notes-app .mn-highlight {
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+    border-left: 4px solid var(--mn-accent-primary);
+    padding: 18px 22px;
+    margin: 22px 0;
+    border-radius: 0 14px 14px 0;
+    position: relative;
+}
+
+.math-notes-app .mn-highlight::before {
+    content: '💡';
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 22px;
+    opacity: 0.3;
+}
+
+.math-notes-app .mn-theorem {
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.08) 0%, rgba(16, 185, 129, 0.04) 100%);
+    border: 1px solid rgba(5, 150, 105, 0.2);
+    border-left: 4px solid var(--mn-accent-primary);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-theorem-title {
+    font-weight: 600;
+    color: var(--mn-accent-primary);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-definition {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.04) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-left: 4px solid var(--mn-accent-tertiary);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-definition-title {
+    font-weight: 600;
+    color: var(--mn-accent-tertiary);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-example {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.04) 100%);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-left: 4px solid var(--mn-accent-blue);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-example-title {
+    font-weight: 600;
+    color: var(--mn-accent-blue);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-warning {
+    background: linear-gradient(135deg, rgba(225, 29, 72, 0.08) 0%, rgba(225, 29, 72, 0.04) 100%);
+    border: 1px solid rgba(225, 29, 72, 0.2);
+    border-left: 4px solid var(--mn-accent-rose);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-warning-title {
+    font-weight: 600;
+    color: var(--mn-accent-rose);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-list {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 18px 0 !important;
+}
+
+.math-notes-app .mn-list li {
+    padding: 10px 0 10px 32px !important;
+    position: relative;
+    border-bottom: 1px dashed var(--mn-border-color);
+    margin: 0 !important;
+}
+
+.math-notes-app .mn-list li:last-child { border-bottom: none; }
+
+.math-notes-app .mn-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--mn-accent-primary);
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* ========== MATH DISPLAY ========== */
+.math-notes-app .mn-math {
+    background: var(--mn-bg-secondary);
+    border: 1px solid var(--mn-border-color);
+    border-radius: 14px;
+    padding: 22px 28px;
+    margin: 22px 0;
+    overflow-x: auto;
+    text-align: center;
+    position: relative;
+}
+
+.math-notes-app .mn-math::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    border-radius: 14px 14px 0 0;
+}
+
+.math-notes-app .katex-display { margin: 0 !important; }
+
+/* ========== VISUALIZATION ========== */
+.math-notes-app .mn-viz {
+    background: var(--mn-bg-glass);
+    border: 1px solid var(--mn-border-color);
+    border-radius: 18px;
+    padding: 28px;
+    margin: 36px 0;
+    box-shadow: var(--mn-shadow-soft);
+    position: relative;
+}
+
+.math-notes-app .mn-viz::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    border-radius: 18px 18px 0 0;
+}
+
+.math-notes-app .mn-viz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.math-notes-app .mn-viz-title {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 18px;
+    color: var(--mn-text-primary);
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+.math-notes-app .mn-viz-controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.math-notes-app .mn-control-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--mn-bg-tertiary);
+    padding: 8px 14px;
+    border-radius: 10px;
+}
+
+.math-notes-app .mn-control-label {
+    font-size: 14px;
+    color: var(--mn-text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.math-notes-app input[type="range"] {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: 120px;
+    height: 6px;
+    background: var(--mn-border-color) !important;
+    border-radius: 3px;
+    outline: none !important;
+    cursor: pointer;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.math-notes-app input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none !important;
+}
+
+.math-notes-app .mn-slider-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--mn-accent-primary);
+    min-width: 40px;
+    text-align: center;
+}
+
+.math-notes-app .mn-svg-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
+    padding: 16px;
+    background: var(--mn-bg-secondary);
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
+.math-notes-app .mn-svg-container svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.math-notes-app .mn-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 14px 0;
+    flex-wrap: wrap;
+}
+
+.math-notes-app .mn-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--mn-text-secondary);
+}
+
+.math-notes-app .mn-legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+}
+
+.math-notes-app .mn-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-stat {
+    background: var(--mn-bg-tertiary);
+    padding: 14px 16px;
+    border-radius: 12px;
+    text-align: center;
+    border-top: 3px solid var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-stat-label {
+    font-size: 11px;
+    color: var(--mn-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.math-notes-app .mn-stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-stat.converge {
+    border-top-color: var(--mn-svg-converge);
+}
+
+.math-notes-app .mn-stat.converge .mn-stat-value {
+    color: var(--mn-svg-converge);
+}
+
+.math-notes-app .mn-stat.diverge {
+    border-top-color: var(--mn-svg-diverge);
+}
+
+.math-notes-app .mn-stat.diverge .mn-stat-value {
+    color: var(--mn-svg-diverge);
+}
+
+/* ========== SUMMARY ========== */
+.math-notes-app .mn-summary {
+    background: linear-gradient(135deg, var(--mn-bg-secondary) 0%, var(--mn-bg-tertiary) 100%);
+    border: 2px solid var(--mn-accent-primary);
+    border-radius: 18px;
+    padding: 32px;
+    margin: 40px 0;
+}
+
+.math-notes-app .mn-summary-title {
+    font-family: 'ZCOOL XiaoWei', serif !important;
+    font-size: 22px !important;
+    color: var(--mn-accent-primary) !important;
+    margin: 0 0 20px 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.math-notes-app .mn-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+.math-notes-app .mn-summary-item {
+    padding: 14px 18px;
+    background: var(--mn-bg-primary);
+    border-radius: 10px;
+    border-left: 3px solid var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-summary-item strong {
+    color: var(--mn-accent-primary);
+}
+
+/* ========== END ========== */
+.math-notes-app .mn-end {
+    text-align: center;
+    padding: 36px 0;
+    color: var(--mn-text-muted);
+}
+
+.math-notes-app .mn-end-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.math-notes-app .mn-end-divider::before,
+.math-notes-app .mn-end-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--mn-border-color), transparent);
+}
+
+.math-notes-app .mn-end-icon { font-size: 22px; }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 900px) {
+    .math-notes-app .mn-main { padding: 40px 30px 80px; }
+    .math-notes-app .mn-page-title { font-size: 28px !important; }
+    .math-notes-app .mn-section-title { font-size: 22px !important; }
+}
+
+@media (max-width: 768px) {
+    .math-notes-app .mn-sidebar {
+        transform: translateX(-280px);
+    }
+    .math-notes-app .mn-sidebar.open {
+        transform: translateX(0);
+    }
+    .math-notes-app .mn-sidebar-toggle {
+        left: 0;
+    }
+    .math-notes-app .mn-sidebar.open + .mn-sidebar-toggle {
+        left: 280px;
+    }
+    .math-notes-app .mn-main {
+        margin-left: 0;
+        padding: 30px 20px 60px;
+    }
+    .math-notes-app .mn-viz-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .math-notes-app input[type="range"] { width: 100%; }
+}
+
+.math-notes-app .katex { font-size: 1.1em; }
+.math-notes-app .katex-display > .katex { font-size: 1.15em; }
+
+/* Animation for convergence/divergence indicator */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.math-notes-app .mn-status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.math-notes-app .mn-status-indicator.converge {
+    background: rgba(5, 150, 105, 0.15);
+    color: var(--mn-svg-converge);
+}
+
+.math-notes-app .mn-status-indicator.diverge {
+    background: rgba(225, 29, 72, 0.15);
+    color: var(--mn-svg-diverge);
+}
+
+.math-notes-app .mn-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.math-notes-app .mn-status-indicator.converge .mn-status-dot {
+    background: var(--mn-svg-converge);
+}
+
+.math-notes-app .mn-status-indicator.diverge .mn-status-dot {
+    background: var(--mn-svg-diverge);
+}
+</style>
+
+<div class="math-notes-app" id="mathNotesApp">
+    <!-- Background -->
+    <div class="mn-bg">
+        <div class="mn-bg-orb"></div>
+        <div class="mn-bg-orb"></div>
+        <div class="mn-bg-orb"></div>
+        <div class="mn-bg-grid"></div>
+    </div>
+
+    <div class="mn-layout">
+        <!-- Fixed Sidebar -->
+        <nav class="mn-sidebar" id="mnSidebar">
+            <div class="mn-sidebar-content">
+                <a href="https://husteread.com/index.php/tp/" class="mn-back">
+                    <span>←</span>
+                    <span>返回</span>
+                </a>
+
+                <div class="mn-directory" id="mnDirectory">
+                    <div class="mn-directory-header">
+                        <div class="mn-directory-title">
+                            <span>📁</span>
+                            <span>上级目录</span>
+                        </div>
+                        <span class="mn-directory-arrow">▼</span>
+                    </div>
+                    <div class="mn-directory-list">
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-1/" class="mn-directory-link">第一节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-2/" class="mn-directory-link">第二节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-3/" class="mn-directory-link">第三节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-4/" class="mn-directory-link">第四节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-5/" class="mn-directory-link">第五节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-6/" class="mn-directory-link">第六节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-7/" class="mn-directory-link">第七节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-8/" class="mn-directory-link active">第八节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-9/" class="mn-directory-link">第九节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-10/" class="mn-directory-link">总复习</a>
+                    </div>
+                </div>
+
+                <div class="mn-section-nav">
+                    <div class="mn-section-header">本节目录</div>
+                    <a href="#sec-1" class="mn-nav-link active"><span class="mn-nav-num">01</span>为什么要广义积分</a>
+                    <a href="#sec-2" class="mn-nav-link"><span class="mn-nav-num">02</span>类型一：区间无穷长</a>
+                    <a href="#sec-3" class="mn-nav-link"><span class="mn-nav-num">03</span>类型二：端点无界</a>
+                    <a href="#sec-4" class="mn-nav-link"><span class="mn-nav-num">04</span>p-型积分：无穷远</a>
+                    <a href="#sec-5" class="mn-nav-link"><span class="mn-nav-num">05</span>p-型积分：零点处</a>
+                    <a href="#sec-6" class="mn-nav-link"><span class="mn-nav-num">06</span>比较判别法</a>
+                    <a href="#sec-7" class="mn-nav-link"><span class="mn-nav-num">07</span>绝对与条件收敛</a>
+                    <a href="#sec-8" class="mn-nav-link"><span class="mn-nav-num">08</span>本节小结</a>
+                </div>
+            </div>
+
+            <div class="mn-sidebar-footer">
+                <div class="mn-theme-toggle" id="mnThemeToggle">
+                    <span>主题模式</span>
+                    <span class="mn-theme-icon" id="mnThemeIcon">🌙</span>
+                </div>
+            </div>
+        </nav>
+
+        <button class="mn-sidebar-toggle" id="mnSidebarToggle">
+            <span>◀</span>
+        </button>
+
+        <!-- Main Content -->
+        <main class="mn-main">
+            <header class="mn-page-header">
+                <div class="mn-badge">📘 第八节</div>
+                <h1 class="mn-page-title">广义（反常）定积分</h1>
+                <p class="mn-page-subtitle">区间不老实（无穷长）？函数不老实（有奇点）？用极限来兜底！</p>
+            </header>
+
+            <!-- Section 1: 为什么要广义积分 -->
+            <section class="mn-section" id="sec-1">
+                <span class="mn-section-num">SECTION 01</span>
+                <h2 class="mn-section-title">为什么要"广义定积分"？</h2>
+                
+                <p>之前我们学的"黎曼定积分"有两条硬规矩：</p>
+                
+                <ul class="mn-list">
+                    <li>积分区间 $[a,b]$ 必须是<strong>有限闭区间</strong></li>
+                    <li>被积函数在上面必须<strong>有界</strong>（顶多有限几个跳跃）</li>
+                </ul>
+
+                <p>但现实中经常遇到打破规矩的情况：</p>
+
+                <div class="mn-highlight">
+                    <strong>🔥 两种"不老实"的情况：</strong>
+                    <ul class="mn-list">
+                        <li><strong>区间无限长</strong>：比如 $\displaystyle\int_1^{+\infty}\frac{1}{x^2}\,dx$，想算"从1到无穷远的总面积"</li>
+                        <li><strong>函数在端点炸裂</strong>：比如 $\displaystyle\int_0^{1}\frac{1}{\sqrt{x}}\,dx$，在0附近冲到 $+\infty$</li>
+                    </ul>
+                </div>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 广义积分的核心思想</div>
+                    <p>遇到"不老实"的情况，我们的对策是：</p>
+                    <p style="text-align:center;font-size:20px;font-weight:600;color:var(--mn-accent-primary);margin:15px 0;">
+                        全都用<strong>极限</strong>来兜底！
+                    </p>
+                    <p>先避开"问题区域"，在"安全区"正常算，再让边界逼近问题点，看结果是否稳定。</p>
+                </div>
+
+                <!-- 直观示意图 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 两种广义积分示意</h3>
+                    </div>
+                    <div class="mn-svg-container">
+                        <svg id="introSvg" viewBox="0 0 700 240" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+                    <p style="text-align:center;font-size:14px;color:var(--mn-text-muted);margin-top:8px;">左图：区间延伸到无穷 | 右图：函数在端点处冲向无穷</p>
+                </div>
+            </section>
+
+            <!-- Section 2: 类型一 - 区间无穷长 -->
+            <section class="mn-section" id="sec-2">
+                <span class="mn-section-num">SECTION 02</span>
+                <h2 class="mn-section-title">类型一：区间无穷长</h2>
+
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 右端无穷：$[a, +\infty)$</div>
+                    <p>如果极限 $\displaystyle\lim_{R\to+\infty}\int_a^R f(x)\,dx$ 存在且为有限实数，则称该广义定积分<strong>收敛</strong>：</p>
+                    <div class="mn-math">$$\int_a^{+\infty}f(x)\,dx := \lim_{R\to+\infty}\int_a^R f(x)\,dx$$</div>
+                    <p>若上述极限不存在或为无穷，则称该广义积分<strong>发散</strong>。</p>
+                </div>
+
+                <div class="mn-highlight">
+                    <strong>翻译成人话：</strong>
+                    <ul class="mn-list">
+                        <li>先别管"到无穷"，只算到一个有限的右端点 $R$</li>
+                        <li>看看当 $R$ 越来越远时，这个定积分有没有趋向一个稳定值</li>
+                        <li>有的话，那个极限就是"从 $a$ 到无穷的总面积"</li>
+                    </ul>
+                </div>
+
+                <p>类似地，左端无穷和两端都无穷也是同样的套路：</p>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 三种无穷区间的定义</div>
+                    <p><strong>左端无穷 $(-\infty, b]$：</strong></p>
+                    <div class="mn-math">$$\int_{-\infty}^b f(x)\,dx := \lim_{L\to-\infty}\int_L^b f(x)\,dx$$</div>
+                    <p><strong>两端都无穷 $(-\infty, +\infty)$：</strong></p>
+                    <div class="mn-math">$$\int_{-\infty}^{+\infty}f(x)\,dx := \int_{-\infty}^c f(x)\,dx + \int_c^{+\infty}f(x)\,dx$$</div>
+                    <p>其中 $c$ 任取，但<strong>两边必须各自收敛</strong>才算整体收敛。</p>
+                </div>
+
+                <div class="mn-warning">
+                    <div class="mn-warning-title">⚠️ 重要警告</div>
+                    <p><strong>不能偷懒</strong>说 $\displaystyle\lim_{R\to\infty}\int_{-R}^R f(x)\,dx$ 存在就叫收敛！</p>
+                    <p>这叫<strong>柯西主值</strong>（Cauchy principal value），和真正的广义积分收敛不是一回事。</p>
+                    <p>例如：$\int_{-\infty}^{+\infty}x\,dx$ 的柯西主值是0，但这个积分其实是发散的！</p>
+                </div>
+
+                <!-- 交互：区间延伸动画 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 观察极限过程：$\int_1^R \frac{1}{x^2}dx$ 当 $R\to\infty$</h3>
+                        <div class="mn-viz-controls">
+                            <div class="mn-control-group">
+                                <span class="mn-control-label">R =</span>
+                                <input type="range" id="RSlider" min="2" max="50" value="5">
+                                <span class="mn-slider-value" id="RVal">5</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-legend">
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-curve);"></div><span>y = 1/x²</span></div>
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-fill);"></div><span>积分面积</span></div>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="limitSvg" viewBox="0 0 700 280" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats">
+                        <div class="mn-stat"><div class="mn-stat-label">当前积分值</div><div class="mn-stat-value" id="currentInt">0.800</div></div>
+                        <div class="mn-stat converge"><div class="mn-stat-label">极限值</div><div class="mn-stat-value">1</div></div>
+                        <div class="mn-stat"><div class="mn-stat-label">距极限差值</div><div class="mn-stat-value" id="diffVal">0.200</div></div>
+                    </div>
+                    <p style="text-align:center;font-size:14px;color:var(--mn-text-muted);margin-top:12px;">🎯 拖动滑块，观察积分值如何逼近极限1！</p>
+                </div>
+            </section>
+
+            <!-- Section 3: 类型二 - 端点无界 -->
+            <section class="mn-section" id="sec-3">
+                <span class="mn-section-num">SECTION 03</span>
+                <h2 class="mn-section-title">类型二：被积函数在端点附近无界</h2>
+
+                <p>第二种常见情况：区间还是有限的 $[a,b]$，但函数在端点附近冲到无穷大。</p>
+
+                <div class="mn-example">
+                    <div class="mn-example-title">📝 典型例子</div>
+                    <ul class="mn-list">
+                        <li>$\displaystyle\int_0^1\frac{1}{\sqrt{x}}\,dx$：在 $x=0$ 处炸裂</li>
+                        <li>$\displaystyle\int_1^2\frac{1}{x-1}\,dx$：在 $x=1$ 处炸裂</li>
+                    </ul>
+                </div>
+
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 左端点有奇点（以 $x=0$ 为例）</div>
+                    <div class="mn-math">$$\int_0^1\frac{1}{\sqrt{x}}\,dx := \lim_{\varepsilon\to 0^+}\int_\varepsilon^1 \frac{1}{\sqrt{x}}\,dx$$</div>
+                    <p>如果这个极限存在（有限），就说它<strong>收敛</strong>；否则<strong>发散</strong>。</p>
+                </div>
+
+                <div class="mn-highlight">
+                    <strong>处理套路：</strong>
+                    <ul class="mn-list">
+                        <li>避开奇点，取 $\varepsilon > 0$</li>
+                        <li>先把 $[\varepsilon, 1]$ 看作普通区间，正常算</li>
+                        <li>再让 $\varepsilon \to 0^+$，看结果是否稳定</li>
+                    </ul>
+                </div>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 中间有奇点的情况</div>
+                    <p>若 $c \in (a,b)$ 是奇点，则需要把区间分成两半：</p>
+                    <div class="mn-math">$$\int_a^b f(x)\,dx := \int_a^c f(x)\,dx + \int_c^b f(x)\,dx$$</div>
+                    <p>其中：</p>
+                    <div class="mn-math">$$\int_a^c f(x)\,dx := \lim_{\varepsilon\to 0^+}\int_a^{c-\varepsilon}f(x)\,dx$$</div>
+                    <div class="mn-math">$$\int_c^b f(x)\,dx := \lim_{\varepsilon\to 0^+}\int_{c+\varepsilon}^b f(x)\,dx$$</div>
+                    <p><strong>两边都要各自收敛才算整体收敛！</strong></p>
+                </div>
+
+                <!-- 交互：逼近奇点 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 逼近奇点：$\int_\varepsilon^1 \frac{1}{\sqrt{x}}dx$ 当 $\varepsilon\to 0^+$</h3>
+                        <div class="mn-viz-controls">
+                            <div class="mn-control-group">
+                                <span class="mn-control-label">ε =</span>
+                                <input type="range" id="epsSlider" min="1" max="50" value="25">
+                                <span class="mn-slider-value" id="epsVal">0.25</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-legend">
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-curve2);"></div><span>y = 1/√x</span></div>
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-fill2);"></div><span>积分面积</span></div>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="epsSvg" viewBox="0 0 700 300" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats">
+                        <div class="mn-stat"><div class="mn-stat-label">当前积分值</div><div class="mn-stat-value" id="epsInt">1.000</div></div>
+                        <div class="mn-stat converge"><div class="mn-stat-label">极限值</div><div class="mn-stat-value">2</div></div>
+                        <div class="mn-stat"><div class="mn-stat-label">距极限差值</div><div class="mn-stat-value" id="epsDiff">1.000</div></div>
+                    </div>
+                    <p style="text-align:center;font-size:14px;color:var(--mn-text-muted);margin-top:12px;">🎯 向左拖动滑块（ε→0），观察积分值如何逼近极限2！</p>
+                </div>
+            </section>
+
+            <!-- Section 4: p-型积分（无穷远） -->
+            <section class="mn-section" id="sec-4">
+                <span class="mn-section-num">SECTION 04</span>
+                <h2 class="mn-section-title">重点例子：$\int_1^{+\infty}\frac{1}{x^p}dx$ 的敛散性</h2>
+
+                <p>这是整本书里经常用到的<strong>"p-型积分"</strong>，也是做广义积分判别的常备模板。</p>
+
+                <div class="mn-highlight">
+                    <strong>几何直觉：</strong>
+                    <p>$y=1/x$ 和 $y=1/x^2$ 虽然都趋向于0，但<strong>下降速度天差地别</strong>：</p>
+                    <ul class="mn-list">
+                        <li>$1/x^2$ 下降得快 → 尾部面积能"积完"</li>
+                        <li>$1/x$ 下降得慢 → 尾部面积永远积不完</li>
+                    </ul>
+                </div>
+
+                <!-- 交互：p值调节 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 尾巴衰减对比：$y = 1/x^p$（$x \geq 1$）</h3>
+                        <div class="mn-viz-controls">
+                            <div class="mn-control-group">
+                                <span class="mn-control-label">p =</span>
+                                <input type="range" id="pSlider1" min="5" max="30" value="10">
+                                <span class="mn-slider-value" id="pVal1">1.0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-legend">
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-curve);"></div><span>y = 1/x^p（可调）</span></div>
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-curve2);"></div><span>y = 1/x（临界）</span></div>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="pSvg1" viewBox="0 0 700 280" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats">
+                        <div class="mn-stat"><div class="mn-stat-label">当前 p 值</div><div class="mn-stat-value" id="pDisplay1">1.0</div></div>
+                        <div class="mn-stat" id="statusStat1"><div class="mn-stat-label">敛散性</div><div class="mn-stat-value" id="status1">发散</div></div>
+                        <div class="mn-stat"><div class="mn-stat-label">积分值（若收敛）</div><div class="mn-stat-value" id="intVal1">∞</div></div>
+                    </div>
+                    <p style="text-align:center;font-size:14px;color:var(--mn-text-muted);margin-top:12px;">🎯 调节 p 值，观察 p=1 是敛散性的分水岭！</p>
+                </div>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 p-型积分（无穷远端）判别公式</div>
+                    <p>对于 $\displaystyle\int_1^{+\infty}\frac{1}{x^p}\,dx$：</p>
+                    <div class="mn-math">$$\int_1^{+\infty}\frac{1}{x^p}\,dx = \begin{cases} \dfrac{1}{p-1} & \text{若 } p > 1 \text{（收敛）} \\[10pt] +\infty & \text{若 } p \leq 1 \text{（发散）} \end{cases}$$</div>
+                </div>
+
+                <div class="mn-example">
+                    <div class="mn-example-title">📝 推导过程（$p \neq 1$）</div>
+                    <p><strong>Step 1：</strong> 求原函数</p>
+                    <div class="mn-math">$$\int x^{-p}\,dx = \frac{1}{1-p}x^{1-p} + C$$</div>
+                    <p><strong>Step 2：</strong> 计算定积分</p>
+                    <div class="mn-math">$$\int_1^R \frac{1}{x^p}\,dx = \frac{1}{1-p}(R^{1-p} - 1)$$</div>
+                    <p><strong>Step 3：</strong> 取极限 $R \to +\infty$</p>
+                    <ul class="mn-list">
+                        <li>若 $p > 1$，则 $1-p < 0$，$R^{1-p} \to 0$，极限为 $\dfrac{1}{p-1}$ ✅</li>
+                        <li>若 $p < 1$，则 $1-p > 0$，$R^{1-p} \to +\infty$，发散 ❌</li>
+                    </ul>
+                    <p><strong>特殊情况 $p=1$：</strong></p>
+                    <div class="mn-math">$$\int_1^R \frac{1}{x}\,dx = \ln R \to +\infty$$</div>
+                    <p>所以 $p=1$ 也发散 ❌</p>
+                </div>
+            </section>
+
+            <!-- Section 5: p-型积分（零点处） -->
+            <section class="mn-section" id="sec-5">
+                <span class="mn-section-num">SECTION 05</span>
+                <h2 class="mn-section-title">零点附近的行为：$\int_0^1\frac{1}{x^p}dx$</h2>
+
+                <p>现在看另一个对称的情形：区间是 $[0,1]$，在 0 附近有奇点。</p>
+
+                <div class="mn-highlight">
+                    <strong>几何直觉：</strong>
+                    <ul class="mn-list">
+                        <li>$1/\sqrt{x}$（$p=0.5$）在 0 附近冲得"温柔" → 面积有限</li>
+                        <li>$1/x$（$p=1$）在 0 附近冲得"更狠" → 面积无限</li>
+                    </ul>
+                </div>
+
+                <!-- 交互：零点附近p值调节 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 零点附近对比：$y = 1/x^p$（$0 < x \leq 1$）</h3>
+                        <div class="mn-viz-controls">
+                            <div class="mn-control-group">
+                                <span class="mn-control-label">p =</span>
+                                <input type="range" id="pSlider2" min="2" max="20" value="10">
+                                <span class="mn-slider-value" id="pVal2">1.0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-legend">
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-curve);"></div><span>y = 1/x^p（可调）</span></div>
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-curve2);"></div><span>y = 1/x（临界）</span></div>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="pSvg2" viewBox="0 0 700 300" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats">
+                        <div class="mn-stat"><div class="mn-stat-label">当前 p 值</div><div class="mn-stat-value" id="pDisplay2">1.0</div></div>
+                        <div class="mn-stat" id="statusStat2"><div class="mn-stat-label">敛散性</div><div class="mn-stat-value" id="status2">发散</div></div>
+                        <div class="mn-stat"><div class="mn-stat-label">积分值（若收敛）</div><div class="mn-stat-value" id="intVal2">∞</div></div>
+                    </div>
+                    <p style="text-align:center;font-size:14px;color:var(--mn-text-muted);margin-top:12px;">🎯 注意：这里 p=1 仍是分水岭，但收敛条件<strong>反过来</strong>了！</p>
+                </div>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 p-型积分（零点端）判别公式</div>
+                    <p>对于 $\displaystyle\int_0^1\frac{1}{x^p}\,dx$：</p>
+                    <div class="mn-math">$$\int_0^1\frac{1}{x^p}\,dx = \begin{cases} \dfrac{1}{1-p} & \text{若 } p < 1 \text{（收敛）} \\[10pt] +\infty & \text{若 } p \geq 1 \text{（发散）} \end{cases}$$</div>
+                </div>
+
+                <div class="mn-warning">
+                    <div class="mn-warning-title">⚠️ 对比记忆</div>
+                    <p>两个p-型积分的敛散性<strong>正好相反</strong>！</p>
+                    <table style="width:100%;border-collapse:collapse;margin-top:10px;">
+                        <tr style="background:var(--mn-bg-tertiary);">
+                            <td style="padding:10px;border:1px solid var(--mn-border-color);font-weight:600;">积分类型</td>
+                            <td style="padding:10px;border:1px solid var(--mn-border-color);font-weight:600;">收敛条件</td>
+                            <td style="padding:10px;border:1px solid var(--mn-border-color);font-weight:600;">发散条件</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px;border:1px solid var(--mn-border-color);">$\int_1^{+\infty}\frac{1}{x^p}dx$</td>
+                            <td style="padding:10px;border:1px solid var(--mn-border-color);color:var(--mn-svg-converge);">$p > 1$</td>
+                            <td style="padding:10px;border:1px solid var(--mn-border-color);color:var(--mn-svg-diverge);">$p \leq 1$</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px;border:1px solid var(--mn-border-color);">$\int_0^1\frac{1}{x^p}dx$</td>
+                            <td style="padding:10px;border:1px solid var(--mn-border-color);color:var(--mn-svg-converge);">$p < 1$</td>
+                            <td style="padding:10px;border:1px solid var(--mn-border-color);color:var(--mn-svg-diverge);">$p \geq 1$</td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section 6: 比较判别法 -->
+            <section class="mn-section" id="sec-6">
+                <span class="mn-section-num">SECTION 06</span>
+                <h2 class="mn-section-title">广义积分的比较判别法</h2>
+
+                <p>搞清楚p-型积分之后，就可以用它们来"带着别的函数一起判敛散"。</p>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 比较判别法（Comparison Test）</div>
+                    <p>假设在 $[a, +\infty)$ 上 $0 \leq f(x) \leq g(x)$，则：</p>
+                    <ul class="mn-list">
+                        <li>若 $\int_a^{+\infty}g(x)\,dx$ <strong>收敛</strong>，则 $\int_a^{+\infty}f(x)\,dx$ 也必然<strong>收敛</strong></li>
+                        <li>若 $\int_a^{+\infty}f(x)\,dx$ <strong>发散</strong>，则 $\int_a^{+\infty}g(x)\,dx$ 也必然<strong>发散</strong></li>
+                    </ul>
+                </div>
+
+                <div class="mn-highlight">
+                    <strong>直觉理解：</strong>
+                    <ul class="mn-list">
+                        <li>"<strong>大的都能积完，小的肯定也能</strong>"</li>
+                        <li>"<strong>小的都积不完，大的就更别想了</strong>"</li>
+                    </ul>
+                </div>
+
+                <!-- 交互：比较判别法可视化 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 比较判别法示意</h3>
+                    </div>
+                    <div class="mn-svg-container">
+                        <svg id="compareSvg" viewBox="0 0 700 280" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+                    <p style="text-align:center;font-size:14px;color:var(--mn-text-muted);margin-top:8px;">绿色函数 ≤ 橙色函数，橙色收敛 ⇒ 绿色也收敛</p>
+                </div>
+
+                <div class="mn-example">
+                    <div class="mn-example-title">📝 例：判断 $\int_1^{+\infty}\frac{1+\sin^2 x}{x^2}\,dx$ 的敛散性</div>
+                    <p><strong>Step 1：</strong> 找上界</p>
+                    <p>由于 $0 \leq \sin^2 x \leq 1$，所以：</p>
+                    <div class="mn-math">$$0 \leq \frac{1+\sin^2 x}{x^2} \leq \frac{2}{x^2}$$</div>
+                    <p><strong>Step 2：</strong> 判断上界积分</p>
+                    <div class="mn-math">$$\int_1^{+\infty}\frac{2}{x^2}\,dx = 2 \cdot \frac{1}{2-1} = 2 < +\infty \quad (\text{收敛})$$</div>
+                    <p><strong>Step 3：</strong> 比较判别</p>
+                    <p>因为"大的"收敛，所以"小的" $\displaystyle\int_1^{+\infty}\frac{1+\sin^2 x}{x^2}\,dx$ 也<strong>收敛</strong>。</p>
+                </div>
+
+                <div class="mn-example">
+                    <div class="mn-example-title">📝 例：判断 $\int_1^{+\infty}\frac{1}{x+\ln x}\,dx$ 的敛散性</div>
+                    <p><strong>分析：</strong> 当 $x \geq 1$ 时，$\ln x \geq 0$，所以：</p>
+                    <div class="mn-math">$$\frac{1}{x + \ln x} \leq \frac{1}{x}$$</div>
+                    <p>但 $\int_1^{+\infty}\frac{1}{x}\,dx$ 发散，这告诉我们什么？</p>
+                    <p style="color:var(--mn-accent-rose);"><strong>⚠️ 什么都不能说！</strong> 因为方向反了——"小的发散"不能推出"大的发散"。</p>
+                    <p><strong>正确做法：</strong>找下界</p>
+                    <p>当 $x \geq 3$ 时，$\ln x < x$，所以 $x + \ln x < 2x$，因此：</p>
+                    <div class="mn-math">$$\frac{1}{x + \ln x} > \frac{1}{2x}$$</div>
+                    <p>而 $\int_3^{+\infty}\frac{1}{2x}\,dx$ 发散，所以原积分也<strong>发散</strong>。</p>
+                </div>
+            </section>
+
+            <!-- Section 7: 绝对收敛与条件收敛 -->
+            <section class="mn-section" id="sec-7">
+                <span class="mn-section-num">SECTION 07</span>
+                <h2 class="mn-section-title">绝对收敛与条件收敛</h2>
+
+                <p>对于会变号的函数（比如 $\sin x / x$），广义积分有一个更微妙的问题：</p>
+
+                <div class="mn-highlight">
+                    <strong>核心区别：</strong>
+                    <p style="text-align:center;font-size:18px;margin:15px 0;">
+                        整体收敛 ≠ 绝对值收敛
+                    </p>
+                </div>
+
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 绝对收敛</div>
+                    <p>若 $\displaystyle\int_a^{+\infty}|f(x)|\,dx$ 收敛，则称 $\displaystyle\int_a^{+\infty}f(x)\,dx$ <strong>绝对收敛</strong>。</p>
+                    <p><strong>重要性质：</strong>绝对收敛 ⇒ 收敛（反过来不一定！）</p>
+                </div>
+
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 条件收敛</div>
+                    <p>若 $\displaystyle\int_a^{+\infty}f(x)\,dx$ 收敛，但 $\displaystyle\int_a^{+\infty}|f(x)|\,dx$ 发散，</p>
+                    <p>则称原积分<strong>条件收敛</strong>。</p>
+                </div>
+
+                <div class="mn-example">
+                    <div class="mn-example-title">📝 经典例子：$\int_1^{+\infty}\frac{\sin x}{x}\,dx$</div>
+                    <p>这个积分是<strong>条件收敛</strong>的典型代表：</p>
+                    <ul class="mn-list">
+                        <li>$\displaystyle\int_1^{+\infty}\frac{\sin x}{x}\,dx$ <strong>收敛</strong>（可用狄利克雷判别法证明）</li>
+                        <li>$\displaystyle\int_1^{+\infty}\left|\frac{\sin x}{x}\right|\,dx$ <strong>发散</strong></li>
+                    </ul>
+                    <p><strong>直觉：</strong>正负振荡相互抵消，使得整体能收敛；但取绝对值后，都是正的，加起来就炸了。</p>
+                </div>
+
+                <!-- 可视化：sin(x)/x 的振荡 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 $y = \sin(x)/x$ 的振荡衰减</h3>
+                    </div>
+
+                    <div class="mn-legend">
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-curve);"></div><span>sin(x)/x</span></div>
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-curve2);opacity:0.5;"></div><span>包络线 ±1/x</span></div>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="sincSvg" viewBox="0 0 700 260" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+                    <p style="text-align:center;font-size:14px;color:var(--mn-text-muted);margin-top:8px;">正负区域交替出现，相互抵消 → 收敛；但 |sin(x)/x| 全为正 → 发散</p>
+                </div>
+
+                <div class="mn-warning">
+                    <div class="mn-warning-title">⚠️ 条件收敛的"滑溜"之处</div>
+                    <p>条件收敛的积分性质比较微妙：</p>
+                    <ul class="mn-list">
+                        <li>可能对积分路径敏感</li>
+                        <li>某些变换可能改变收敛值</li>
+                        <li>初学阶段遇到变号函数时要格外小心</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 8: Summary -->
+            <section class="mn-section" id="sec-8">
+                <span class="mn-section-num">SECTION 08</span>
+                <h2 class="mn-section-title">本节小结</h2>
+
+                <div class="mn-summary">
+                    <h3 class="mn-summary-title"><span>📋</span> 广义积分工具箱</h3>
+                    <div class="mn-summary-grid">
+                        <div class="mn-summary-item">
+                            <strong>区间无穷长</strong><br>
+                            $\int_a^{+\infty}f = \lim_{R\to\infty}\int_a^R f$<br>
+                            极限存在则收敛
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>端点有奇点</strong><br>
+                            $\int_0^1 f = \lim_{\varepsilon\to 0^+}\int_\varepsilon^1 f$<br>
+                            避开奇点取极限
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>p-型（无穷远）</strong><br>
+                            $\int_1^{+\infty}\frac{1}{x^p}dx$<br>
+                            $p>1$ 收敛，$p\leq 1$ 发散
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>p-型（零点处）</strong><br>
+                            $\int_0^1\frac{1}{x^p}dx$<br>
+                            $p<1$ 收敛，$p\geq 1$ 发散
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>比较判别法</strong><br>
+                            大的收敛 ⇒ 小的收敛<br>
+                            小的发散 ⇒ 大的发散
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>绝对 vs 条件</strong><br>
+                            绝对收敛 ⇒ 收敛<br>
+                            条件收敛：反例 $\frac{\sin x}{x}$
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mn-end">
+                    <div class="mn-end-divider"><span class="mn-end-icon">✅</span></div>
+                    <p>第八节完成！下一节我们将讨论广义积分与级数收敛的联系（积分判别法）。</p>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    
+    var app = document.getElementById('mathNotesApp');
+    if (!app) return;
+    
+    // ========== SIDEBAR ==========
+    var sidebar = document.getElementById('mnSidebar');
+    var sidebarToggle = document.getElementById('mnSidebarToggle');
+    
+    sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+    });
+    
+    var directory = document.getElementById('mnDirectory');
+    var directoryHeader = directory.querySelector('.mn-directory-header');
+    directoryHeader.addEventListener('click', function() {
+        directory.classList.toggle('open');
+    });
+    
+    // ========== THEME ==========
+    var themeToggle = document.getElementById('mnThemeToggle');
+    var themeIcon = document.getElementById('mnThemeIcon');
+    
+    var savedTheme = localStorage.getItem('mn-theme') || 'light';
+    app.setAttribute('data-theme', savedTheme);
+    themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+    
+    themeToggle.addEventListener('click', function() {
+        var current = app.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        app.setAttribute('data-theme', next);
+        localStorage.setItem('mn-theme', next);
+        themeIcon.textContent = next === 'dark' ? '☀️' : '🌙';
+        redrawAll();
+    });
+    
+    // ========== NAV LINKS ==========
+    var navLinks = app.querySelectorAll('.mn-nav-link');
+    navLinks.forEach(function(link) {
+        link.addEventListener('click', function() {
+            navLinks.forEach(function(l) { l.classList.remove('active'); });
+            this.classList.add('active');
+        });
+    });
+    
+    // ========== HELPERS ==========
+    function getColors() {
+        var style = getComputedStyle(app);
+        return {
+            curve: style.getPropertyValue('--mn-svg-curve').trim() || '#059669',
+            curve2: style.getPropertyValue('--mn-svg-curve2').trim() || '#f59e0b',
+            fill: style.getPropertyValue('--mn-svg-fill').trim() || 'rgba(5,150,105,0.25)',
+            fill2: style.getPropertyValue('--mn-svg-fill2').trim() || 'rgba(245,158,11,0.25)',
+            grid: style.getPropertyValue('--mn-svg-grid').trim() || '#d1fae5',
+            axis: style.getPropertyValue('--mn-svg-axis').trim() || '#166534',
+            bg: style.getPropertyValue('--mn-bg-secondary').trim() || '#ffffff',
+            text: style.getPropertyValue('--mn-text-primary').trim() || '#14532d',
+            converge: style.getPropertyValue('--mn-svg-converge').trim() || '#059669',
+            diverge: style.getPropertyValue('--mn-svg-diverge').trim() || '#e11d48',
+            muted: style.getPropertyValue('--mn-text-muted').trim() || '#4d7c5f'
+        };
+    }
+    
+    // ========== 0. INTRO SVG ==========
+    function drawIntro() {
+        var svg = document.getElementById('introSvg');
+        var colors = getColors();
+        var width = 700, height = 240;
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Left panel: infinite interval
+        var lw = 320, lh = 180;
+        var lm = {left: 50, right: 30, top: 30, bottom: 40};
+        
+        // Draw 1/x² curve going to infinity
+        var curvePath1 = '';
+        for (var i = 0; i <= 80; i++) {
+            var x = 1 + i * 0.05;
+            var y = 1 / (x * x);
+            var px = lm.left + (x - 1) * 60;
+            var py = lm.top + lh - lm.bottom - y * 100;
+            if (i === 0) curvePath1 = 'M ' + px + ' ' + py;
+            else curvePath1 += ' L ' + px + ' ' + py;
+        }
+        
+        // Fill area
+        var areaPath1 = curvePath1;
+        areaPath1 += ' L ' + (lm.left + 240) + ' ' + (lm.top + lh - lm.bottom);
+        areaPath1 += ' L ' + lm.left + ' ' + (lm.top + lh - lm.bottom) + ' Z';
+        content += '<path d="'+areaPath1+'" fill="'+colors.fill+'" opacity="0.6"/>';
+        content += '<path d="'+curvePath1+'" fill="none" stroke="'+colors.curve+'" stroke-width="2.5"/>';
+        
+        // Arrow to infinity
+        content += '<path d="M 290 '+(lm.top+lh-lm.bottom)+' L 320 '+(lm.top+lh-lm.bottom)+'" stroke="'+colors.axis+'" stroke-width="2" stroke-dasharray="4,2"/>';
+        content += '<text x="310" y="'+(lm.top+lh-lm.bottom-8)+'" fill="'+colors.muted+'" font-size="16">→∞</text>';
+        
+        // Axis
+        content += '<line x1="'+lm.left+'" y1="'+(lm.top+lh-lm.bottom)+'" x2="320" y2="'+(lm.top+lh-lm.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        content += '<line x1="'+lm.left+'" y1="'+(lm.top)+'" x2="'+lm.left+'" y2="'+(lm.top+lh-lm.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        content += '<text x="175" y="22" fill="'+colors.text+'" font-size="14" text-anchor="middle" font-weight="500">类型一：区间到无穷</text>';
+        content += '<text x="175" y="'+(lm.top+lh)+'" fill="'+colors.muted+'" font-size="12" text-anchor="middle">∫₁^∞ 1/x² dx = 1 (收敛)</text>';
+        
+        // Right panel: singularity at endpoint
+        var rx = 370;
+        
+        // Draw 1/√x curve near 0
+        var curvePath2 = '';
+        for (var i = 1; i <= 50; i++) {
+            var x = i * 0.02;
+            var y = 1 / Math.sqrt(x);
+            var yClip = Math.min(y, 6);
+            var px = rx + lm.left + x * 200;
+            var py = lm.top + lh - lm.bottom - yClip * 18;
+            if (i === 1) curvePath2 = 'M ' + px + ' ' + py;
+            else curvePath2 += ' L ' + px + ' ' + py;
+        }
+        
+        // Fill area
+        var areaPath2 = curvePath2;
+        areaPath2 += ' L ' + (rx + lm.left + 200) + ' ' + (lm.top + lh - lm.bottom);
+        areaPath2 += ' L ' + (rx + lm.left + 20) + ' ' + (lm.top + lh - lm.bottom) + ' Z';
+        content += '<path d="'+areaPath2+'" fill="'+colors.fill2+'" opacity="0.6"/>';
+        content += '<path d="'+curvePath2+'" fill="none" stroke="'+colors.curve2+'" stroke-width="2.5"/>';
+        
+        // Vertical arrow at singularity
+        content += '<path d="M '+(rx+lm.left+10)+' '+(lm.top+30)+' L '+(rx+lm.left+10)+' '+(lm.top)+'" stroke="'+colors.curve2+'" stroke-width="2" stroke-dasharray="4,2"/>';
+        content += '<text x="'+(rx+lm.left+20)+'" y="'+(lm.top+15)+'" fill="'+colors.curve2+'" font-size="14">→∞</text>';
+        
+        // Axis
+        content += '<line x1="'+(rx+lm.left)+'" y1="'+(lm.top+lh-lm.bottom)+'" x2="'+(rx+lm.left+220)+'" y2="'+(lm.top+lh-lm.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        content += '<line x1="'+(rx+lm.left)+'" y1="'+(lm.top)+'" x2="'+(rx+lm.left)+'" y2="'+(lm.top+lh-lm.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        content += '<text x="'+(rx+175)+'" y="22" fill="'+colors.text+'" font-size="14" text-anchor="middle" font-weight="500">类型二：端点处无界</text>';
+        content += '<text x="'+(rx+175)+'" y="'+(lm.top+lh)+'" fill="'+colors.muted+'" font-size="12" text-anchor="middle">∫₀¹ 1/√x dx = 2 (收敛)</text>';
+        
+        svg.innerHTML = content;
+    }
+    
+    // ========== 1. Limit Process R → ∞ ==========
+    var RSlider = document.getElementById('RSlider');
+    
+    function drawLimitR(R) {
+        var svg = document.getElementById('limitSvg');
+        var colors = getColors();
+        var width = 700, height = 280;
+        var margin = {top: 30, right: 50, bottom: 50, left: 60};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        var xMax = Math.max(R + 2, 10);
+        var yMax = 1.2;
+        
+        var xScale = function(x) { return margin.left + ((x - 1) / (xMax - 1)) * plotWidth; };
+        var yScale = function(y) { return height - margin.bottom - (y / yMax) * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Grid
+        for (var i = 1; i <= Math.floor(xMax); i += Math.ceil(xMax/10)) {
+            var gx = xScale(i);
+            if (gx >= margin.left && gx <= width - margin.right) {
+                content += '<line x1="'+gx+'" y1="'+margin.top+'" x2="'+gx+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.grid+'" stroke-dasharray="2,2" opacity="0.6"/>';
+            }
+        }
+        
+        // Curve y = 1/x²
+        var curvePath = '';
+        for (var i = 0; i <= 200; i++) {
+            var x = 1 + i * (xMax - 1) / 200;
+            var y = 1 / (x * x);
+            var px = xScale(x);
+            var py = yScale(y);
+            if (i === 0) curvePath = 'M ' + px + ' ' + py;
+            else curvePath += ' L ' + px + ' ' + py;
+        }
+        content += '<path d="'+curvePath+'" fill="none" stroke="'+colors.curve+'" stroke-width="3"/>';
+        
+        // Fill area from 1 to R
+        var areaPath = 'M ' + xScale(1) + ' ' + yScale(0);
+        for (var i = 0; i <= 100; i++) {
+            var x = 1 + i * (R - 1) / 100;
+            var y = 1 / (x * x);
+            areaPath += ' L ' + xScale(x) + ' ' + yScale(y);
+        }
+        areaPath += ' L ' + xScale(R) + ' ' + yScale(0) + ' Z';
+        content += '<path d="'+areaPath+'" fill="'+colors.fill+'" opacity="0.6"/>';
+        
+        // Vertical line at R
+        content += '<line x1="'+xScale(R)+'" y1="'+yScale(0)+'" x2="'+xScale(R)+'" y2="'+yScale(1/(R*R))+'" stroke="'+colors.curve+'" stroke-width="2" stroke-dasharray="4,2"/>';
+        content += '<circle cx="'+xScale(R)+'" cy="'+yScale(1/(R*R))+'" r="5" fill="'+colors.curve+'"/>';
+        
+        // Axis
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        content += '<line x1="'+xScale(1)+'" y1="'+margin.top+'" x2="'+xScale(1)+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // Labels
+        content += '<text x="'+xScale(1)+'" y="'+(yScale(0)+20)+'" fill="'+colors.text+'" font-size="12" text-anchor="middle">1</text>';
+        content += '<text x="'+xScale(R)+'" y="'+(yScale(0)+20)+'" fill="'+colors.curve+'" font-size="13" text-anchor="middle" font-weight="600">R='+R+'</text>';
+        content += '<text x="'+(margin.left-15)+'" y="'+yScale(1)+'" fill="'+colors.text+'" font-size="12" text-anchor="end">1</text>';
+        content += '<text x="'+(width/2)+'" y="22" fill="'+colors.text+'" font-size="14" text-anchor="middle" font-weight="500">y = 1/x²</text>';
+        
+        // Arrow to infinity
+        content += '<text x="'+(width-margin.right+5)+'" y="'+(yScale(0)+5)+'" fill="'+colors.muted+'" font-size="14">→ +∞</text>';
+        
+        svg.innerHTML = content;
+        
+        // Calculate integral
+        var integral = 1 - 1/R;
+        var diff = Math.abs(1 - integral);
+        document.getElementById('currentInt').textContent = integral.toFixed(4);
+        document.getElementById('diffVal').textContent = diff.toFixed(4);
+    }
+    
+    RSlider.addEventListener('input', function() {
+        var R = parseInt(this.value);
+        document.getElementById('RVal').textContent = R;
+        drawLimitR(R);
+    });
+    
+    // ========== 2. Epsilon approaching 0 ==========
+    var epsSlider = document.getElementById('epsSlider');
+    
+    function drawEpsilon(eps) {
+        var svg = document.getElementById('epsSvg');
+        var colors = getColors();
+        var width = 700, height = 300;
+        var margin = {top: 30, right: 50, bottom: 50, left: 60};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        var xMax = 1.1;
+        var yMax = 8;
+        
+        var xScale = function(x) { return margin.left + (x / xMax) * plotWidth; };
+        var yScale = function(y) { return height - margin.bottom - (y / yMax) * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Grid
+        for (var i = 1; i <= 10; i++) {
+            var gy = yScale(i * 0.8);
+            content += '<line x1="'+margin.left+'" y1="'+gy+'" x2="'+(width-margin.right)+'" y2="'+gy+'" stroke="'+colors.grid+'" stroke-dasharray="2,2" opacity="0.5"/>';
+        }
+        
+        // Curve y = 1/√x (clipped)
+        var curvePath = '';
+        for (var i = 1; i <= 200; i++) {
+            var x = i * xMax / 200;
+            var y = Math.min(1 / Math.sqrt(x), yMax);
+            var px = xScale(x);
+            var py = yScale(y);
+            if (i === 1) curvePath = 'M ' + px + ' ' + py;
+            else curvePath += ' L ' + px + ' ' + py;
+        }
+        content += '<path d="'+curvePath+'" fill="none" stroke="'+colors.curve2+'" stroke-width="3"/>';
+        
+        // Fill area from eps to 1
+        var areaPath = 'M ' + xScale(eps) + ' ' + yScale(0);
+        for (var i = 0; i <= 100; i++) {
+            var x = eps + i * (1 - eps) / 100;
+            var y = Math.min(1 / Math.sqrt(x), yMax);
+            areaPath += ' L ' + xScale(x) + ' ' + yScale(y);
+        }
+        areaPath += ' L ' + xScale(1) + ' ' + yScale(0) + ' Z';
+        content += '<path d="'+areaPath+'" fill="'+colors.fill2+'" opacity="0.6"/>';
+        
+        // Vertical line at eps
+        var epsY = Math.min(1/Math.sqrt(eps), yMax);
+        content += '<line x1="'+xScale(eps)+'" y1="'+yScale(0)+'" x2="'+xScale(eps)+'" y2="'+yScale(epsY)+'" stroke="'+colors.curve2+'" stroke-width="2" stroke-dasharray="4,2"/>';
+        content += '<circle cx="'+xScale(eps)+'" cy="'+yScale(epsY)+'" r="5" fill="'+colors.curve2+'"/>';
+        
+        // Singularity indicator
+        content += '<path d="M '+xScale(0)+' '+yScale(yMax-0.5)+' L '+xScale(0)+' '+margin.top+'" stroke="'+colors.diverge+'" stroke-width="2" stroke-dasharray="4,2"/>';
+        content += '<text x="'+(xScale(0)+8)+'" y="'+(margin.top+15)+'" fill="'+colors.diverge+'" font-size="12">奇点</text>';
+        
+        // Axis
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        content += '<line x1="'+xScale(0)+'" y1="'+margin.top+'" x2="'+xScale(0)+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // Labels
+        content += '<text x="'+xScale(0)+'" y="'+(yScale(0)+20)+'" fill="'+colors.text+'" font-size="12" text-anchor="middle">0</text>';
+        content += '<text x="'+xScale(1)+'" y="'+(yScale(0)+20)+'" fill="'+colors.text+'" font-size="12" text-anchor="middle">1</text>';
+        content += '<text x="'+xScale(eps)+'" y="'+(yScale(0)+20)+'" fill="'+colors.curve2+'" font-size="13" text-anchor="middle" font-weight="600">ε</text>';
+        content += '<text x="'+(width/2)+'" y="22" fill="'+colors.text+'" font-size="14" text-anchor="middle" font-weight="500">y = 1/√x</text>';
+        
+        svg.innerHTML = content;
+        
+        // Calculate integral: ∫_eps^1 x^{-1/2} dx = 2√x |_eps^1 = 2(1 - √eps)
+        var integral = 2 * (1 - Math.sqrt(eps));
+        var diff = Math.abs(2 - integral);
+        document.getElementById('epsInt').textContent = integral.toFixed(3);
+        document.getElementById('epsDiff').textContent = diff.toFixed(3);
+    }
+    
+    epsSlider.addEventListener('input', function() {
+        var val = parseInt(this.value);
+        var eps = val / 100;
+        document.getElementById('epsVal').textContent = eps.toFixed(2);
+        drawEpsilon(eps);
+    });
+    
+    // ========== 3. p-integral at infinity ==========
+    var pSlider1 = document.getElementById('pSlider1');
+    
+    function drawP1(p) {
+        var svg = document.getElementById('pSvg1');
+        var colors = getColors();
+        var width = 700, height = 280;
+        var margin = {top: 30, right: 50, bottom: 50, left: 60};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        var xMax = 8;
+        var yMax = 1.2;
+        
+        var xScale = function(x) { return margin.left + ((x - 1) / (xMax - 1)) * plotWidth; };
+        var yScale = function(y) { return height - margin.bottom - (y / yMax) * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Grid
+        for (var i = 1; i <= 8; i++) {
+            var gx = xScale(i);
+            content += '<line x1="'+gx+'" y1="'+margin.top+'" x2="'+gx+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.grid+'" stroke-dasharray="2,2" opacity="0.5"/>';
+        }
+        
+        // Reference curve y = 1/x (p=1)
+        var refPath = '';
+        for (var i = 0; i <= 100; i++) {
+            var x = 1 + i * (xMax - 1) / 100;
+            var y = 1 / x;
+            if (i === 0) refPath = 'M ' + xScale(x) + ' ' + yScale(y);
+            else refPath += ' L ' + xScale(x) + ' ' + yScale(y);
+        }
+        content += '<path d="'+refPath+'" fill="none" stroke="'+colors.curve2+'" stroke-width="2" stroke-dasharray="5,3" opacity="0.7"/>';
+        
+        // Main curve y = 1/x^p
+        var curvePath = '';
+        for (var i = 0; i <= 100; i++) {
+            var x = 1 + i * (xMax - 1) / 100;
+            var y = Math.pow(x, -p);
+            if (i === 0) curvePath = 'M ' + xScale(x) + ' ' + yScale(y);
+            else curvePath += ' L ' + xScale(x) + ' ' + yScale(y);
+        }
+        
+        // Fill area
+        var areaPath = curvePath + ' L ' + xScale(xMax) + ' ' + yScale(0) + ' L ' + xScale(1) + ' ' + yScale(0) + ' Z';
+        content += '<path d="'+areaPath+'" fill="'+colors.fill+'" opacity="0.5"/>';
+        content += '<path d="'+curvePath+'" fill="none" stroke="'+colors.curve+'" stroke-width="3"/>';
+        
+        // Axis
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        content += '<line x1="'+xScale(1)+'" y1="'+margin.top+'" x2="'+xScale(1)+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // Labels
+        content += '<text x="'+xScale(1)+'" y="'+(yScale(0)+20)+'" fill="'+colors.text+'" font-size="12" text-anchor="middle">1</text>';
+        for (var i = 2; i <= 7; i += 2) {
+            content += '<text x="'+xScale(i)+'" y="'+(yScale(0)+20)+'" fill="'+colors.muted+'" font-size="11" text-anchor="middle">'+i+'</text>';
+        }
+        content += '<text x="'+(width-margin.right)+'" y="'+(yScale(0)+5)+'" fill="'+colors.muted+'" font-size="14">→∞</text>';
+        content += '<text x="'+(margin.left-15)+'" y="'+yScale(1)+'" fill="'+colors.text+'" font-size="12" text-anchor="end">1</text>';
+        
+        // Title with p value
+        content += '<text x="'+(width/2)+'" y="22" fill="'+colors.text+'" font-size="14" text-anchor="middle" font-weight="500">y = 1/x^'+p.toFixed(1)+'</text>';
+        
+        svg.innerHTML = content;
+        
+        // Update status
+        var converges = p > 1;
+        var intVal = converges ? (1 / (p - 1)).toFixed(3) : '∞';
+        
+        document.getElementById('pDisplay1').textContent = p.toFixed(1);
+        document.getElementById('status1').textContent = converges ? '收敛 ✓' : '发散 ✗';
+        document.getElementById('intVal1').textContent = intVal;
+        
+        var statusStat = document.getElementById('statusStat1');
+        statusStat.className = 'mn-stat ' + (converges ? 'converge' : 'diverge');
+    }
+    
+    pSlider1.addEventListener('input', function() {
+        var p = parseInt(this.value) / 10;
+        document.getElementById('pVal1').textContent = p.toFixed(1);
+        drawP1(p);
+    });
+    
+    // ========== 4. p-integral at zero ==========
+    var pSlider2 = document.getElementById('pSlider2');
+    
+    function drawP2(p) {
+        var svg = document.getElementById('pSvg2');
+        var colors = getColors();
+        var width = 700, height = 300;
+        var margin = {top: 30, right: 50, bottom: 50, left: 60};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        var xMax = 1.1;
+        var yMax = 10;
+        
+        var xScale = function(x) { return margin.left + (x / xMax) * plotWidth; };
+        var yScale = function(y) { return height - margin.bottom - (y / yMax) * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Grid
+        for (var i = 1; i <= 5; i++) {
+            var gy = yScale(i * 2);
+            content += '<line x1="'+margin.left+'" y1="'+gy+'" x2="'+(width-margin.right)+'" y2="'+gy+'" stroke="'+colors.grid+'" stroke-dasharray="2,2" opacity="0.5"/>';
+        }
+        
+        // Reference curve y = 1/x (p=1)
+        var refPath = '';
+        for (var i = 2; i <= 100; i++) {
+            var x = i / 100;
+            var y = Math.min(1 / x, yMax);
+            if (i === 2) refPath = 'M ' + xScale(x) + ' ' + yScale(y);
+            else refPath += ' L ' + xScale(x) + ' ' + yScale(y);
+        }
+        content += '<path d="'+refPath+'" fill="none" stroke="'+colors.curve2+'" stroke-width="2" stroke-dasharray="5,3" opacity="0.7"/>';
+        
+        // Main curve y = 1/x^p
+        var curvePath = '';
+        var startIdx = Math.max(1, Math.ceil(Math.pow(0.01, 1/p) * 100));
+        for (var i = startIdx; i <= 100; i++) {
+            var x = i / 100;
+            var y = Math.min(Math.pow(x, -p), yMax);
+            if (i === startIdx) curvePath = 'M ' + xScale(x) + ' ' + yScale(y);
+            else curvePath += ' L ' + xScale(x) + ' ' + yScale(y);
+        }
+        
+        // Fill area from small value to 1
+        var eps = 0.05;
+        var areaPath = 'M ' + xScale(eps) + ' ' + yScale(0);
+        for (var i = 0; i <= 50; i++) {
+            var x = eps + i * (1 - eps) / 50;
+            var y = Math.min(Math.pow(x, -p), yMax);
+            areaPath += ' L ' + xScale(x) + ' ' + yScale(y);
+        }
+        areaPath += ' L ' + xScale(1) + ' ' + yScale(0) + ' Z';
+        content += '<path d="'+areaPath+'" fill="'+colors.fill+'" opacity="0.5"/>';
+        content += '<path d="'+curvePath+'" fill="none" stroke="'+colors.curve+'" stroke-width="3"/>';
+        
+        // Singularity indicator
+        content += '<path d="M '+xScale(0)+' '+yScale(yMax-0.5)+' L '+xScale(0)+' '+margin.top+'" stroke="'+colors.diverge+'" stroke-width="2" stroke-dasharray="4,2"/>';
+        
+        // Axis
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        content += '<line x1="'+xScale(0)+'" y1="'+margin.top+'" x2="'+xScale(0)+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // Labels
+        content += '<text x="'+xScale(0)+'" y="'+(yScale(0)+20)+'" fill="'+colors.text+'" font-size="12" text-anchor="middle">0</text>';
+        content += '<text x="'+xScale(1)+'" y="'+(yScale(0)+20)+'" fill="'+colors.text+'" font-size="12" text-anchor="middle">1</text>';
+        content += '<text x="'+(width/2)+'" y="22" fill="'+colors.text+'" font-size="14" text-anchor="middle" font-weight="500">y = 1/x^'+p.toFixed(1)+'（零点附近）</text>';
+        
+        svg.innerHTML = content;
+        
+        // Update status (note: convergence condition is REVERSED!)
+        var converges = p < 1;
+        var intVal = converges ? (1 / (1 - p)).toFixed(3) : '∞';
+        
+        document.getElementById('pDisplay2').textContent = p.toFixed(1);
+        document.getElementById('status2').textContent = converges ? '收敛 ✓' : '发散 ✗';
+        document.getElementById('intVal2').textContent = intVal;
+        
+        var statusStat = document.getElementById('statusStat2');
+        statusStat.className = 'mn-stat ' + (converges ? 'converge' : 'diverge');
+    }
+    
+    pSlider2.addEventListener('input', function() {
+        var p = parseInt(this.value) / 10;
+        document.getElementById('pVal2').textContent = p.toFixed(1);
+        drawP2(p);
+    });
+    
+    // ========== 5. Comparison Test ==========
+    function drawCompare() {
+        var svg = document.getElementById('compareSvg');
+        var colors = getColors();
+        var width = 700, height = 280;
+        var margin = {top: 30, right: 50, bottom: 50, left: 60};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        var xMax = 6;
+        var yMax = 2.2;
+        
+        var xScale = function(x) { return margin.left + ((x - 1) / (xMax - 1)) * plotWidth; };
+        var yScale = function(y) { return height - margin.bottom - (y / yMax) * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Grid
+        for (var i = 1; i <= 6; i++) {
+            var gx = xScale(i);
+            content += '<line x1="'+gx+'" y1="'+margin.top+'" x2="'+gx+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.grid+'" stroke-dasharray="2,2" opacity="0.5"/>';
+        }
+        
+        // Upper bound: 2/x²
+        var upperPath = '';
+        for (var i = 0; i <= 100; i++) {
+            var x = 1 + i * (xMax - 1) / 100;
+            var y = 2 / (x * x);
+            if (i === 0) upperPath = 'M ' + xScale(x) + ' ' + yScale(y);
+            else upperPath += ' L ' + xScale(x) + ' ' + yScale(y);
+        }
+        content += '<path d="'+upperPath+'" fill="none" stroke="'+colors.curve2+'" stroke-width="2.5"/>';
+        
+        // Lower function: (1+sin²x)/x²
+        var lowerPath = '';
+        for (var i = 0; i <= 200; i++) {
+            var x = 1 + i * (xMax - 1) / 200;
+            var y = (1 + Math.sin(x*3) * Math.sin(x*3)) / (x * x);
+            if (i === 0) lowerPath = 'M ' + xScale(x) + ' ' + yScale(y);
+            else lowerPath += ' L ' + xScale(x) + ' ' + yScale(y);
+        }
+        
+        // Fill between
+        var fillPath = lowerPath + ' L ' + xScale(xMax) + ' ' + yScale(0) + ' L ' + xScale(1) + ' ' + yScale(0) + ' Z';
+        content += '<path d="'+fillPath+'" fill="'+colors.fill+'" opacity="0.4"/>';
+        content += '<path d="'+lowerPath+'" fill="none" stroke="'+colors.curve+'" stroke-width="2.5"/>';
+        
+        // Axis
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        content += '<line x1="'+xScale(1)+'" y1="'+margin.top+'" x2="'+xScale(1)+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // Labels
+        content += '<text x="'+xScale(1)+'" y="'+(yScale(0)+20)+'" fill="'+colors.text+'" font-size="12" text-anchor="middle">1</text>';
+        content += '<text x="'+(width-margin.right)+'" y="'+(yScale(0)+5)+'" fill="'+colors.muted+'" font-size="14">→∞</text>';
+        
+        // Legend
+        content += '<text x="'+(width-margin.right-10)+'" y="'+(margin.top+20)+'" fill="'+colors.curve2+'" font-size="13" text-anchor="end" font-weight="500">2/x² (上界)</text>';
+        content += '<text x="'+(width-margin.right-10)+'" y="'+(margin.top+40)+'" fill="'+colors.curve+'" font-size="13" text-anchor="end" font-weight="500">(1+sin²x)/x²</text>';
+        
+        content += '<text x="'+(width/2)+'" y="22" fill="'+colors.text+'" font-size="14" text-anchor="middle" font-weight="500">比较判别法：(1+sin²x)/x² ≤ 2/x²</text>';
+        
+        svg.innerHTML = content;
+    }
+    
+    // ========== 6. sinc function ==========
+    function drawSinc() {
+        var svg = document.getElementById('sincSvg');
+        var colors = getColors();
+        var width = 700, height = 260;
+        var margin = {top: 30, right: 40, bottom: 40, left: 50};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        var xMax = 30;
+        var yMax = 1.2;
+        
+        var xScale = function(x) { return margin.left + (x / xMax) * plotWidth; };
+        var yScale = function(y) { return height/2 + (-y / yMax) * (plotHeight/2); };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Zero line
+        content += '<line x1="'+margin.left+'" y1="'+(height/2)+'" x2="'+(width-margin.right)+'" y2="'+(height/2)+'" stroke="'+colors.grid+'" stroke-width="1"/>';
+        
+        // Envelope ±1/x
+        var envTop = 'M ' + xScale(1) + ' ' + yScale(1);
+        var envBot = 'M ' + xScale(1) + ' ' + yScale(-1);
+        for (var i = 1; i <= 100; i++) {
+            var x = 1 + i * (xMax - 1) / 100;
+            envTop += ' L ' + xScale(x) + ' ' + yScale(1/x);
+            envBot += ' L ' + xScale(x) + ' ' + yScale(-1/x);
+        }
+        content += '<path d="'+envTop+'" fill="none" stroke="'+colors.curve2+'" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>';
+        content += '<path d="'+envBot+'" fill="none" stroke="'+colors.curve2+'" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>';
+        
+        // sin(x)/x curve
+        var sincPath = '';
+        for (var i = 0; i <= 300; i++) {
+            var x = 0.5 + i * (xMax - 0.5) / 300;
+            var y = Math.sin(x) / x;
+            if (i === 0) sincPath = 'M ' + xScale(x) + ' ' + yScale(y);
+            else sincPath += ' L ' + xScale(x) + ' ' + yScale(y);
+        }
+        content += '<path d="'+sincPath+'" fill="none" stroke="'+colors.curve+'" stroke-width="2.5"/>';
+        
+        // Positive and negative regions (simplified fill)
+        // Just show a few alternating regions
+        for (var k = 0; k < 8; k++) {
+            var startX = Math.PI * k + 0.5;
+            var endX = Math.PI * (k + 1);
+            if (endX > xMax) break;
+            
+            var regionPath = 'M ' + xScale(startX) + ' ' + yScale(0);
+            for (var i = 0; i <= 20; i++) {
+                var x = startX + i * (endX - startX) / 20;
+                var y = Math.sin(x) / x;
+                regionPath += ' L ' + xScale(x) + ' ' + yScale(y);
+            }
+            regionPath += ' L ' + xScale(endX) + ' ' + yScale(0) + ' Z';
+            
+            var fillColor = k % 2 === 0 ? colors.fill : 'rgba(225,29,72,0.15)';
+            content += '<path d="'+regionPath+'" fill="'+fillColor+'" opacity="0.5"/>';
+        }
+        
+        // Axis
+        content += '<line x1="'+margin.left+'" y1="'+(height/2)+'" x2="'+(width-margin.right)+'" y2="'+(height/2)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        content += '<line x1="'+margin.left+'" y1="'+margin.top+'" x2="'+margin.left+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // Labels
+        content += '<text x="'+(width/2)+'" y="22" fill="'+colors.text+'" font-size="14" text-anchor="middle" font-weight="500">y = sin(x)/x 的振荡衰减</text>';
+        content += '<text x="'+(width-margin.right)+'" y="'+(height/2-8)+'" fill="'+colors.muted+'" font-size="13">→∞</text>';
+        
+        svg.innerHTML = content;
+    }
+    
+    // ========== REDRAW ALL ==========
+    function redrawAll() {
+        drawIntro();
+        drawLimitR(parseInt(RSlider.value));
+        drawEpsilon(parseInt(epsSlider.value) / 100);
+        drawP1(parseInt(pSlider1.value) / 10);
+        drawP2(parseInt(pSlider2.value) / 10);
+        drawCompare();
+        drawSinc();
+    }
+    
+    // ========== INIT ==========
+    drawIntro();
+    drawLimitR(5);
+    drawEpsilon(0.25);
+    drawP1(1.0);
+    drawP2(1.0);
+    drawCompare();
+    drawSinc();
+    
+    // ========== KATEX ==========
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'function') {
+            renderMathInElement(app, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError: false
+            });
+        } else {
+            setTimeout(initKaTeX, 100);
+        }
+    }
+    initKaTeX();
+})();
+</script>
+
+</body>
+</html>

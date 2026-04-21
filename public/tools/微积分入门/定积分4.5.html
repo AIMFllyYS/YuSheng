@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第五节 · 定积分的计算技巧 - 数学笔记</title>
+    
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=ZCOOL+XiaoWei&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<style>
+/* ========== SCOPED STYLES - AMBER/ORANGE THEME ========== */
+.math-notes-app {
+    --mn-bg-primary: #faf8f5;
+    --mn-bg-secondary: #ffffff;
+    --mn-bg-tertiary: #f5f0e8;
+    --mn-bg-glass: rgba(255, 255, 255, 0.95);
+    --mn-text-primary: #2a2520;
+    --mn-text-secondary: #5a5045;
+    --mn-text-muted: #8a8075;
+    --mn-accent-primary: #d97706;
+    --mn-accent-secondary: #f59e0b;
+    --mn-accent-tertiary: #0891b2;
+    --mn-accent-purple: #7c3aed;
+    --mn-accent-rose: #e11d48;
+    --mn-border-color: rgba(217, 119, 6, 0.12);
+    --mn-shadow-soft: 0 4px 24px rgba(217, 119, 6, 0.08);
+    --mn-shadow-medium: 0 12px 48px rgba(217, 119, 6, 0.15);
+    --mn-nav-bg: rgba(255, 255, 255, 0.98);
+    --mn-svg-curve: #d97706;
+    --mn-svg-curve2: #0891b2;
+    --mn-svg-fill: rgba(217, 119, 6, 0.25);
+    --mn-svg-fill2: rgba(8, 145, 178, 0.25);
+    --mn-svg-grid: #e8e0d8;
+    --mn-svg-axis: #5a5045;
+    --mn-svg-even: #7c3aed;
+    --mn-svg-odd: #e11d48;
+}
+
+.math-notes-app[data-theme="dark"] {
+    --mn-bg-primary: #1a1612;
+    --mn-bg-secondary: #221e18;
+    --mn-bg-tertiary: #2e2820;
+    --mn-bg-glass: rgba(34, 30, 24, 0.98);
+    --mn-text-primary: #f0e8e0;
+    --mn-text-secondary: #b8a898;
+    --mn-text-muted: #787068;
+    --mn-accent-primary: #fbbf24;
+    --mn-accent-secondary: #fcd34d;
+    --mn-accent-tertiary: #22d3ee;
+    --mn-accent-purple: #a78bfa;
+    --mn-accent-rose: #fb7185;
+    --mn-border-color: rgba(251, 191, 36, 0.15);
+    --mn-shadow-soft: 0 4px 24px rgba(0,0,0,0.4);
+    --mn-shadow-medium: 0 12px 48px rgba(0,0,0,0.5);
+    --mn-nav-bg: rgba(26, 22, 18, 0.98);
+    --mn-svg-curve: #fbbf24;
+    --mn-svg-curve2: #22d3ee;
+    --mn-svg-fill: rgba(251, 191, 36, 0.3);
+    --mn-svg-fill2: rgba(34, 211, 238, 0.3);
+    --mn-svg-grid: #3a3028;
+    --mn-svg-axis: #b8a898;
+    --mn-svg-even: #a78bfa;
+    --mn-svg-odd: #fb7185;
+}
+
+.math-notes-app,
+.math-notes-app * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box !important;
+}
+
+.math-notes-app {
+    font-family: 'Noto Serif SC', 'SimSun', serif !important;
+    background: var(--mn-bg-primary) !important;
+    color: var(--mn-text-primary) !important;
+    line-height: 1.9 !important;
+    font-size: 17px !important;
+    position: relative !important;
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* ========== BACKGROUND ========== */
+.math-notes-app .mn-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.math-notes-app .mn-bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.3;
+    animation: mnFloat 26s ease-in-out infinite;
+}
+
+.math-notes-app .mn-bg-orb:nth-child(1) {
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, var(--mn-accent-primary) 0%, transparent 70%);
+    top: -120px;
+    right: -30px;
+}
+
+.math-notes-app .mn-bg-orb:nth-child(2) {
+    width: 550px;
+    height: 550px;
+    background: radial-gradient(circle, var(--mn-accent-secondary) 0%, transparent 70%);
+    bottom: -180px;
+    left: -80px;
+    animation-delay: -9s;
+}
+
+.math-notes-app .mn-bg-orb:nth-child(3) {
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, var(--mn-accent-tertiary) 0%, transparent 70%);
+    top: 50%;
+    left: 45%;
+    animation-delay: -17s;
+    opacity: 0.2;
+}
+
+@keyframes mnFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(25px, -30px) scale(1.04); }
+    66% { transform: translate(-18px, 18px) scale(0.96); }
+}
+
+.math-notes-app .mn-bg-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(var(--mn-border-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--mn-border-color) 1px, transparent 1px);
+    background-size: 52px 52px;
+    opacity: 0.5;
+}
+
+/* ========== LAYOUT ========== */
+.math-notes-app .mn-layout {
+    display: flex;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+}
+
+/* ========== FIXED SIDEBAR ========== */
+.math-notes-app .mn-sidebar {
+    width: 280px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    background: var(--mn-nav-bg);
+    border-right: 1px solid var(--mn-border-color);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    box-shadow: var(--mn-shadow-soft);
+}
+
+.math-notes-app .mn-sidebar.collapsed {
+    transform: translateX(-280px);
+}
+
+.math-notes-app .mn-sidebar-toggle {
+    position: fixed;
+    left: 280px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 60px;
+    background: var(--mn-nav-bg);
+    border: 1px solid var(--mn-border-color);
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    transition: all 0.3s ease;
+}
+
+.math-notes-app .mn-sidebar.collapsed + .mn-sidebar-toggle {
+    left: 0;
+}
+
+.math-notes-app .mn-sidebar-toggle:hover {
+    width: 32px;
+    background: var(--mn-bg-tertiary);
+}
+
+.math-notes-app .mn-sidebar-toggle span {
+    font-size: 14px;
+    color: var(--mn-text-muted);
+    transition: transform 0.3s ease;
+}
+
+.math-notes-app .mn-sidebar.collapsed + .mn-sidebar-toggle span {
+    transform: rotate(180deg);
+}
+
+.math-notes-app .mn-sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 90px;
+}
+
+.math-notes-app .mn-sidebar-content::-webkit-scrollbar { width: 4px; }
+.math-notes-app .mn-sidebar-content::-webkit-scrollbar-thumb { background: var(--mn-border-color); border-radius: 2px; }
+
+/* Back & Directory */
+.math-notes-app .mn-back {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 20px;
+    color: var(--mn-text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 15px;
+    border-bottom: 1px solid var(--mn-border-color);
+    transition: all 0.2s ease;
+}
+
+.math-notes-app .mn-back:hover {
+    background: var(--mn-bg-tertiary);
+    color: var(--mn-accent-primary) !important;
+}
+
+.math-notes-app .mn-directory {
+    border-bottom: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-directory-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    user-select: none;
+}
+
+.math-notes-app .mn-directory-header:hover {
+    background: var(--mn-bg-tertiary);
+}
+
+.math-notes-app .mn-directory-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--mn-text-primary);
+}
+
+.math-notes-app .mn-directory-arrow {
+    font-size: 12px;
+    color: var(--mn-text-muted);
+    transition: transform 0.3s ease;
+}
+
+.math-notes-app .mn-directory.open .mn-directory-arrow {
+    transform: rotate(180deg);
+}
+
+.math-notes-app .mn-directory-list {
+    max-height: 0;
+    overflow: hidden;
+    background: var(--mn-bg-tertiary);
+    transition: max-height 0.3s ease;
+}
+
+.math-notes-app .mn-directory.open .mn-directory-list {
+    max-height: 400px;
+}
+
+.math-notes-app .mn-directory-link {
+    display: block !important;
+    padding: 10px 20px 10px 44px;
+    color: var(--mn-text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 14px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.math-notes-app .mn-directory-link::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--mn-border-color);
+    transition: background 0.2s ease;
+}
+
+.math-notes-app .mn-directory-link:hover {
+    background: rgba(217, 119, 6, 0.05);
+    color: var(--mn-text-primary) !important;
+}
+
+.math-notes-app .mn-directory-link:hover::before {
+    background: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-directory-link.active {
+    color: var(--mn-accent-primary) !important;
+    font-weight: 500;
+    background: rgba(217, 119, 6, 0.08);
+}
+
+.math-notes-app .mn-directory-link.active::before {
+    background: var(--mn-accent-primary);
+}
+
+/* Section Nav */
+.math-notes-app .mn-section-nav {
+    padding: 16px 0;
+}
+
+.math-notes-app .mn-section-header {
+    padding: 0 20px 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--mn-text-muted);
+    font-weight: 600;
+}
+
+.math-notes-app .mn-nav-link {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: var(--mn-text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.math-notes-app .mn-nav-link:hover {
+    background: var(--mn-bg-tertiary);
+    color: var(--mn-text-primary) !important;
+}
+
+.math-notes-app .mn-nav-link.active {
+    background: rgba(217, 119, 6, 0.1);
+    color: var(--mn-accent-primary) !important;
+    font-weight: 500;
+    border-left-color: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-nav-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--mn-text-muted);
+    width: 22px;
+}
+
+/* Sidebar Footer */
+.math-notes-app .mn-sidebar-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 20px;
+    background: var(--mn-nav-bg);
+    border-top: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--mn-bg-tertiary);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.math-notes-app .mn-theme-toggle:hover {
+    border-color: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-theme-toggle span { font-size: 14px; color: var(--mn-text-secondary); }
+.math-notes-app .mn-theme-icon { font-size: 18px; }
+
+/* ========== MAIN CONTENT ========== */
+.math-notes-app .mn-main {
+    flex: 1;
+    margin-left: 280px;
+    padding: 50px 60px 100px;
+    max-width: calc(280px + 880px);
+    min-width: 0;
+    transition: margin-left 0.3s ease;
+}
+
+.math-notes-app .mn-sidebar.collapsed ~ .mn-main {
+    margin-left: 0;
+}
+
+/* ========== PAGE HEADER ========== */
+.math-notes-app .mn-page-header {
+    margin-bottom: 50px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    color: white !important;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-page-title {
+    font-family: 'ZCOOL XiaoWei', serif !important;
+    font-size: 34px !important;
+    font-weight: 400 !important;
+    color: var(--mn-text-primary) !important;
+    margin: 0 0 14px 0 !important;
+    padding: 0 !important;
+    line-height: 1.3 !important;
+    border: none !important;
+}
+
+.math-notes-app .mn-page-subtitle {
+    font-size: 16px;
+    color: var(--mn-text-secondary);
+    margin: 0;
+    max-width: 600px;
+}
+
+/* ========== SECTIONS ========== */
+.math-notes-app .mn-section {
+    margin-bottom: 56px;
+}
+
+.math-notes-app .mn-section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--mn-accent-primary);
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.math-notes-app .mn-section-title {
+    font-family: 'ZCOOL XiaoWei', serif !important;
+    font-size: 24px !important;
+    font-weight: 400 !important;
+    color: var(--mn-text-primary) !important;
+    margin: 0 0 20px 0 !important;
+    padding: 0 0 10px 0 !important;
+    border-bottom: 2px solid var(--mn-border-color) !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    position: relative;
+}
+
+.math-notes-app .mn-section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+}
+
+.math-notes-app p {
+    margin: 0 0 18px 0 !important;
+    padding: 0 !important;
+    text-align: justify;
+    color: var(--mn-text-primary);
+}
+
+/* ========== SPECIAL BLOCKS ========== */
+.math-notes-app .mn-highlight {
+    background: linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+    border-left: 4px solid var(--mn-accent-primary);
+    padding: 18px 22px;
+    margin: 22px 0;
+    border-radius: 0 14px 14px 0;
+    position: relative;
+}
+
+.math-notes-app .mn-highlight::before {
+    content: '💡';
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 22px;
+    opacity: 0.3;
+}
+
+.math-notes-app .mn-theorem {
+    background: linear-gradient(135deg, rgba(217, 119, 6, 0.08) 0%, rgba(245, 158, 11, 0.04) 100%);
+    border: 1px solid rgba(217, 119, 6, 0.2);
+    border-left: 4px solid var(--mn-accent-primary);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-theorem-title {
+    font-weight: 600;
+    color: var(--mn-accent-primary);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-definition {
+    background: linear-gradient(135deg, rgba(8, 145, 178, 0.08) 0%, rgba(8, 145, 178, 0.04) 100%);
+    border: 1px solid rgba(8, 145, 178, 0.2);
+    border-left: 4px solid var(--mn-accent-tertiary);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-definition-title {
+    font-weight: 600;
+    color: var(--mn-accent-tertiary);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-example {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(124, 58, 237, 0.04) 100%);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    border-left: 4px solid var(--mn-accent-purple);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-example-title {
+    font-weight: 600;
+    color: var(--mn-accent-purple);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-tip {
+    background: linear-gradient(135deg, rgba(225, 29, 72, 0.08) 0%, rgba(225, 29, 72, 0.04) 100%);
+    border: 1px solid rgba(225, 29, 72, 0.2);
+    border-left: 4px solid var(--mn-accent-rose);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-tip-title {
+    font-weight: 600;
+    color: var(--mn-accent-rose);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-list {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 18px 0 !important;
+}
+
+.math-notes-app .mn-list li {
+    padding: 10px 0 10px 32px !important;
+    position: relative;
+    border-bottom: 1px dashed var(--mn-border-color);
+    margin: 0 !important;
+}
+
+.math-notes-app .mn-list li:last-child { border-bottom: none; }
+
+.math-notes-app .mn-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--mn-accent-primary);
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* ========== MATH DISPLAY ========== */
+.math-notes-app .mn-math {
+    background: var(--mn-bg-secondary);
+    border: 1px solid var(--mn-border-color);
+    border-radius: 14px;
+    padding: 22px 28px;
+    margin: 22px 0;
+    overflow-x: auto;
+    text-align: center;
+    position: relative;
+}
+
+.math-notes-app .mn-math::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    border-radius: 14px 14px 0 0;
+}
+
+.math-notes-app .katex-display { margin: 0 !important; }
+
+/* ========== VISUALIZATION ========== */
+.math-notes-app .mn-viz {
+    background: var(--mn-bg-glass);
+    border: 1px solid var(--mn-border-color);
+    border-radius: 18px;
+    padding: 28px;
+    margin: 36px 0;
+    box-shadow: var(--mn-shadow-soft);
+    position: relative;
+}
+
+.math-notes-app .mn-viz::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    border-radius: 18px 18px 0 0;
+}
+
+.math-notes-app .mn-viz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.math-notes-app .mn-viz-title {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 18px;
+    color: var(--mn-text-primary);
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+.math-notes-app .mn-viz-controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.math-notes-app .mn-control-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--mn-bg-tertiary);
+    padding: 8px 14px;
+    border-radius: 10px;
+}
+
+.math-notes-app .mn-control-label {
+    font-size: 14px;
+    color: var(--mn-text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.math-notes-app input[type="range"] {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: 120px;
+    height: 6px;
+    background: var(--mn-border-color) !important;
+    border-radius: 3px;
+    outline: none !important;
+    cursor: pointer;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.math-notes-app input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none !important;
+}
+
+.math-notes-app .mn-slider-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--mn-accent-primary);
+    min-width: 40px;
+    text-align: center;
+}
+
+.math-notes-app .mn-svg-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
+    padding: 16px;
+    background: var(--mn-bg-secondary);
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
+.math-notes-app .mn-svg-container svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.math-notes-app .mn-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 14px 0;
+    flex-wrap: wrap;
+}
+
+.math-notes-app .mn-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--mn-text-secondary);
+}
+
+.math-notes-app .mn-legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+}
+
+.math-notes-app .mn-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-stat {
+    background: var(--mn-bg-tertiary);
+    padding: 14px 16px;
+    border-radius: 12px;
+    text-align: center;
+    border-top: 3px solid var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-stat-label {
+    font-size: 11px;
+    color: var(--mn-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.math-notes-app .mn-stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--mn-accent-primary);
+}
+
+/* ========== BUTTONS ========== */
+.math-notes-app .mn-btn-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.math-notes-app .mn-btn {
+    padding: 10px 20px;
+    border: none !important;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Noto Serif SC', serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none !important;
+}
+
+.math-notes-app .mn-btn-primary {
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    color: white !important;
+}
+
+.math-notes-app .mn-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(217, 119, 6, 0.3);
+}
+
+.math-notes-app .mn-btn-secondary {
+    background: var(--mn-bg-tertiary);
+    color: var(--mn-text-primary) !important;
+}
+
+.math-notes-app .mn-btn-secondary:hover {
+    background: var(--mn-bg-secondary);
+}
+
+/* ========== TABS ========== */
+.math-notes-app .mn-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--mn-bg-tertiary);
+    padding: 4px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+
+.math-notes-app .mn-tab {
+    padding: 8px 16px;
+    border: none !important;
+    background: transparent;
+    color: var(--mn-text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-family: 'Noto Serif SC', serif;
+}
+
+.math-notes-app .mn-tab:hover {
+    color: var(--mn-text-primary);
+}
+
+.math-notes-app .mn-tab.active {
+    background: var(--mn-bg-secondary);
+    color: var(--mn-accent-primary);
+    font-weight: 500;
+    box-shadow: var(--mn-shadow-soft);
+}
+
+/* ========== SUMMARY ========== */
+.math-notes-app .mn-summary {
+    background: linear-gradient(135deg, var(--mn-bg-secondary) 0%, var(--mn-bg-tertiary) 100%);
+    border: 2px solid var(--mn-accent-primary);
+    border-radius: 18px;
+    padding: 32px;
+    margin: 40px 0;
+}
+
+.math-notes-app .mn-summary-title {
+    font-family: 'ZCOOL XiaoWei', serif !important;
+    font-size: 22px !important;
+    color: var(--mn-accent-primary) !important;
+    margin: 0 0 20px 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.math-notes-app .mn-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+}
+
+.math-notes-app .mn-summary-item {
+    padding: 14px 18px;
+    background: var(--mn-bg-primary);
+    border-radius: 10px;
+    border-left: 3px solid var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-summary-item strong {
+    color: var(--mn-accent-primary);
+}
+
+/* ========== END ========== */
+.math-notes-app .mn-end {
+    text-align: center;
+    padding: 36px 0;
+    color: var(--mn-text-muted);
+}
+
+.math-notes-app .mn-end-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.math-notes-app .mn-end-divider::before,
+.math-notes-app .mn-end-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--mn-border-color), transparent);
+}
+
+.math-notes-app .mn-end-icon { font-size: 22px; }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 900px) {
+    .math-notes-app .mn-main { padding: 40px 30px 80px; }
+    .math-notes-app .mn-page-title { font-size: 28px !important; }
+    .math-notes-app .mn-section-title { font-size: 22px !important; }
+}
+
+@media (max-width: 768px) {
+    .math-notes-app .mn-sidebar {
+        transform: translateX(-280px);
+    }
+    .math-notes-app .mn-sidebar.open {
+        transform: translateX(0);
+    }
+    .math-notes-app .mn-sidebar-toggle {
+        left: 0;
+    }
+    .math-notes-app .mn-sidebar.open + .mn-sidebar-toggle {
+        left: 280px;
+    }
+    .math-notes-app .mn-main {
+        margin-left: 0;
+        padding: 30px 20px 60px;
+    }
+    .math-notes-app .mn-viz-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .math-notes-app input[type="range"] { width: 100%; }
+}
+
+.math-notes-app .katex { font-size: 1.1em; }
+.math-notes-app .katex-display > .katex { font-size: 1.15em; }
+</style>
+
+<div class="math-notes-app" id="mathNotesApp">
+    <!-- Background -->
+    <div class="mn-bg">
+        <div class="mn-bg-orb"></div>
+        <div class="mn-bg-orb"></div>
+        <div class="mn-bg-orb"></div>
+        <div class="mn-bg-grid"></div>
+    </div>
+
+    <div class="mn-layout">
+        <!-- Fixed Sidebar -->
+        <nav class="mn-sidebar" id="mnSidebar">
+            <div class="mn-sidebar-content">
+                <a href="https://husteread.com/index.php/tp/" class="mn-back">
+                    <span>←</span>
+                    <span>返回</span>
+                </a>
+
+                <div class="mn-directory" id="mnDirectory">
+                    <div class="mn-directory-header">
+                        <div class="mn-directory-title">
+                            <span>📁</span>
+                            <span>上级目录</span>
+                        </div>
+                        <span class="mn-directory-arrow">▼</span>
+                    </div>
+                    <div class="mn-directory-list">
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-1/" class="mn-directory-link">第一节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-2/" class="mn-directory-link">第二节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-3/" class="mn-directory-link">第三节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-4/" class="mn-directory-link">第四节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-5/" class="mn-directory-link active">第五节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-6/" class="mn-directory-link">第六节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-7/" class="mn-directory-link">第七节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-8/" class="mn-directory-link">第八节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-9/" class="mn-directory-link">第九节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-10/" class="mn-directory-link">总复习</a>
+                    </div>
+                </div>
+
+                <div class="mn-section-nav">
+                    <div class="mn-section-header">本节目录</div>
+                    <a href="#sec-1" class="mn-nav-link active"><span class="mn-nav-num">01</span>换元积分法</a>
+                    <a href="#sec-2" class="mn-nav-link"><span class="mn-nav-num">02</span>分部积分法</a>
+                    <a href="#sec-3" class="mn-nav-link"><span class="mn-nav-num">03</span>对称性技巧</a>
+                    <a href="#sec-4" class="mn-nav-link"><span class="mn-nav-num">04</span>应用实例</a>
+                    <a href="#sec-5" class="mn-nav-link"><span class="mn-nav-num">05</span>本节小结</a>
+                </div>
+            </div>
+
+            <div class="mn-sidebar-footer">
+                <div class="mn-theme-toggle" id="mnThemeToggle">
+                    <span>主题模式</span>
+                    <span class="mn-theme-icon" id="mnThemeIcon">🌙</span>
+                </div>
+            </div>
+        </nav>
+
+        <button class="mn-sidebar-toggle" id="mnSidebarToggle">
+            <span>◀</span>
+        </button>
+
+        <!-- Main Content -->
+        <main class="mn-main">
+            <header class="mn-page-header">
+                <div class="mn-badge">📘 第五节</div>
+                <h1 class="mn-page-title">定积分的计算技巧</h1>
+                <p class="mn-page-subtitle">换元法、分部积分、对称性——微积分基本定理已经给了你钥匙，现在教你怎么拧锁</p>
+            </header>
+
+            <!-- Section 1: 换元法 -->
+            <section class="mn-section" id="sec-1">
+                <span class="mn-section-num">SECTION 01</span>
+                <h2 class="mn-section-title">换元积分法：积分版"链式法则"</h2>
+                
+                <p>不定积分里我们学过换元：把复杂的变量替换成"更乖的小孩"。定积分里要更精致一点：<strong>上下限也要一起换！</strong></p>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 定积分换元公式</div>
+                    <p>设 $\varphi$ 在 $[a,b]$ 上连续可导，$f$ 在 $\varphi$ 的值域上连续。令 $u = \varphi(x)$，则：</p>
+                    <div class="mn-math">$$\int_a^b f(\varphi(x))\varphi'(x)\,dx = \int_{\varphi(a)}^{\varphi(b)} f(u)\,du$$</div>
+                </div>
+
+                <div class="mn-highlight">
+                    <strong>换元三步走：</strong>
+                    <ul class="mn-list">
+                        <li>识别模式：$f(\varphi(x)) \cdot \varphi'(x)$（链式法则的"残骸"）</li>
+                        <li>换元：令 $u = \varphi(x)$，则 $du = \varphi'(x)\,dx$</li>
+                        <li>换上下限：$x=a \Rightarrow u=\varphi(a)$，$x=b \Rightarrow u=\varphi(b)$</li>
+                    </ul>
+                </div>
+
+                <div class="mn-example">
+                    <div class="mn-example-title">📝 例 1：$\int_0^1 2x e^{x^2}\,dx$</div>
+                    <p>令 $u = x^2$，则 $du = 2x\,dx$</p>
+                    <p>换上下限：$x=0 \Rightarrow u=0$，$x=1 \Rightarrow u=1$</p>
+                    <div class="mn-math">$$\int_0^1 2x e^{x^2}\,dx = \int_0^1 e^u\,du = e^u\Big|_0^1 = e - 1$$</div>
+                </div>
+
+                <!-- Interactive: 换元法可视化 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 换元法可视化：∫₀¹ 2x·e^(x²) dx</h3>
+                    </div>
+
+                    <div class="mn-legend">
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-fill);"></div><span>原积分（x 空间）</span></div>
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-fill2);"></div><span>换元后（u 空间）</span></div>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="substSvg" viewBox="0 0 700 260" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats">
+                        <div class="mn-stat"><div class="mn-stat-label">原积分 ∫2xe^(x²)dx</div><div class="mn-stat-value" id="substOrig">1.7183</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-tertiary);"><div class="mn-stat-label">换元后 ∫e^u du</div><div class="mn-stat-value" style="color:var(--mn-accent-tertiary);" id="substNew">1.7183</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-purple);"><div class="mn-stat-label">e - 1 =</div><div class="mn-stat-value" style="color:var(--mn-accent-purple);">1.7183</div></div>
+                    </div>
+                </div>
+
+                <div class="mn-example">
+                    <div class="mn-example-title">📝 例 2：$\int_0^{\pi/2} \sin x \cos x\,dx$</div>
+                    <p>令 $u = \sin x$，则 $du = \cos x\,dx$</p>
+                    <p>换上下限：$x=0 \Rightarrow u=0$，$x=\pi/2 \Rightarrow u=1$</p>
+                    <div class="mn-math">$$\int_0^{\pi/2} \sin x \cos x\,dx = \int_0^1 u\,du = \frac{1}{2}u^2\Big|_0^1 = \frac{1}{2}$$</div>
+                </div>
+
+                <div class="mn-tip">
+                    <div class="mn-tip-title">🎯 何时用换元？</div>
+                    <ul class="mn-list">
+                        <li>被积函数里出现"某个式子 + 它的导数"，如 $f(g(x))g'(x)$</li>
+                        <li>三角函数整齐结构：$\sin x \cos x$，$\cos^2 x \sin x$</li>
+                        <li>出现根号：$\sqrt{ax^2 + bx + c}$ 常配合三角换元</li>
+                    </ul>
+                    <p style="margin-top:10px;"><strong>口诀：</strong>一看就像"链式法则干完活后的残骸"，那多半就是换元该出手了！</p>
+                </div>
+            </section>
+
+            <!-- Section 2: 分部积分 -->
+            <section class="mn-section" id="sec-2">
+                <span class="mn-section-num">SECTION 02</span>
+                <h2 class="mn-section-title">分部积分法：积分版"乘积求导"</h2>
+
+                <p>乘积求导：$(uv)' = u'v + uv'$，移项后两边积分就得到分部积分公式。</p>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 定积分分部积分公式</div>
+                    <div class="mn-math">$$\int_a^b u\,dv = [uv]_a^b - \int_a^b v\,du$$</div>
+                    <p>或写成：$\displaystyle\int_a^b u(x)v'(x)\,dx = u(x)v(x)\Big|_a^b - \int_a^b u'(x)v(x)\,dx$</p>
+                </div>
+
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 LIATE 法则：如何选 u 和 dv</div>
+                    <p><strong>优先把这些当 u</strong>（按顺序）：</p>
+                    <ul class="mn-list">
+                        <li><strong>L</strong>ogarithm（对数函数）：$\ln x$</li>
+                        <li><strong>I</strong>nverse trig（反三角）：$\arctan x$, $\arcsin x$</li>
+                        <li><strong>A</strong>lgebraic（幂函数）：$x^n$</li>
+                        <li><strong>T</strong>rig（三角函数）：$\sin x$, $\cos x$</li>
+                        <li><strong>E</strong>xponential（指数函数）：$e^x$</li>
+                    </ul>
+                    <p style="margin-top:10px;"><strong>原则：</strong>u 选成"求导会变简单"的，dv 选成"容易积分"的。</p>
+                </div>
+
+                <div class="mn-example">
+                    <div class="mn-example-title">📝 例 1：$\int_0^1 x e^x\,dx$</div>
+                    <p>选 $u = x$（求导变 1），$dv = e^x dx$（积分还是 $e^x$）</p>
+                    <p>则 $du = dx$，$v = e^x$</p>
+                    <div class="mn-math">$$\int_0^1 x e^x\,dx = [xe^x]_0^1 - \int_0^1 e^x\,dx = (e - 0) - (e - 1) = 1$$</div>
+                </div>
+
+                <!-- Interactive: 分部积分可视化 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 分部积分演示：∫₀¹ xe^x dx</h3>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="ibpSvg" viewBox="0 0 700 280" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats">
+                        <div class="mn-stat"><div class="mn-stat-label">[uv]₀¹ = [xe^x]₀¹</div><div class="mn-stat-value" id="ibpUV">2.7183</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-tertiary);"><div class="mn-stat-label">∫v du = ∫e^x dx</div><div class="mn-stat-value" style="color:var(--mn-accent-tertiary);" id="ibpVDU">1.7183</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-purple);"><div class="mn-stat-label">结果</div><div class="mn-stat-value" style="color:var(--mn-accent-purple);" id="ibpResult">1.0000</div></div>
+                    </div>
+                </div>
+
+                <div class="mn-example">
+                    <div class="mn-example-title">📝 例 2：$\int_0^\pi x \sin x\,dx$</div>
+                    <p>选 $u = x$，$dv = \sin x\,dx$，则 $du = dx$，$v = -\cos x$</p>
+                    <div class="mn-math">$$\int_0^\pi x \sin x\,dx = [-x\cos x]_0^\pi + \int_0^\pi \cos x\,dx$$</div>
+                    <p>边界项：$[-x\cos x]_0^\pi = -\pi \cdot (-1) - 0 = \pi$</p>
+                    <p>积分项：$\int_0^\pi \cos x\,dx = \sin x|_0^\pi = 0$</p>
+                    <p><strong>结果：$\pi$</strong></p>
+                </div>
+            </section>
+
+            <!-- Section 3: 对称性 -->
+            <section class="mn-section" id="sec-3">
+                <span class="mn-section-num">SECTION 03</span>
+                <h2 class="mn-section-title">对称性技巧：奇偶函数的妙用</h2>
+
+                <p>当积分区间是 $[-a, a]$ 时，利用函数的奇偶性可以<strong>节省一半工作量</strong>！</p>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 对称性定理</div>
+                    <p><strong>偶函数</strong>（$f(-x) = f(x)$，关于 y 轴对称）：</p>
+                    <div class="mn-math">$$\int_{-a}^{a} f(x)\,dx = 2\int_0^a f(x)\,dx$$</div>
+                    <p><strong>奇函数</strong>（$f(-x) = -f(x)$，关于原点对称）：</p>
+                    <div class="mn-math">$$\int_{-a}^{a} f(x)\,dx = 0$$</div>
+                </div>
+
+                <!-- Interactive: 对称性可视化 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 奇偶函数对称性可视化</h3>
+                    </div>
+
+                    <div class="mn-tabs" id="symTabs">
+                        <button class="mn-tab active" data-tab="even">偶函数 f(x) = x²</button>
+                        <button class="mn-tab" data-tab="odd">奇函数 g(x) = x³</button>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="symSvg" viewBox="0 0 700 300" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats" id="symStats">
+                        <div class="mn-stat"><div class="mn-stat-label">左半 ∫₋₁⁰</div><div class="mn-stat-value" id="symLeft">0.3333</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-tertiary);"><div class="mn-stat-label">右半 ∫₀¹</div><div class="mn-stat-value" style="color:var(--mn-accent-tertiary);" id="symRight">0.3333</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-purple);"><div class="mn-stat-label">总和 ∫₋₁¹</div><div class="mn-stat-value" style="color:var(--mn-accent-purple);" id="symTotal">0.6667</div></div>
+                    </div>
+                </div>
+
+                <div class="mn-highlight">
+                    <strong>奇偶性速查：</strong>
+                    <ul class="mn-list">
+                        <li>偶 × 偶 = 偶，奇 × 奇 = 偶，偶 × 奇 = 奇</li>
+                        <li>$x^n$：n 为偶数是偶函数，n 为奇数是奇函数</li>
+                        <li>$\cos x$, $|x|$, $e^{x^2}$ 是偶函数</li>
+                        <li>$\sin x$, $\tan x$, $x$, $x^3$ 是奇函数</li>
+                    </ul>
+                </div>
+
+                <div class="mn-example">
+                    <div class="mn-example-title">📝 例：$\int_{-2}^2 x \cos x\,dx$</div>
+                    <p>$x$ 是奇函数，$\cos x$ 是偶函数</p>
+                    <p>奇 × 偶 = 奇 → 整体是奇函数</p>
+                    <div class="mn-math">$$\int_{-2}^2 x \cos x\,dx = 0$$</div>
+                    <p>直接得答案，不用算！</p>
+                </div>
+
+                <div class="mn-tip">
+                    <div class="mn-tip-title">🎯 考试技巧</div>
+                    <p>一看到区间是 $[-a, a]$，立刻条件反射：检查函数是不是奇/偶！</p>
+                    <ul class="mn-list">
+                        <li>纯奇函数 → 积分直接是 0</li>
+                        <li>偶函数 → 缩成 2 倍的 $[0, a]$ 积分</li>
+                        <li>混合函数 → 拆开看哪部分是奇、哪部分是偶</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 4: 应用 -->
+            <section class="mn-section" id="sec-4">
+                <span class="mn-section-num">SECTION 04</span>
+                <h2 class="mn-section-title">应用实例</h2>
+
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 变力做功</div>
+                    <p>力 $F(x)$ 随位置变化，从 $x=a$ 到 $x=b$ 所做的功：</p>
+                    <div class="mn-math">$$W = \int_a^b F(x)\,dx$$</div>
+                </div>
+
+                <!-- Interactive: 变力做功 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 变力做功：F(x) = 2x</h3>
+                        <div class="mn-control-group">
+                            <span class="mn-control-label">b =</span>
+                            <input type="range" id="workSlider" min="10" max="50" value="30">
+                            <span class="mn-slider-value" id="workB">3.0</span>
+                        </div>
+                    </div>
+
+                    <div class="mn-legend">
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-curve);"></div><span>F(x) = 2x (N)</span></div>
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-fill);"></div><span>做功 W = ∫F dx</span></div>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="workSvg" viewBox="0 0 700 240" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats">
+                        <div class="mn-stat"><div class="mn-stat-label">位移 (m)</div><div class="mn-stat-value" id="workDisp">3.0</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-tertiary);"><div class="mn-stat-label">F(b) (N)</div><div class="mn-stat-value" style="color:var(--mn-accent-tertiary);" id="workFB">6.0</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-purple);"><div class="mn-stat-label">做功 W (J)</div><div class="mn-stat-value" style="color:var(--mn-accent-purple);" id="workW">9.0</div></div>
+                    </div>
+                </div>
+
+                <div class="mn-example">
+                    <div class="mn-example-title">📝 概率密度归一化</div>
+                    <p>随机变量的密度函数 $p(x)$ 满足：</p>
+                    <div class="mn-math">$$\int_{-\infty}^{+\infty} p(x)\,dx = 1$$</div>
+                    <p>例如均匀分布 $p(x) = 1$ 在 $[0,1]$ 上：$\int_0^1 1\,dx = 1$ ✓</p>
+                </div>
+            </section>
+
+            <!-- Section 5: Summary -->
+            <section class="mn-section" id="sec-5">
+                <span class="mn-section-num">SECTION 05</span>
+                <h2 class="mn-section-title">本节小结</h2>
+
+                <div class="mn-summary">
+                    <h3 class="mn-summary-title"><span>📋</span> 三把计算神器</h3>
+                    <div class="mn-summary-grid">
+                        <div class="mn-summary-item">
+                            <strong>换元法</strong><br>
+                            识别 $f(\varphi(x))\varphi'(x)$<br>
+                            令 $u = \varphi(x)$<br>
+                            <strong>上下限一起换！</strong>
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>分部积分</strong><br>
+                            $\int u\,dv = [uv] - \int v\,du$<br>
+                            LIATE 法则选 u<br>
+                            幂×指数、幂×三角、ln×others
+                        </div>
+                        <div class="mn-summary-item">
+                            <strong>对称性</strong><br>
+                            偶函数：$\int_{-a}^a = 2\int_0^a$<br>
+                            奇函数：$\int_{-a}^a = 0$<br>
+                            区间 $[-a,a]$ 立刻检查！
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mn-highlight">
+                    <strong>做题流程：</strong>
+                    <p>1. 看区间是否对称 → 用对称性</p>
+                    <p>2. 看是否有"链式法则残骸" → 用换元</p>
+                    <p>3. 看是否是两函数乘积 → 用分部积分</p>
+                    <p>4. 都不行？那可能需要更高级的技巧了~</p>
+                </div>
+
+                <div class="mn-end">
+                    <div class="mn-end-divider"><span class="mn-end-icon">✅</span></div>
+                    <p>第五节完成！下一节我们将学习定积分的几何应用（面积、体积、弧长）。</p>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    
+    var app = document.getElementById('mathNotesApp');
+    if (!app) return;
+    
+    // ========== SIDEBAR ==========
+    var sidebar = document.getElementById('mnSidebar');
+    var sidebarToggle = document.getElementById('mnSidebarToggle');
+    
+    sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+    });
+    
+    var directory = document.getElementById('mnDirectory');
+    var directoryHeader = directory.querySelector('.mn-directory-header');
+    directoryHeader.addEventListener('click', function() {
+        directory.classList.toggle('open');
+    });
+    
+    // ========== THEME ==========
+    var themeToggle = document.getElementById('mnThemeToggle');
+    var themeIcon = document.getElementById('mnThemeIcon');
+    
+    var savedTheme = localStorage.getItem('mn-theme') || 'light';
+    app.setAttribute('data-theme', savedTheme);
+    themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+    
+    themeToggle.addEventListener('click', function() {
+        var current = app.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        app.setAttribute('data-theme', next);
+        localStorage.setItem('mn-theme', next);
+        themeIcon.textContent = next === 'dark' ? '☀️' : '🌙';
+        redrawAll();
+    });
+    
+    // ========== NAV LINKS ==========
+    var navLinks = app.querySelectorAll('.mn-nav-link');
+    navLinks.forEach(function(link) {
+        link.addEventListener('click', function() {
+            navLinks.forEach(function(l) { l.classList.remove('active'); });
+            this.classList.add('active');
+        });
+    });
+    
+    // ========== HELPERS ==========
+    function getColors() {
+        var style = getComputedStyle(app);
+        return {
+            curve: style.getPropertyValue('--mn-svg-curve').trim() || '#d97706',
+            curve2: style.getPropertyValue('--mn-svg-curve2').trim() || '#0891b2',
+            fill: style.getPropertyValue('--mn-svg-fill').trim() || 'rgba(217,119,6,0.25)',
+            fill2: style.getPropertyValue('--mn-svg-fill2').trim() || 'rgba(8,145,178,0.25)',
+            grid: style.getPropertyValue('--mn-svg-grid').trim() || '#e8e0d8',
+            axis: style.getPropertyValue('--mn-svg-axis').trim() || '#5a5045',
+            bg: style.getPropertyValue('--mn-bg-secondary').trim() || '#ffffff',
+            text: style.getPropertyValue('--mn-text-primary').trim() || '#2a2520',
+            even: style.getPropertyValue('--mn-svg-even').trim() || '#7c3aed',
+            odd: style.getPropertyValue('--mn-svg-odd').trim() || '#e11d48',
+            purple: style.getPropertyValue('--mn-accent-purple').trim() || '#7c3aed',
+            tertiary: style.getPropertyValue('--mn-accent-tertiary').trim() || '#0891b2'
+        };
+    }
+    
+    // ========== 1. 换元法可视化 ==========
+    function drawSubstitution() {
+        var svg = document.getElementById('substSvg');
+        var colors = getColors();
+        var width = 700, height = 260;
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Left panel: original integral
+        var lw = 320, lh = 200;
+        var lm = {top: 30, right: 20, bottom: 30, left: 40};
+        var lpw = lw - lm.left - lm.right;
+        var lph = lh - lm.top - lm.bottom;
+        
+        var lxS = function(x) { return lm.left + x * lpw; };
+        var lyS = function(y) { return lm.top + lph - (y / 5.5) * lph; };
+        
+        // Grid and axis for left panel
+        content += '<line x1="'+lm.left+'" y1="'+lyS(0)+'" x2="'+(lw-lm.right)+'" y2="'+lyS(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // f(x) = 2x * e^(x^2)
+        var f1 = function(x) { return 2 * x * Math.exp(x * x); };
+        
+        // Area
+        var areaPath = 'M ' + lxS(0) + ' ' + lyS(0);
+        for (var i = 0; i <= 50; i++) {
+            var x = i / 50;
+            areaPath += ' L ' + lxS(x) + ' ' + lyS(f1(x));
+        }
+        areaPath += ' L ' + lxS(1) + ' ' + lyS(0) + ' Z';
+        content += '<path d="'+areaPath+'" fill="'+colors.fill+'" stroke="'+colors.curve+'" stroke-width="2"/>';
+        
+        // Curve
+        var curvePath = 'M ' + lxS(0) + ' ' + lyS(f1(0));
+        for (var i = 1; i <= 50; i++) {
+            var x = i / 50;
+            curvePath += ' L ' + lxS(x) + ' ' + lyS(f1(x));
+        }
+        content += '<path d="'+curvePath+'" fill="none" stroke="'+colors.curve+'" stroke-width="3"/>';
+        
+        // Labels
+        content += '<text x="'+(lw/2)+'" y="18" fill="'+colors.text+'" font-size="13" text-anchor="middle" font-weight="600">原积分：∫₀¹ 2xe^(x²) dx</text>';
+        content += '<text x="'+(lw-lm.right)+'" y="'+lyS(0)+'+18" fill="'+colors.text+'" font-size="12" text-anchor="end">x</text>';
+        
+        // Right panel: transformed integral
+        var rx = 370;
+        var rxS = function(x) { return rx + lm.left + x * lpw; };
+        
+        content += '<line x1="'+(rx+lm.left)+'" y1="'+lyS(0)+'" x2="'+(rx+lw-lm.right)+'" y2="'+lyS(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // f(u) = e^u
+        var f2 = function(u) { return Math.exp(u); };
+        
+        // Area
+        var area2Path = 'M ' + rxS(0) + ' ' + lyS(0);
+        for (var i = 0; i <= 50; i++) {
+            var u = i / 50;
+            area2Path += ' L ' + rxS(u) + ' ' + lyS(f2(u));
+        }
+        area2Path += ' L ' + rxS(1) + ' ' + lyS(0) + ' Z';
+        content += '<path d="'+area2Path+'" fill="'+colors.fill2+'" stroke="'+colors.curve2+'" stroke-width="2"/>';
+        
+        // Curve
+        var curve2Path = 'M ' + rxS(0) + ' ' + lyS(f2(0));
+        for (var i = 1; i <= 50; i++) {
+            var u = i / 50;
+            curve2Path += ' L ' + rxS(u) + ' ' + lyS(f2(u));
+        }
+        content += '<path d="'+curve2Path+'" fill="none" stroke="'+colors.curve2+'" stroke-width="3"/>';
+        
+        // Labels
+        content += '<text x="'+(rx+lw/2)+'" y="18" fill="'+colors.text+'" font-size="13" text-anchor="middle" font-weight="600">换元后：∫₀¹ eᵘ du</text>';
+        content += '<text x="'+(rx+lw-lm.right)+'" y="'+lyS(0)+'+18" fill="'+colors.text+'" font-size="12" text-anchor="end">u</text>';
+        
+        // Arrow between panels
+        content += '<path d="M 330 '+height/2+' L 360 '+height/2+'" stroke="'+colors.purple+'" stroke-width="3" marker-end="url(#arrowPurple)"/>';
+        content += '<text x="345" y="'+(height/2-10)+'" fill="'+colors.purple+'" font-size="11" text-anchor="middle">u = x²</text>';
+        
+        // Arrow marker
+        content += '<defs><marker id="arrowPurple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="'+colors.purple+'"/></marker></defs>';
+        
+        svg.innerHTML = content;
+        
+        var integral = Math.E - 1;
+        document.getElementById('substOrig').textContent = integral.toFixed(4);
+        document.getElementById('substNew').textContent = integral.toFixed(4);
+    }
+    
+    // ========== 2. 分部积分可视化 ==========
+    function drawIBP() {
+        var svg = document.getElementById('ibpSvg');
+        var colors = getColors();
+        var width = 700, height = 280;
+        var margin = {top: 30, right: 40, bottom: 40, left: 50};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        var xScale = function(x) { return margin.left + x * plotWidth; };
+        var yScale = function(y) { return height - margin.bottom - (y / 3) * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Grid
+        for (var i = 0; i <= 10; i++) {
+            var gx = xScale(i/10);
+            content += '<line x1="'+gx+'" y1="'+margin.top+'" x2="'+gx+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.grid+'" stroke-dasharray="2,2"/>';
+        }
+        
+        // f(x) = x * e^x
+        var f = function(x) { return x * Math.exp(x); };
+        
+        // Area
+        var areaPath = 'M ' + xScale(0) + ' ' + yScale(0);
+        for (var i = 0; i <= 100; i++) {
+            var x = i / 100;
+            areaPath += ' L ' + xScale(x) + ' ' + yScale(f(x));
+        }
+        areaPath += ' L ' + xScale(1) + ' ' + yScale(0) + ' Z';
+        content += '<path d="'+areaPath+'" fill="'+colors.fill+'" stroke="'+colors.curve+'" stroke-width="2"/>';
+        
+        // Curve
+        var curvePath = 'M ' + xScale(0) + ' ' + yScale(f(0));
+        for (var i = 1; i <= 100; i++) {
+            var x = i / 100;
+            curvePath += ' L ' + xScale(x) + ' ' + yScale(f(x));
+        }
+        content += '<path d="'+curvePath+'" fill="none" stroke="'+colors.curve+'" stroke-width="3"/>';
+        
+        // Axis
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // Show components
+        // u = x, v = e^x
+        // [uv]_0^1 = [x*e^x]_0^1 = e - 0 = e
+        // ∫v du = ∫e^x dx = e - 1
+        
+        // Labels
+        content += '<text x="'+(width/2)+'" y="22" fill="'+colors.text+'" font-size="14" text-anchor="middle" font-family="JetBrains Mono">f(x) = x·eˣ</text>';
+        
+        // Show the decomposition
+        content += '<text x="'+(margin.left + 20)+'" y="'+(margin.top + 30)+'" fill="'+colors.curve+'" font-size="12">u = x → du = dx</text>';
+        content += '<text x="'+(margin.left + 20)+'" y="'+(margin.top + 50)+'" fill="'+colors.tertiary+'" font-size="12">dv = eˣdx → v = eˣ</text>';
+        
+        svg.innerHTML = content;
+        
+        var e = Math.E;
+        document.getElementById('ibpUV').textContent = e.toFixed(4);
+        document.getElementById('ibpVDU').textContent = (e - 1).toFixed(4);
+        document.getElementById('ibpResult').textContent = '1.0000';
+    }
+    
+    // ========== 3. 对称性可视化 ==========
+    var symMode = 'even';
+    
+    function drawSymmetry() {
+        var svg = document.getElementById('symSvg');
+        var colors = getColors();
+        var width = 700, height = 300;
+        var margin = {top: 30, right: 40, bottom: 40, left: 50};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        // x from -1 to 1
+        var xScale = function(x) { return margin.left + ((x + 1) / 2) * plotWidth; };
+        var yMax = symMode === 'even' ? 1 : 1;
+        var yMin = symMode === 'even' ? 0 : -1;
+        var yRange = yMax - yMin;
+        var yScale = function(y) { return height - margin.bottom - ((y - yMin) / yRange) * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Grid
+        for (var i = -10; i <= 10; i++) {
+            var gx = xScale(i/10);
+            content += '<line x1="'+gx+'" y1="'+margin.top+'" x2="'+gx+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.grid+'" stroke-dasharray="2,2" opacity="0.5"/>';
+        }
+        
+        var f = symMode === 'even' ? function(x) { return x * x; } : function(x) { return x * x * x; };
+        var funcColor = symMode === 'even' ? colors.even : colors.odd;
+        
+        // Left area (negative x)
+        var leftPath = 'M ' + xScale(-1) + ' ' + yScale(0);
+        for (var i = 0; i <= 50; i++) {
+            var x = -1 + i / 50;
+            leftPath += ' L ' + xScale(x) + ' ' + yScale(f(x));
+        }
+        leftPath += ' L ' + xScale(0) + ' ' + yScale(0) + ' Z';
+        content += '<path d="'+leftPath+'" fill="'+funcColor+'" opacity="0.3" stroke="'+funcColor+'" stroke-width="2"/>';
+        
+        // Right area (positive x)
+        var rightPath = 'M ' + xScale(0) + ' ' + yScale(0);
+        for (var i = 0; i <= 50; i++) {
+            var x = i / 50;
+            rightPath += ' L ' + xScale(x) + ' ' + yScale(f(x));
+        }
+        rightPath += ' L ' + xScale(1) + ' ' + yScale(0) + ' Z';
+        content += '<path d="'+rightPath+'" fill="'+colors.curve+'" opacity="0.3" stroke="'+colors.curve+'" stroke-width="2"/>';
+        
+        // Full curve
+        var curvePath = 'M ' + xScale(-1) + ' ' + yScale(f(-1));
+        for (var i = 1; i <= 100; i++) {
+            var x = -1 + 2 * i / 100;
+            curvePath += ' L ' + xScale(x) + ' ' + yScale(f(x));
+        }
+        content += '<path d="'+curvePath+'" fill="none" stroke="'+funcColor+'" stroke-width="3"/>';
+        
+        // Axis
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        content += '<line x1="'+xScale(0)+'" y1="'+margin.top+'" x2="'+xScale(0)+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // Labels
+        var label = symMode === 'even' ? 'f(x) = x² (偶函数)' : 'g(x) = x³ (奇函数)';
+        content += '<text x="'+(width/2)+'" y="22" fill="'+funcColor+'" font-size="14" text-anchor="middle" font-weight="600">'+label+'</text>';
+        
+        // Symmetry annotation
+        if (symMode === 'even') {
+            content += '<text x="'+xScale(-0.5)+'" y="'+yScale(0.6)+'" fill="'+funcColor+'" font-size="12" text-anchor="middle">左 = 右</text>';
+            content += '<text x="'+xScale(0.5)+'" y="'+yScale(0.6)+'" fill="'+colors.curve+'" font-size="12" text-anchor="middle">→ 总 = 2×右</text>';
+        } else {
+            content += '<text x="'+xScale(-0.5)+'" y="'+yScale(-0.3)+'" fill="'+funcColor+'" font-size="12" text-anchor="middle">负</text>';
+            content += '<text x="'+xScale(0.5)+'" y="'+yScale(0.3)+'" fill="'+colors.curve+'" font-size="12" text-anchor="middle">正</text>';
+            content += '<text x="'+xScale(0)+'" y="'+(height-margin.bottom+30)+'" fill="'+funcColor+'" font-size="13" text-anchor="middle">左右抵消 → 总 = 0</text>';
+        }
+        
+        svg.innerHTML = content;
+        
+        // Calculate integrals
+        var leftInt, rightInt, totalInt;
+        if (symMode === 'even') {
+            leftInt = 1/3;
+            rightInt = 1/3;
+            totalInt = 2/3;
+        } else {
+            leftInt = -1/4;
+            rightInt = 1/4;
+            totalInt = 0;
+        }
+        
+        document.getElementById('symLeft').textContent = leftInt.toFixed(4);
+        document.getElementById('symRight').textContent = rightInt.toFixed(4);
+        document.getElementById('symTotal').textContent = totalInt.toFixed(4);
+    }
+    
+    var symTabs = document.querySelectorAll('#symTabs .mn-tab');
+    symTabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            symTabs.forEach(function(t) { t.classList.remove('active'); });
+            this.classList.add('active');
+            symMode = this.getAttribute('data-tab');
+            drawSymmetry();
+        });
+    });
+    
+    // ========== 4. 变力做功 ==========
+    var workSlider = document.getElementById('workSlider');
+    
+    function drawWork(b) {
+        var svg = document.getElementById('workSvg');
+        var colors = getColors();
+        var width = 700, height = 240;
+        var margin = {top: 25, right: 40, bottom: 35, left: 50};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        var xMax = 5;
+        var yMax = 10;
+        var xScale = function(x) { return margin.left + (x / xMax) * plotWidth; };
+        var yScale = function(y) { return height - margin.bottom - (y / yMax) * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Grid
+        for (var i = 0; i <= 5; i++) {
+            var gx = xScale(i);
+            var gy = yScale(i * 2);
+            content += '<line x1="'+gx+'" y1="'+margin.top+'" x2="'+gx+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.grid+'" stroke-dasharray="2,2"/>';
+            content += '<line x1="'+margin.left+'" y1="'+gy+'" x2="'+(width-margin.right)+'" y2="'+gy+'" stroke="'+colors.grid+'" stroke-dasharray="2,2"/>';
+        }
+        
+        // F(x) = 2x
+        var F = function(x) { return 2 * x; };
+        
+        // Area from 0 to b
+        var areaPath = 'M ' + xScale(0) + ' ' + yScale(0);
+        for (var i = 0; i <= 50; i++) {
+            var x = b * i / 50;
+            areaPath += ' L ' + xScale(x) + ' ' + yScale(F(x));
+        }
+        areaPath += ' L ' + xScale(b) + ' ' + yScale(0) + ' Z';
+        content += '<path d="'+areaPath+'" fill="'+colors.fill+'" stroke="'+colors.curve+'" stroke-width="2"/>';
+        
+        // Full line
+        content += '<line x1="'+xScale(0)+'" y1="'+yScale(0)+'" x2="'+xScale(xMax)+'" y2="'+yScale(F(xMax))+'" stroke="'+colors.curve+'" stroke-width="3"/>';
+        
+        // Vertical line at b
+        content += '<line x1="'+xScale(b)+'" y1="'+yScale(0)+'" x2="'+xScale(b)+'" y2="'+yScale(F(b))+'" stroke="'+colors.tertiary+'" stroke-width="2" stroke-dasharray="4,2"/>';
+        content += '<circle cx="'+xScale(b)+'" cy="'+yScale(F(b))+'" r="5" fill="'+colors.tertiary+'"/>';
+        
+        // Axis
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        content += '<line x1="'+xScale(0)+'" y1="'+margin.top+'" x2="'+xScale(0)+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // Labels
+        content += '<text x="'+xScale(b)+'" y="'+(yScale(0)+18)+'" fill="'+colors.tertiary+'" font-size="12" text-anchor="middle">b</text>';
+        content += '<text x="'+(width-margin.right)+'" y="'+yScale(0)+'-5" fill="'+colors.text+'" font-size="12" text-anchor="end">x (m)</text>';
+        content += '<text x="'+xScale(0)+'-5" y="'+margin.top+'" fill="'+colors.text+'" font-size="12" text-anchor="end">F (N)</text>';
+        
+        svg.innerHTML = content;
+        
+        var W = b * b; // ∫_0^b 2x dx = x²|_0^b = b²
+        document.getElementById('workDisp').textContent = b.toFixed(1);
+        document.getElementById('workFB').textContent = (2 * b).toFixed(1);
+        document.getElementById('workW').textContent = W.toFixed(1);
+    }
+    
+    workSlider.addEventListener('input', function() {
+        var b = parseInt(this.value) / 10;
+        document.getElementById('workB').textContent = b.toFixed(1);
+        drawWork(b);
+    });
+    
+    // ========== REDRAW ==========
+    function redrawAll() {
+        drawSubstitution();
+        drawIBP();
+        drawSymmetry();
+        drawWork(parseInt(workSlider.value) / 10);
+    }
+    
+    // ========== INIT ==========
+    drawSubstitution();
+    drawIBP();
+    drawSymmetry();
+    drawWork(3);
+    
+    // ========== KATEX ==========
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'function') {
+            renderMathInElement(app, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError: false
+            });
+        } else {
+            setTimeout(initKaTeX, 100);
+        }
+    }
+    initKaTeX();
+})();
+</script>
+
+</body>
+</html>

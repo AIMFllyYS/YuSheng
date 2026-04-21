@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第三节 · 定积分的性质 - 数学笔记</title>
+    
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=ZCOOL+XiaoWei&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<style>
+/* ========== SCOPED STYLES - PURPLE THEME ========== */
+.math-notes-app {
+    --mn-bg-primary: #f7f5fa;
+    --mn-bg-secondary: #ffffff;
+    --mn-bg-tertiary: #f0ecf5;
+    --mn-bg-glass: rgba(255, 255, 255, 0.95);
+    --mn-text-primary: #2c2c2c;
+    --mn-text-secondary: #555555;
+    --mn-text-muted: #888888;
+    --mn-accent-primary: #7c5295;
+    --mn-accent-secondary: #9b6bb3;
+    --mn-accent-tertiary: #5a8a6b;
+    --mn-accent-gold: #c9a227;
+    --mn-accent-rose: #c75a7a;
+    --mn-border-color: rgba(124, 82, 149, 0.12);
+    --mn-shadow-soft: 0 4px 24px rgba(124, 82, 149, 0.08);
+    --mn-shadow-medium: 0 12px 48px rgba(124, 82, 149, 0.15);
+    --mn-nav-bg: rgba(255, 255, 255, 0.98);
+    --mn-svg-curve: #7c5295;
+    --mn-svg-curve2: #c75a7a;
+    --mn-svg-fill: rgba(124, 82, 149, 0.25);
+    --mn-svg-fill2: rgba(199, 90, 122, 0.25);
+    --mn-svg-grid: #e8e0f0;
+    --mn-svg-axis: #555;
+    --mn-svg-avg: #c9a227;
+}
+
+.math-notes-app[data-theme="dark"] {
+    --mn-bg-primary: #151318;
+    --mn-bg-secondary: #1e1b22;
+    --mn-bg-tertiary: #2a2630;
+    --mn-bg-glass: rgba(30, 27, 34, 0.98);
+    --mn-text-primary: #e8e4ef;
+    --mn-text-secondary: #a8a4b0;
+    --mn-text-muted: #6a6a7a;
+    --mn-accent-primary: #a080c0;
+    --mn-accent-secondary: #b898d0;
+    --mn-accent-tertiary: #7ab88a;
+    --mn-accent-gold: #e0c060;
+    --mn-accent-rose: #e07090;
+    --mn-border-color: rgba(160, 128, 192, 0.15);
+    --mn-shadow-soft: 0 4px 24px rgba(0,0,0,0.4);
+    --mn-shadow-medium: 0 12px 48px rgba(0,0,0,0.5);
+    --mn-nav-bg: rgba(24, 22, 28, 0.98);
+    --mn-svg-curve: #a080c0;
+    --mn-svg-curve2: #e07090;
+    --mn-svg-fill: rgba(160, 128, 192, 0.3);
+    --mn-svg-fill2: rgba(224, 112, 144, 0.3);
+    --mn-svg-grid: #3a3640;
+    --mn-svg-axis: #999;
+    --mn-svg-avg: #e0c060;
+}
+
+.math-notes-app,
+.math-notes-app * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box !important;
+}
+
+.math-notes-app {
+    font-family: 'Noto Serif SC', 'SimSun', serif !important;
+    background: var(--mn-bg-primary) !important;
+    color: var(--mn-text-primary) !important;
+    line-height: 1.9 !important;
+    font-size: 17px !important;
+    position: relative !important;
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* ========== BACKGROUND ========== */
+.math-notes-app .mn-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.math-notes-app .mn-bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    animation: mnFloat 25s ease-in-out infinite;
+}
+
+.math-notes-app .mn-bg-orb:nth-child(1) {
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, var(--mn-accent-primary) 0%, transparent 70%);
+    top: -120px;
+    right: 5%;
+}
+
+.math-notes-app .mn-bg-orb:nth-child(2) {
+    width: 550px;
+    height: 550px;
+    background: radial-gradient(circle, var(--mn-accent-rose) 0%, transparent 70%);
+    bottom: -180px;
+    left: -80px;
+    animation-delay: -8s;
+}
+
+.math-notes-app .mn-bg-orb:nth-child(3) {
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, var(--mn-accent-gold) 0%, transparent 70%);
+    top: 45%;
+    left: 35%;
+    animation-delay: -16s;
+    opacity: 0.2;
+}
+
+@keyframes mnFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(25px, -25px) scale(1.03); }
+    66% { transform: translate(-15px, 15px) scale(0.97); }
+}
+
+.math-notes-app .mn-bg-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(var(--mn-border-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--mn-border-color) 1px, transparent 1px);
+    background-size: 50px 50px;
+    opacity: 0.5;
+}
+
+/* ========== LAYOUT ========== */
+.math-notes-app .mn-layout {
+    display: flex;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+}
+
+/* ========== FIXED SIDEBAR ========== */
+.math-notes-app .mn-sidebar {
+    width: 280px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    background: var(--mn-nav-bg);
+    border-right: 1px solid var(--mn-border-color);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    box-shadow: var(--mn-shadow-soft);
+}
+
+.math-notes-app .mn-sidebar.collapsed {
+    transform: translateX(-280px);
+}
+
+.math-notes-app .mn-sidebar-toggle {
+    position: fixed;
+    left: 280px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 60px;
+    background: var(--mn-nav-bg);
+    border: 1px solid var(--mn-border-color);
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    transition: all 0.3s ease;
+}
+
+.math-notes-app .mn-sidebar.collapsed + .mn-sidebar-toggle {
+    left: 0;
+}
+
+.math-notes-app .mn-sidebar-toggle:hover {
+    width: 32px;
+    background: var(--mn-bg-tertiary);
+}
+
+.math-notes-app .mn-sidebar-toggle span {
+    font-size: 14px;
+    color: var(--mn-text-muted);
+    transition: transform 0.3s ease;
+}
+
+.math-notes-app .mn-sidebar.collapsed + .mn-sidebar-toggle span {
+    transform: rotate(180deg);
+}
+
+.math-notes-app .mn-sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 90px;
+}
+
+.math-notes-app .mn-sidebar-content::-webkit-scrollbar { width: 4px; }
+.math-notes-app .mn-sidebar-content::-webkit-scrollbar-thumb { background: var(--mn-border-color); border-radius: 2px; }
+
+/* Back & Directory */
+.math-notes-app .mn-back {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 20px;
+    color: var(--mn-text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 15px;
+    border-bottom: 1px solid var(--mn-border-color);
+    transition: all 0.2s ease;
+}
+
+.math-notes-app .mn-back:hover {
+    background: var(--mn-bg-tertiary);
+    color: var(--mn-accent-primary) !important;
+}
+
+.math-notes-app .mn-directory {
+    border-bottom: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-directory-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    user-select: none;
+}
+
+.math-notes-app .mn-directory-header:hover {
+    background: var(--mn-bg-tertiary);
+}
+
+.math-notes-app .mn-directory-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--mn-text-primary);
+}
+
+.math-notes-app .mn-directory-arrow {
+    font-size: 12px;
+    color: var(--mn-text-muted);
+    transition: transform 0.3s ease;
+}
+
+.math-notes-app .mn-directory.open .mn-directory-arrow {
+    transform: rotate(180deg);
+}
+
+.math-notes-app .mn-directory-list {
+    max-height: 0;
+    overflow: hidden;
+    background: var(--mn-bg-tertiary);
+    transition: max-height 0.3s ease;
+}
+
+.math-notes-app .mn-directory.open .mn-directory-list {
+    max-height: 400px;
+}
+
+.math-notes-app .mn-directory-link {
+    display: block !important;
+    padding: 10px 20px 10px 44px;
+    color: var(--mn-text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 14px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.math-notes-app .mn-directory-link::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--mn-border-color);
+    transition: background 0.2s ease;
+}
+
+.math-notes-app .mn-directory-link:hover {
+    background: rgba(124, 82, 149, 0.05);
+    color: var(--mn-text-primary) !important;
+}
+
+.math-notes-app .mn-directory-link:hover::before {
+    background: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-directory-link.active {
+    color: var(--mn-accent-primary) !important;
+    font-weight: 500;
+    background: rgba(124, 82, 149, 0.08);
+}
+
+.math-notes-app .mn-directory-link.active::before {
+    background: var(--mn-accent-primary);
+}
+
+/* Section Nav */
+.math-notes-app .mn-section-nav {
+    padding: 16px 0;
+}
+
+.math-notes-app .mn-section-header {
+    padding: 0 20px 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--mn-text-muted);
+    font-weight: 600;
+}
+
+.math-notes-app .mn-nav-link {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: var(--mn-text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.math-notes-app .mn-nav-link:hover {
+    background: var(--mn-bg-tertiary);
+    color: var(--mn-text-primary) !important;
+}
+
+.math-notes-app .mn-nav-link.active {
+    background: rgba(124, 82, 149, 0.1);
+    color: var(--mn-accent-primary) !important;
+    font-weight: 500;
+    border-left-color: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-nav-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--mn-text-muted);
+    width: 22px;
+}
+
+/* Sidebar Footer */
+.math-notes-app .mn-sidebar-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 20px;
+    background: var(--mn-nav-bg);
+    border-top: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--mn-bg-tertiary);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.math-notes-app .mn-theme-toggle:hover {
+    border-color: var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-theme-toggle span { font-size: 14px; color: var(--mn-text-secondary); }
+.math-notes-app .mn-theme-icon { font-size: 18px; }
+
+/* ========== MAIN CONTENT ========== */
+.math-notes-app .mn-main {
+    flex: 1;
+    margin-left: 280px;
+    padding: 50px 60px 100px;
+    max-width: calc(280px + 880px);
+    min-width: 0;
+    transition: margin-left 0.3s ease;
+}
+
+.math-notes-app .mn-sidebar.collapsed ~ .mn-main {
+    margin-left: 0;
+}
+
+/* ========== PAGE HEADER ========== */
+.math-notes-app .mn-page-header {
+    margin-bottom: 50px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    color: white !important;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-page-title {
+    font-family: 'ZCOOL XiaoWei', serif !important;
+    font-size: 34px !important;
+    font-weight: 400 !important;
+    color: var(--mn-text-primary) !important;
+    margin: 0 0 14px 0 !important;
+    padding: 0 !important;
+    line-height: 1.3 !important;
+    border: none !important;
+}
+
+.math-notes-app .mn-page-subtitle {
+    font-size: 16px;
+    color: var(--mn-text-secondary);
+    margin: 0;
+    max-width: 580px;
+}
+
+/* ========== SECTIONS ========== */
+.math-notes-app .mn-section {
+    margin-bottom: 56px;
+}
+
+.math-notes-app .mn-section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--mn-accent-primary);
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.math-notes-app .mn-section-title {
+    font-family: 'ZCOOL XiaoWei', serif !important;
+    font-size: 24px !important;
+    font-weight: 400 !important;
+    color: var(--mn-text-primary) !important;
+    margin: 0 0 20px 0 !important;
+    padding: 0 0 10px 0 !important;
+    border-bottom: 2px solid var(--mn-border-color) !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    position: relative;
+}
+
+.math-notes-app .mn-section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+}
+
+.math-notes-app p {
+    margin: 0 0 18px 0 !important;
+    padding: 0 !important;
+    text-align: justify;
+    color: var(--mn-text-primary);
+}
+
+/* ========== SPECIAL BLOCKS ========== */
+.math-notes-app .mn-highlight {
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.1) 0%, rgba(201, 162, 39, 0.05) 100%);
+    border-left: 4px solid var(--mn-accent-gold);
+    padding: 18px 22px;
+    margin: 22px 0;
+    border-radius: 0 14px 14px 0;
+    position: relative;
+}
+
+.math-notes-app .mn-highlight::before {
+    content: '💡';
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 22px;
+    opacity: 0.3;
+}
+
+.math-notes-app .mn-theorem {
+    background: linear-gradient(135deg, rgba(124, 82, 149, 0.08) 0%, rgba(155, 107, 179, 0.05) 100%);
+    border: 1px solid rgba(124, 82, 149, 0.2);
+    border-left: 4px solid var(--mn-accent-primary);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-theorem-title {
+    font-weight: 600;
+    color: var(--mn-accent-primary);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-definition {
+    background: linear-gradient(135deg, rgba(90, 138, 107, 0.08) 0%, rgba(90, 138, 107, 0.04) 100%);
+    border: 1px solid rgba(90, 138, 107, 0.2);
+    border-left: 4px solid var(--mn-accent-tertiary);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-definition-title {
+    font-weight: 600;
+    color: var(--mn-accent-tertiary);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-warning {
+    background: linear-gradient(135deg, rgba(199, 90, 122, 0.08) 0%, rgba(199, 90, 122, 0.04) 100%);
+    border: 1px solid rgba(199, 90, 122, 0.2);
+    border-left: 4px solid var(--mn-accent-rose);
+    padding: 22px 26px;
+    margin: 26px 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.math-notes-app .mn-warning-title {
+    font-weight: 600;
+    color: var(--mn-accent-rose);
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.math-notes-app .mn-list {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 18px 0 !important;
+}
+
+.math-notes-app .mn-list li {
+    padding: 10px 0 10px 32px !important;
+    position: relative;
+    border-bottom: 1px dashed var(--mn-border-color);
+    margin: 0 !important;
+}
+
+.math-notes-app .mn-list li:last-child { border-bottom: none; }
+
+.math-notes-app .mn-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--mn-accent-primary);
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* ========== MATH DISPLAY ========== */
+.math-notes-app .mn-math {
+    background: var(--mn-bg-secondary);
+    border: 1px solid var(--mn-border-color);
+    border-radius: 14px;
+    padding: 22px 28px;
+    margin: 22px 0;
+    overflow-x: auto;
+    text-align: center;
+    position: relative;
+}
+
+.math-notes-app .mn-math::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    border-radius: 14px 14px 0 0;
+}
+
+.math-notes-app .katex-display { margin: 0 !important; }
+
+/* ========== VISUALIZATION ========== */
+.math-notes-app .mn-viz {
+    background: var(--mn-bg-glass);
+    border: 1px solid var(--mn-border-color);
+    border-radius: 18px;
+    padding: 28px;
+    margin: 36px 0;
+    box-shadow: var(--mn-shadow-soft);
+    position: relative;
+}
+
+.math-notes-app .mn-viz::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    border-radius: 18px 18px 0 0;
+}
+
+.math-notes-app .mn-viz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.math-notes-app .mn-viz-title {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 18px;
+    color: var(--mn-text-primary);
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+.math-notes-app .mn-viz-controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.math-notes-app .mn-control-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--mn-bg-tertiary);
+    padding: 8px 14px;
+    border-radius: 10px;
+}
+
+.math-notes-app .mn-control-label {
+    font-size: 14px;
+    color: var(--mn-text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.math-notes-app input[type="range"] {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: 120px;
+    height: 6px;
+    background: var(--mn-border-color) !important;
+    border-radius: 3px;
+    outline: none !important;
+    cursor: pointer;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.math-notes-app input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none !important;
+}
+
+.math-notes-app .mn-slider-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--mn-accent-primary);
+    min-width: 36px;
+    text-align: center;
+}
+
+.math-notes-app .mn-svg-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
+    padding: 16px;
+    background: var(--mn-bg-secondary);
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
+.math-notes-app .mn-svg-container svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.math-notes-app .mn-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 14px 0;
+    flex-wrap: wrap;
+}
+
+.math-notes-app .mn-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--mn-text-secondary);
+}
+
+.math-notes-app .mn-legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+}
+
+.math-notes-app .mn-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--mn-border-color);
+}
+
+.math-notes-app .mn-stat {
+    background: var(--mn-bg-tertiary);
+    padding: 14px 16px;
+    border-radius: 12px;
+    text-align: center;
+    border-top: 3px solid var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-stat-label {
+    font-size: 11px;
+    color: var(--mn-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.math-notes-app .mn-stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--mn-accent-primary);
+}
+
+/* ========== BUTTONS ========== */
+.math-notes-app .mn-btn-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.math-notes-app .mn-btn {
+    padding: 10px 20px;
+    border: none !important;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Noto Serif SC', serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none !important;
+}
+
+.math-notes-app .mn-btn-primary {
+    background: linear-gradient(135deg, var(--mn-accent-primary) 0%, var(--mn-accent-secondary) 100%);
+    color: white !important;
+}
+
+.math-notes-app .mn-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(124, 82, 149, 0.3);
+}
+
+.math-notes-app .mn-btn-secondary {
+    background: var(--mn-bg-tertiary);
+    color: var(--mn-text-primary) !important;
+}
+
+.math-notes-app .mn-btn-secondary:hover {
+    background: var(--mn-bg-secondary);
+}
+
+/* ========== TABS ========== */
+.math-notes-app .mn-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--mn-bg-tertiary);
+    padding: 4px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+
+.math-notes-app .mn-tab {
+    padding: 8px 16px;
+    border: none !important;
+    background: transparent;
+    color: var(--mn-text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-family: 'Noto Serif SC', serif;
+}
+
+.math-notes-app .mn-tab:hover {
+    color: var(--mn-text-primary);
+}
+
+.math-notes-app .mn-tab.active {
+    background: var(--mn-bg-secondary);
+    color: var(--mn-accent-primary);
+    font-weight: 500;
+    box-shadow: var(--mn-shadow-soft);
+}
+
+/* ========== SUMMARY ========== */
+.math-notes-app .mn-summary {
+    background: linear-gradient(135deg, var(--mn-bg-secondary) 0%, var(--mn-bg-tertiary) 100%);
+    border: 2px solid var(--mn-accent-primary);
+    border-radius: 18px;
+    padding: 32px;
+    margin: 40px 0;
+}
+
+.math-notes-app .mn-summary-title {
+    font-family: 'ZCOOL XiaoWei', serif !important;
+    font-size: 22px !important;
+    color: var(--mn-accent-primary) !important;
+    margin: 0 0 20px 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.math-notes-app .mn-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+}
+
+.math-notes-app .mn-summary-item {
+    padding: 14px 18px;
+    background: var(--mn-bg-primary);
+    border-radius: 10px;
+    border-left: 3px solid var(--mn-accent-primary);
+}
+
+.math-notes-app .mn-summary-item strong {
+    color: var(--mn-accent-primary);
+}
+
+/* ========== END ========== */
+.math-notes-app .mn-end {
+    text-align: center;
+    padding: 36px 0;
+    color: var(--mn-text-muted);
+}
+
+.math-notes-app .mn-end-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.math-notes-app .mn-end-divider::before,
+.math-notes-app .mn-end-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--mn-border-color), transparent);
+}
+
+.math-notes-app .mn-end-icon { font-size: 22px; }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 900px) {
+    .math-notes-app .mn-main { padding: 40px 30px 80px; }
+    .math-notes-app .mn-page-title { font-size: 28px !important; }
+    .math-notes-app .mn-section-title { font-size: 22px !important; }
+}
+
+@media (max-width: 768px) {
+    .math-notes-app .mn-sidebar {
+        transform: translateX(-280px);
+    }
+    .math-notes-app .mn-sidebar.open {
+        transform: translateX(0);
+    }
+    .math-notes-app .mn-sidebar-toggle {
+        left: 0;
+    }
+    .math-notes-app .mn-sidebar.open + .mn-sidebar-toggle {
+        left: 280px;
+    }
+    .math-notes-app .mn-main {
+        margin-left: 0;
+        padding: 30px 20px 60px;
+    }
+    .math-notes-app .mn-viz-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .math-notes-app input[type="range"] { width: 100%; }
+}
+
+.math-notes-app .katex { font-size: 1.1em; }
+.math-notes-app .katex-display > .katex { font-size: 1.15em; }
+</style>
+
+<div class="math-notes-app" id="mathNotesApp">
+    <!-- Background -->
+    <div class="mn-bg">
+        <div class="mn-bg-orb"></div>
+        <div class="mn-bg-orb"></div>
+        <div class="mn-bg-orb"></div>
+        <div class="mn-bg-grid"></div>
+    </div>
+
+    <div class="mn-layout">
+        <!-- Fixed Sidebar -->
+        <nav class="mn-sidebar" id="mnSidebar">
+            <div class="mn-sidebar-content">
+                <a href="https://husteread.com/index.php/tp/" class="mn-back">
+                    <span>←</span>
+                    <span>返回</span>
+                </a>
+
+                <div class="mn-directory" id="mnDirectory">
+                    <div class="mn-directory-header">
+                        <div class="mn-directory-title">
+                            <span>📁</span>
+                            <span>上级目录</span>
+                        </div>
+                        <span class="mn-directory-arrow">▼</span>
+                    </div>
+                    <div class="mn-directory-list">
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-1/" class="mn-directory-link">第一节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-2/" class="mn-directory-link">第二节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-3/" class="mn-directory-link active">第三节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-4/" class="mn-directory-link">第四节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-5/" class="mn-directory-link">第五节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-6/" class="mn-directory-link">第六节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-7/" class="mn-directory-link">第七节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-8/" class="mn-directory-link">第八节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-9/" class="mn-directory-link">第九节</a>
+                        <a href="https://husteread.com/index.php/math-calculus-note-4-3-10/" class="mn-directory-link">总复习</a>
+                    </div>
+                </div>
+
+                <div class="mn-section-nav">
+                    <div class="mn-section-header">本节目录</div>
+                    <a href="#sec-1" class="mn-nav-link active"><span class="mn-nav-num">01</span>可积性的区间传递</a>
+                    <a href="#sec-2" class="mn-nav-link"><span class="mn-nav-num">02</span>区间可加性</a>
+                    <a href="#sec-3" class="mn-nav-link"><span class="mn-nav-num">03</span>线性性质</a>
+                    <a href="#sec-4" class="mn-nav-link"><span class="mn-nav-num">04</span>大小比较</a>
+                    <a href="#sec-5" class="mn-nav-link"><span class="mn-nav-num">05</span>绝对值与绝对可积</a>
+                    <a href="#sec-6" class="mn-nav-link"><span class="mn-nav-num">06</span>积分第一中值定理</a>
+                    <a href="#sec-7" class="mn-nav-link"><span class="mn-nav-num">07</span>本节小结</a>
+                </div>
+            </div>
+
+            <div class="mn-sidebar-footer">
+                <div class="mn-theme-toggle" id="mnThemeToggle">
+                    <span>主题模式</span>
+                    <span class="mn-theme-icon" id="mnThemeIcon">🌙</span>
+                </div>
+            </div>
+        </nav>
+
+        <button class="mn-sidebar-toggle" id="mnSidebarToggle">
+            <span>◀</span>
+        </button>
+
+        <!-- Main Content -->
+        <main class="mn-main">
+            <header class="mn-page-header">
+                <div class="mn-badge">📘 第三节</div>
+                <h1 class="mn-page-title">定积分的性质</h1>
+                <p class="mn-page-subtitle">区间可加性、线性、大小比较、绝对可积性与积分中值定理</p>
+            </header>
+
+            <!-- Section 1 -->
+            <section class="mn-section" id="sec-1">
+                <span class="mn-section-num">SECTION 01</span>
+                <h2 class="mn-section-title">可积性的区间传递</h2>
+                
+                <p>上一节我们知道了哪些函数可积（连续、单调）。现在问一个自然的问题：</p>
+
+                <div class="mn-highlight">
+                    如果 $f$ 在整个 $[a,b]$ 上可积，那它在子区间 $[a,c]$、$[c,b]$ 上也可积吗？反过来呢？
+                </div>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 区间传递定理</div>
+                    <p><strong>向下继承：</strong>若 $f$ 在 $[a,b]$ 上黎曼可积，则对任意 $c \in (a,b)$，$f$ 在 $[a,c]$ 和 $[c,b]$ 上也黎曼可积。</p>
+                    <p><strong>向上拼接：</strong>若 $f$ 在 $[a,c]$、$[c,b]$ 都黎曼可积，则 $f$ 在整个 $[a,b]$ 上也黎曼可积。</p>
+                </div>
+
+                <p><strong>为什么"大可积 ⇒ 小可积"？</strong></p>
+                <p>还记得振幅判据吗：$\sum \omega_i \Delta x_i \to 0$。子区间上的振幅和只是总振幅和的一部分，大的趋于0，小的必然也趋于0。</p>
+            </section>
+
+            <!-- Section 2: 区间可加性 -->
+            <section class="mn-section" id="sec-2">
+                <span class="mn-section-num">SECTION 02</span>
+                <h2 class="mn-section-title">区间可加性</h2>
+
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 区间可加性</div>
+                    <p>若 $f$ 在 $[a,b]$ 上黎曼可积，则对任意 $c \in (a,b)$：</p>
+                    <div class="mn-math">$$\int_a^b f(x)\,dx = \int_a^c f(x)\,dx + \int_c^b f(x)\,dx$$</div>
+                </div>
+
+                <p><strong>形象理解：</strong>整个区间的面积 = 左半段面积 + 右半段面积。</p>
+
+                <!-- Interactive: 区间可加性 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 区间可加性可视化</h3>
+                        <div class="mn-viz-controls">
+                            <div class="mn-control-group">
+                                <span class="mn-control-label">c =</span>
+                                <input type="range" id="addSlider" min="10" max="90" value="50">
+                                <span class="mn-slider-value" id="addC">0.50</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-legend">
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-fill);border:2px solid var(--mn-svg-curve);"></div><span>∫ₐᶜ f(x)dx</span></div>
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-fill2);border:2px solid var(--mn-svg-curve2);"></div><span>∫ᶜᵇ f(x)dx</span></div>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="addSvg" viewBox="0 0 700 280" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats">
+                        <div class="mn-stat"><div class="mn-stat-label">∫ₐᶜ f</div><div class="mn-stat-value" id="addLeft">0.1250</div></div>
+                        <div class="mn-stat"><div class="mn-stat-label">∫ᶜᵇ f</div><div class="mn-stat-value" id="addRight" style="color:var(--mn-accent-rose);">0.2083</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-gold);"><div class="mn-stat-label">∫ₐᵇ f (总和)</div><div class="mn-stat-value" style="color:var(--mn-accent-gold);" id="addTotal">0.3333</div></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: 线性性质 -->
+            <section class="mn-section" id="sec-3">
+                <span class="mn-section-num">SECTION 03</span>
+                <h2 class="mn-section-title">线性性质</h2>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 积分的线性</div>
+                    <p>若 $f, g$ 在 $[a,b]$ 上可积，$\alpha, \beta$ 为常数，则：</p>
+                    <div class="mn-math">$$\int_a^b [\alpha f(x) + \beta g(x)]\,dx = \alpha \int_a^b f(x)\,dx + \beta \int_a^b g(x)\,dx$$</div>
+                </div>
+
+                <p>一句话：<strong>积分对函数是线性的</strong>。常数可以提出来，函数可以拆开来积。</p>
+
+                <!-- Interactive: 线性性质 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 线性性质演示</h3>
+                        <div class="mn-viz-controls">
+                            <div class="mn-control-group">
+                                <span class="mn-control-label">α =</span>
+                                <input type="range" id="alphaSlider" min="-20" max="30" value="10">
+                                <span class="mn-slider-value" id="alphaVal">1.0</span>
+                            </div>
+                            <div class="mn-control-group">
+                                <span class="mn-control-label">β =</span>
+                                <input type="range" id="betaSlider" min="-20" max="30" value="10">
+                                <span class="mn-slider-value" id="betaVal">1.0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mn-legend">
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-curve);"></div><span>f(x) = x²</span></div>
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-curve2);"></div><span>g(x) = x</span></div>
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-accent-gold);"></div><span>αf + βg</span></div>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="linearSvg" viewBox="0 0 700 280" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats">
+                        <div class="mn-stat"><div class="mn-stat-label">α·∫f</div><div class="mn-stat-value" id="linearF">0.3333</div></div>
+                        <div class="mn-stat"><div class="mn-stat-label">β·∫g</div><div class="mn-stat-value" id="linearG" style="color:var(--mn-accent-rose);">0.5000</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-gold);"><div class="mn-stat-label">∫(αf+βg)</div><div class="mn-stat-value" style="color:var(--mn-accent-gold);" id="linearSum">0.8333</div></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: 大小比较 -->
+            <section class="mn-section" id="sec-4">
+                <span class="mn-section-num">SECTION 04</span>
+                <h2 class="mn-section-title">大小比较</h2>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 保序性</div>
+                    <ul class="mn-list">
+                        <li>若 $f(x) \geq 0$ 在 $[a,b]$ 上成立，则 $\int_a^b f(x)\,dx \geq 0$</li>
+                        <li>若 $f(x) \geq g(x)$ 在 $[a,b]$ 上成立，则 $\int_a^b f(x)\,dx \geq \int_a^b g(x)\,dx$</li>
+                        <li>若 $m \leq f(x) \leq M$，则 $m(b-a) \leq \int_a^b f(x)\,dx \leq M(b-a)$</li>
+                    </ul>
+                </div>
+
+                <!-- Interactive: 大小比较 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 f ≥ g ⇒ ∫f ≥ ∫g</h3>
+                    </div>
+
+                    <div class="mn-tabs" id="compareTabs">
+                        <button class="mn-tab active" data-tab="compare1">f(x) = x² vs g(x) = x³</button>
+                        <button class="mn-tab" data-tab="compare2">f(x) = sin(πx) 范围估计</button>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="compareSvg" viewBox="0 0 700 280" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats" id="compareStats">
+                        <div class="mn-stat"><div class="mn-stat-label">∫f(x)dx</div><div class="mn-stat-value" id="compareF">0.3333</div></div>
+                        <div class="mn-stat"><div class="mn-stat-label">∫g(x)dx</div><div class="mn-stat-value" id="compareG" style="color:var(--mn-accent-rose);">0.2500</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-tertiary);"><div class="mn-stat-label">差值 ∫f - ∫g</div><div class="mn-stat-value" style="color:var(--mn-accent-tertiary);" id="compareDiff">0.0833</div></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: 绝对值 -->
+            <section class="mn-section" id="sec-5">
+                <span class="mn-section-num">SECTION 05</span>
+                <h2 class="mn-section-title">绝对值与"绝对可积"</h2>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 绝对值不等式</div>
+                    <p>若 $f$ 在 $[a,b]$ 上黎曼可积，则 $|f|$ 也可积，且：</p>
+                    <div class="mn-math">$$\left|\int_a^b f(x)\,dx\right| \leq \int_a^b |f(x)|\,dx$$</div>
+                </div>
+
+                <p>直观理解：正负区域"抵消"后的面积 ≤ 把所有面积都算正的总和。</p>
+
+                <!-- Interactive: 绝对值不等式 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 |∫f| ≤ ∫|f| 可视化</h3>
+                        <div class="mn-control-group">
+                            <span class="mn-control-label">频率 =</span>
+                            <input type="range" id="absSlider" min="10" max="40" value="20">
+                            <span class="mn-slider-value" id="absFreq">2.0</span>
+                        </div>
+                    </div>
+
+                    <div class="mn-legend">
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-fill);"></div><span>正区域</span></div>
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-fill2);"></div><span>负区域</span></div>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="absSvg" viewBox="0 0 700 280" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats">
+                        <div class="mn-stat"><div class="mn-stat-label">∫f (带符号)</div><div class="mn-stat-value" id="absIntF">0.0000</div></div>
+                        <div class="mn-stat"><div class="mn-stat-label">|∫f|</div><div class="mn-stat-value" id="absAbsIntF" style="color:var(--mn-accent-rose);">0.0000</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-gold);"><div class="mn-stat-label">∫|f|</div><div class="mn-stat-value" style="color:var(--mn-accent-gold);" id="absIntAbsF">0.6366</div></div>
+                    </div>
+                </div>
+
+                <div class="mn-warning">
+                    <div class="mn-warning-title">⚠️ 反向不成立！</div>
+                    <p><strong>狄利克雷函数</strong>：$f(x) = \begin{cases} 1, & x \in \mathbb{Q} \\ 0, & x \notin \mathbb{Q} \end{cases}$</p>
+                    <p>在任意区间内，$\sup f = 1$，$\inf f = 0$，所以上和恒为1，下和恒为0，不可积！</p>
+                    <p>这说明：$|f|$ 可积 $\not\Rightarrow$ $f$ 可积。</p>
+                </div>
+            </section>
+
+            <!-- Section 6: 中值定理 -->
+            <section class="mn-section" id="sec-6">
+                <span class="mn-section-num">SECTION 06</span>
+                <h2 class="mn-section-title">积分第一中值定理</h2>
+
+                <div class="mn-theorem">
+                    <div class="mn-theorem-title">📜 积分第一中值定理</div>
+                    <p>若 $f$ 在 $[a,b]$ 上<strong>连续</strong>，则存在 $\xi \in (a,b)$，使得：</p>
+                    <div class="mn-math">$$\int_a^b f(x)\,dx = f(\xi)(b-a)$$</div>
+                    <p>等价地：$\displaystyle f(\xi) = \frac{1}{b-a}\int_a^b f(x)\,dx$ 就是函数在区间上的<strong>平均值</strong>。</p>
+                </div>
+
+                <p><strong>几何意义：</strong>曲线下面积 = 某个高度 $f(\xi)$ × 宽度 $(b-a)$ 形成的矩形面积。</p>
+
+                <!-- Interactive: 中值定理 -->
+                <div class="mn-viz">
+                    <div class="mn-viz-header">
+                        <h3 class="mn-viz-title">📊 积分中值定理可视化</h3>
+                        <div class="mn-btn-group">
+                            <button class="mn-btn mn-btn-primary" id="mvtAnimate">▶ 寻找 ξ</button>
+                            <button class="mn-btn mn-btn-secondary" id="mvtReset">↻ 重置</button>
+                        </div>
+                    </div>
+
+                    <div class="mn-legend">
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-svg-fill);"></div><span>曲线下面积</span></div>
+                        <div class="mn-legend-item"><div class="mn-legend-color" style="background:var(--mn-accent-gold);opacity:0.3;"></div><span>平均值矩形</span></div>
+                    </div>
+
+                    <div class="mn-svg-container">
+                        <svg id="mvtSvg" viewBox="0 0 700 320" style="width:100%;max-width:700px;height:auto;"></svg>
+                    </div>
+
+                    <div class="mn-stats">
+                        <div class="mn-stat"><div class="mn-stat-label">曲线下面积</div><div class="mn-stat-value" id="mvtArea">0.6366</div></div>
+                        <div class="mn-stat"><div class="mn-stat-label">平均值 f_avg</div><div class="mn-stat-value" id="mvtAvg" style="color:var(--mn-accent-gold);">0.6366</div></div>
+                        <div class="mn-stat"><div class="mn-stat-label">ξ 的位置</div><div class="mn-stat-value" id="mvtXi" style="color:var(--mn-accent-rose);">—</div></div>
+                        <div class="mn-stat" style="border-top-color:var(--mn-accent-tertiary);"><div class="mn-stat-label">矩形面积</div><div class="mn-stat-value" style="color:var(--mn-accent-tertiary);" id="mvtRect">0.6366</div></div>
+                    </div>
+                </div>
+
+                <div class="mn-definition">
+                    <div class="mn-definition-title">📐 一般形式（带权重）</div>
+                    <p>若 $f$ 连续，$g$ 可积且不变号，则存在 $\xi \in (a,b)$：</p>
+                    <div class="mn-math">$$\int_a^b f(x)g(x)\,dx = f(\xi)\int_a^b g(x)\,dx$$</div>
+                </div>
+            </section>
+
+            <!-- Section 7: Summary -->
+            <section class="mn-section" id="sec-7">
+                <span class="mn-section-num">SECTION 07</span>
+                <h2 class="mn-section-title">本节小结</h2>
+
+                <div class="mn-summary">
+                    <h3 class="mn-summary-title"><span>📋</span> 定积分性质工具箱</h3>
+                    <div class="mn-summary-grid">
+                        <div class="mn-summary-item"><strong>区间传递</strong><br>$[a,b]$ 可积 ⇔ 子区间可积</div>
+                        <div class="mn-summary-item"><strong>区间可加性</strong><br>$\int_a^b f = \int_a^c f + \int_c^b f$</div>
+                        <div class="mn-summary-item"><strong>线性性质</strong><br>$\int(\alpha f + \beta g) = \alpha\int f + \beta\int g$</div>
+                        <div class="mn-summary-item"><strong>保序性</strong><br>$f \geq g \Rightarrow \int f \geq \int g$</div>
+                        <div class="mn-summary-item"><strong>绝对值</strong><br>$|\int f| \leq \int |f|$<br>反向不成立！</div>
+                        <div class="mn-summary-item"><strong>中值定理</strong><br>$\int_a^b f = f(\xi)(b-a)$<br>平均值一定能取到</div>
+                    </div>
+                </div>
+
+                <div class="mn-end">
+                    <div class="mn-end-divider"><span class="mn-end-icon">✅</span></div>
+                    <p>第三节完成！下一节我们将学习微积分基本定理。</p>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    
+    var app = document.getElementById('mathNotesApp');
+    if (!app) return;
+    
+    // ========== SIDEBAR ==========
+    var sidebar = document.getElementById('mnSidebar');
+    var sidebarToggle = document.getElementById('mnSidebarToggle');
+    
+    sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+    });
+    
+    var directory = document.getElementById('mnDirectory');
+    var directoryHeader = directory.querySelector('.mn-directory-header');
+    directoryHeader.addEventListener('click', function() {
+        directory.classList.toggle('open');
+    });
+    
+    // ========== THEME ==========
+    var themeToggle = document.getElementById('mnThemeToggle');
+    var themeIcon = document.getElementById('mnThemeIcon');
+    
+    var savedTheme = localStorage.getItem('mn-theme') || 'light';
+    app.setAttribute('data-theme', savedTheme);
+    themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+    
+    themeToggle.addEventListener('click', function() {
+        var current = app.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        app.setAttribute('data-theme', next);
+        localStorage.setItem('mn-theme', next);
+        themeIcon.textContent = next === 'dark' ? '☀️' : '🌙';
+        redrawAll();
+    });
+    
+    // ========== NAV LINKS ==========
+    var navLinks = app.querySelectorAll('.mn-nav-link');
+    navLinks.forEach(function(link) {
+        link.addEventListener('click', function() {
+            navLinks.forEach(function(l) { l.classList.remove('active'); });
+            this.classList.add('active');
+        });
+    });
+    
+    // ========== HELPERS ==========
+    function getColors() {
+        var style = getComputedStyle(app);
+        return {
+            curve: style.getPropertyValue('--mn-svg-curve').trim() || '#7c5295',
+            curve2: style.getPropertyValue('--mn-svg-curve2').trim() || '#c75a7a',
+            fill: style.getPropertyValue('--mn-svg-fill').trim() || 'rgba(124,82,149,0.25)',
+            fill2: style.getPropertyValue('--mn-svg-fill2').trim() || 'rgba(199,90,122,0.25)',
+            grid: style.getPropertyValue('--mn-svg-grid').trim() || '#e8e0f0',
+            axis: style.getPropertyValue('--mn-svg-axis').trim() || '#555',
+            bg: style.getPropertyValue('--mn-bg-secondary').trim() || '#ffffff',
+            text: style.getPropertyValue('--mn-text-primary').trim() || '#2c2c2c',
+            gold: style.getPropertyValue('--mn-svg-avg').trim() || '#c9a227',
+            tertiary: style.getPropertyValue('--mn-accent-tertiary').trim() || '#5a8a6b'
+        };
+    }
+    
+    // Functions
+    var f1 = function(x) { return x * x; }; // x²
+    var f2 = function(x) { return x; }; // x
+    var f3 = function(x) { return x * x * x; }; // x³
+    var fSin = function(x) { return Math.sin(Math.PI * x); };
+    
+    // ========== 1. 区间可加性 ==========
+    var addSlider = document.getElementById('addSlider');
+    var addC = document.getElementById('addC');
+    
+    function drawAdditivity(c) {
+        var svg = document.getElementById('addSvg');
+        var colors = getColors();
+        var width = 700, height = 280;
+        var margin = {top: 25, right: 35, bottom: 35, left: 45};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        var xScale = function(x) { return margin.left + x * plotWidth; };
+        var yScale = function(y) { return height - margin.bottom - y * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Grid
+        for (var i = 0; i <= 10; i++) {
+            var gx = xScale(i/10);
+            var gy = yScale(i/10);
+            content += '<line x1="'+gx+'" y1="'+margin.top+'" x2="'+gx+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.grid+'" stroke-width="1" stroke-dasharray="2,2"/>';
+            content += '<line x1="'+margin.left+'" y1="'+gy+'" x2="'+(width-margin.right)+'" y2="'+gy+'" stroke="'+colors.grid+'" stroke-width="1" stroke-dasharray="2,2"/>';
+        }
+        
+        // Left area (0 to c)
+        var leftPath = 'M ' + xScale(0) + ' ' + yScale(0);
+        for (var i = 0; i <= 50; i++) {
+            var x = c * i / 50;
+            leftPath += ' L ' + xScale(x) + ' ' + yScale(f1(x));
+        }
+        leftPath += ' L ' + xScale(c) + ' ' + yScale(0) + ' Z';
+        content += '<path d="'+leftPath+'" fill="'+colors.fill+'" stroke="'+colors.curve+'" stroke-width="2"/>';
+        
+        // Right area (c to 1)
+        var rightPath = 'M ' + xScale(c) + ' ' + yScale(0);
+        for (var i = 0; i <= 50; i++) {
+            var x = c + (1 - c) * i / 50;
+            rightPath += ' L ' + xScale(x) + ' ' + yScale(f1(x));
+        }
+        rightPath += ' L ' + xScale(1) + ' ' + yScale(0) + ' Z';
+        content += '<path d="'+rightPath+'" fill="'+colors.fill2+'" stroke="'+colors.curve2+'" stroke-width="2"/>';
+        
+        // Dividing line at c
+        content += '<line x1="'+xScale(c)+'" y1="'+margin.top+'" x2="'+xScale(c)+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.gold+'" stroke-width="2" stroke-dasharray="6,3"/>';
+        content += '<text x="'+xScale(c)+'" y="'+(margin.top-8)+'" fill="'+colors.gold+'" font-size="14" text-anchor="middle" font-family="JetBrains Mono">c = '+c.toFixed(2)+'</text>';
+        
+        // Axis
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        svg.innerHTML = content;
+        
+        // Calculate integrals
+        var leftInt = Math.pow(c, 3) / 3;
+        var rightInt = (1 - Math.pow(c, 3)) / 3;
+        var totalInt = 1/3;
+        
+        document.getElementById('addLeft').textContent = leftInt.toFixed(4);
+        document.getElementById('addRight').textContent = rightInt.toFixed(4);
+        document.getElementById('addTotal').textContent = totalInt.toFixed(4);
+    }
+    
+    addSlider.addEventListener('input', function() {
+        var c = parseInt(this.value) / 100;
+        addC.textContent = c.toFixed(2);
+        drawAdditivity(c);
+    });
+    
+    // ========== 2. 线性性质 ==========
+    var alphaSlider = document.getElementById('alphaSlider');
+    var betaSlider = document.getElementById('betaSlider');
+    var alphaVal = document.getElementById('alphaVal');
+    var betaVal = document.getElementById('betaVal');
+    
+    function drawLinear(alpha, beta) {
+        var svg = document.getElementById('linearSvg');
+        var colors = getColors();
+        var width = 700, height = 280;
+        var margin = {top: 25, right: 35, bottom: 35, left: 50};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        // Find y range
+        var yMin = 0, yMax = 0;
+        for (var i = 0; i <= 100; i++) {
+            var x = i / 100;
+            var y1 = alpha * f1(x);
+            var y2 = beta * f2(x);
+            var ySum = alpha * f1(x) + beta * f2(x);
+            yMin = Math.min(yMin, y1, y2, ySum, 0);
+            yMax = Math.max(yMax, y1, y2, ySum, 1);
+        }
+        var yRange = yMax - yMin || 1;
+        
+        var xScale = function(x) { return margin.left + x * plotWidth; };
+        var yScale = function(y) { return height - margin.bottom - ((y - yMin) / yRange) * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Zero line
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // f(x) = x² scaled by alpha
+        var path1 = 'M ' + xScale(0) + ' ' + yScale(alpha * f1(0));
+        for (var i = 1; i <= 100; i++) {
+            var x = i / 100;
+            path1 += ' L ' + xScale(x) + ' ' + yScale(alpha * f1(x));
+        }
+        content += '<path d="'+path1+'" fill="none" stroke="'+colors.curve+'" stroke-width="2" stroke-dasharray="4,2"/>';
+        
+        // g(x) = x scaled by beta
+        var path2 = 'M ' + xScale(0) + ' ' + yScale(beta * f2(0));
+        for (var i = 1; i <= 100; i++) {
+            var x = i / 100;
+            path2 += ' L ' + xScale(x) + ' ' + yScale(beta * f2(x));
+        }
+        content += '<path d="'+path2+'" fill="none" stroke="'+colors.curve2+'" stroke-width="2" stroke-dasharray="4,2"/>';
+        
+        // Combined: αf + βg (filled)
+        var pathSum = 'M ' + xScale(0) + ' ' + yScale(0);
+        for (var i = 0; i <= 100; i++) {
+            var x = i / 100;
+            var y = alpha * f1(x) + beta * f2(x);
+            pathSum += ' L ' + xScale(x) + ' ' + yScale(y);
+        }
+        pathSum += ' L ' + xScale(1) + ' ' + yScale(0) + ' Z';
+        content += '<path d="'+pathSum+'" fill="rgba(201,162,39,0.2)" stroke="'+colors.gold+'" stroke-width="3"/>';
+        
+        svg.innerHTML = content;
+        
+        // Calculate
+        var intF = alpha * (1/3);
+        var intG = beta * (1/2);
+        var intSum = intF + intG;
+        
+        document.getElementById('linearF').textContent = intF.toFixed(4);
+        document.getElementById('linearG').textContent = intG.toFixed(4);
+        document.getElementById('linearSum').textContent = intSum.toFixed(4);
+    }
+    
+    alphaSlider.addEventListener('input', function() {
+        var alpha = (parseInt(this.value) - 10) / 10;
+        alphaVal.textContent = alpha.toFixed(1);
+        drawLinear(alpha, (parseInt(betaSlider.value) - 10) / 10);
+    });
+    
+    betaSlider.addEventListener('input', function() {
+        var beta = (parseInt(this.value) - 10) / 10;
+        betaVal.textContent = beta.toFixed(1);
+        drawLinear((parseInt(alphaSlider.value) - 10) / 10, beta);
+    });
+    
+    // ========== 3. 大小比较 ==========
+    var compareMode = 'compare1';
+    var compareTabs = document.querySelectorAll('#compareTabs .mn-tab');
+    
+    function drawCompare() {
+        var svg = document.getElementById('compareSvg');
+        var colors = getColors();
+        var width = 700, height = 280;
+        var margin = {top: 25, right: 35, bottom: 35, left: 45};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        var xScale = function(x) { return margin.left + x * plotWidth; };
+        var yScale = function(y) { return height - margin.bottom - y * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        if (compareMode === 'compare1') {
+            // f = x², g = x³ on [0,1], f ≥ g
+            // Fill between curves
+            var fillPath = 'M ' + xScale(0) + ' ' + yScale(f1(0));
+            for (var i = 0; i <= 100; i++) {
+                var x = i / 100;
+                fillPath += ' L ' + xScale(x) + ' ' + yScale(f1(x));
+            }
+            for (var i = 100; i >= 0; i--) {
+                var x = i / 100;
+                fillPath += ' L ' + xScale(x) + ' ' + yScale(f3(x));
+            }
+            fillPath += ' Z';
+            content += '<path d="'+fillPath+'" fill="'+colors.fill+'" opacity="0.5"/>';
+            
+            // g = x³ area
+            var gPath = 'M ' + xScale(0) + ' ' + yScale(0);
+            for (var i = 0; i <= 100; i++) {
+                var x = i / 100;
+                gPath += ' L ' + xScale(x) + ' ' + yScale(f3(x));
+            }
+            gPath += ' L ' + xScale(1) + ' ' + yScale(0) + ' Z';
+            content += '<path d="'+gPath+'" fill="'+colors.fill2+'"/>';
+            
+            // Curves
+            var p1 = 'M ' + xScale(0) + ' ' + yScale(f1(0));
+            var p2 = 'M ' + xScale(0) + ' ' + yScale(f3(0));
+            for (var i = 1; i <= 100; i++) {
+                var x = i / 100;
+                p1 += ' L ' + xScale(x) + ' ' + yScale(f1(x));
+                p2 += ' L ' + xScale(x) + ' ' + yScale(f3(x));
+            }
+            content += '<path d="'+p1+'" fill="none" stroke="'+colors.curve+'" stroke-width="3"/>';
+            content += '<path d="'+p2+'" fill="none" stroke="'+colors.curve2+'" stroke-width="3"/>';
+            
+            // Labels
+            content += '<text x="'+(width-margin.right-60)+'" y="'+yScale(0.85)+'" fill="'+colors.curve+'" font-size="14">f(x) = x²</text>';
+            content += '<text x="'+(width-margin.right-60)+'" y="'+yScale(0.55)+'" fill="'+colors.curve2+'" font-size="14">g(x) = x³</text>';
+            
+            document.getElementById('compareF').textContent = (1/3).toFixed(4);
+            document.getElementById('compareG').textContent = (1/4).toFixed(4);
+            document.getElementById('compareDiff').textContent = (1/3 - 1/4).toFixed(4);
+        } else {
+            // sin(πx) with bounds
+            var fPath = 'M ' + xScale(0) + ' ' + yScale(0);
+            for (var i = 0; i <= 100; i++) {
+                var x = i / 100;
+                fPath += ' L ' + xScale(x) + ' ' + yScale(fSin(x));
+            }
+            fPath += ' L ' + xScale(1) + ' ' + yScale(0) + ' Z';
+            content += '<path d="'+fPath+'" fill="'+colors.fill+'"/>';
+            
+            // m = 0 line and M = 1 line
+            content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.tertiary+'" stroke-width="2" stroke-dasharray="6,3"/>';
+            content += '<line x1="'+margin.left+'" y1="'+yScale(1)+'" x2="'+(width-margin.right)+'" y2="'+yScale(1)+'" stroke="'+colors.gold+'" stroke-width="2" stroke-dasharray="6,3"/>';
+            
+            // Curve
+            var cPath = 'M ' + xScale(0) + ' ' + yScale(fSin(0));
+            for (var i = 1; i <= 100; i++) {
+                var x = i / 100;
+                cPath += ' L ' + xScale(x) + ' ' + yScale(fSin(x));
+            }
+            content += '<path d="'+cPath+'" fill="none" stroke="'+colors.curve+'" stroke-width="3"/>';
+            
+            content += '<text x="'+(width-margin.right-80)+'" y="'+yScale(1)+'-5" fill="'+colors.gold+'" font-size="12">M = 1</text>';
+            content += '<text x="'+(width-margin.right-80)+'" y="'+yScale(0)+'+15" fill="'+colors.tertiary+'" font-size="12">m = 0</text>';
+            
+            var integral = 2 / Math.PI;
+            document.getElementById('compareF').textContent = integral.toFixed(4);
+            document.getElementById('compareG').textContent = '0 (下界)';
+            document.getElementById('compareDiff').textContent = '1 (上界)';
+        }
+        
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        svg.innerHTML = content;
+    }
+    
+    compareTabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            compareTabs.forEach(function(t) { t.classList.remove('active'); });
+            this.classList.add('active');
+            compareMode = this.getAttribute('data-tab');
+            drawCompare();
+        });
+    });
+    
+    // ========== 4. 绝对值不等式 ==========
+    var absSlider = document.getElementById('absSlider');
+    var absFreq = document.getElementById('absFreq');
+    
+    function drawAbs(freq) {
+        var svg = document.getElementById('absSvg');
+        var colors = getColors();
+        var width = 700, height = 280;
+        var margin = {top: 25, right: 35, bottom: 35, left: 45};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        var fAbs = function(x) { return Math.sin(freq * Math.PI * x); };
+        
+        var xScale = function(x) { return margin.left + x * plotWidth; };
+        var yScale = function(y) { return height - margin.bottom - (y + 1) / 2 * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Zero line
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // Fill positive and negative regions
+        var n = 200;
+        for (var i = 0; i < n; i++) {
+            var x0 = i / n;
+            var x1 = (i + 1) / n;
+            var y0 = fAbs(x0);
+            var y1 = fAbs(x1);
+            var ymid = (y0 + y1) / 2;
+            
+            if (ymid >= 0) {
+                content += '<rect x="'+xScale(x0)+'" y="'+yScale(Math.max(y0,y1))+'" width="'+((xScale(x1)-xScale(x0))+0.5)+'" height="'+(yScale(0)-yScale(Math.max(y0,y1)))+'" fill="'+colors.fill+'"/>';
+            } else {
+                content += '<rect x="'+xScale(x0)+'" y="'+yScale(0)+'" width="'+((xScale(x1)-xScale(x0))+0.5)+'" height="'+(yScale(Math.min(y0,y1))-yScale(0))+'" fill="'+colors.fill2+'"/>';
+            }
+        }
+        
+        // Curve
+        var cPath = 'M ' + xScale(0) + ' ' + yScale(fAbs(0));
+        for (var i = 1; i <= 200; i++) {
+            var x = i / 200;
+            cPath += ' L ' + xScale(x) + ' ' + yScale(fAbs(x));
+        }
+        content += '<path d="'+cPath+'" fill="none" stroke="'+colors.curve+'" stroke-width="2.5"/>';
+        
+        svg.innerHTML = content;
+        
+        // Numerical integration
+        var intF = 0, intAbsF = 0;
+        var dx = 1 / 1000;
+        for (var i = 0; i < 1000; i++) {
+            var x = (i + 0.5) * dx;
+            var y = fAbs(x);
+            intF += y * dx;
+            intAbsF += Math.abs(y) * dx;
+        }
+        
+        document.getElementById('absIntF').textContent = intF.toFixed(4);
+        document.getElementById('absAbsIntF').textContent = Math.abs(intF).toFixed(4);
+        document.getElementById('absIntAbsF').textContent = intAbsF.toFixed(4);
+    }
+    
+    absSlider.addEventListener('input', function() {
+        var freq = parseInt(this.value) / 10;
+        absFreq.textContent = freq.toFixed(1);
+        drawAbs(freq);
+    });
+    
+    // ========== 5. 中值定理 ==========
+    var mvtAnimating = false;
+    var mvtXi = null;
+    
+    function drawMVT(xi) {
+        var svg = document.getElementById('mvtSvg');
+        var colors = getColors();
+        var width = 700, height = 320;
+        var margin = {top: 30, right: 40, bottom: 40, left: 50};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        
+        var xScale = function(x) { return margin.left + x * plotWidth; };
+        var yScale = function(y) { return height - margin.bottom - y * plotHeight; };
+        
+        var content = '<rect width="'+width+'" height="'+height+'" fill="'+colors.bg+'" rx="8"/>';
+        
+        // Grid
+        for (var i = 0; i <= 10; i++) {
+            var gx = xScale(i/10);
+            var gy = yScale(i/10);
+            content += '<line x1="'+gx+'" y1="'+margin.top+'" x2="'+gx+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.grid+'" stroke-width="1" stroke-dasharray="2,2"/>';
+            content += '<line x1="'+margin.left+'" y1="'+gy+'" x2="'+(width-margin.right)+'" y2="'+gy+'" stroke="'+colors.grid+'" stroke-width="1" stroke-dasharray="2,2"/>';
+        }
+        
+        var avg = 2 / Math.PI; // ≈ 0.6366
+        
+        // Curve area
+        var areaPath = 'M ' + xScale(0) + ' ' + yScale(0);
+        for (var i = 0; i <= 100; i++) {
+            var x = i / 100;
+            areaPath += ' L ' + xScale(x) + ' ' + yScale(fSin(x));
+        }
+        areaPath += ' L ' + xScale(1) + ' ' + yScale(0) + ' Z';
+        content += '<path d="'+areaPath+'" fill="'+colors.fill+'" stroke="'+colors.curve+'" stroke-width="2"/>';
+        
+        // Average rectangle
+        content += '<rect x="'+xScale(0)+'" y="'+yScale(avg)+'" width="'+(xScale(1)-xScale(0))+'" height="'+(yScale(0)-yScale(avg))+'" fill="rgba(201,162,39,0.15)" stroke="'+colors.gold+'" stroke-width="2" stroke-dasharray="6,3"/>';
+        
+        // Average line
+        content += '<line x1="'+margin.left+'" y1="'+yScale(avg)+'" x2="'+(width-margin.right)+'" y2="'+yScale(avg)+'" stroke="'+colors.gold+'" stroke-width="2"/>';
+        content += '<text x="'+(width-margin.right+5)+'" y="'+yScale(avg)+'+4" fill="'+colors.gold+'" font-size="12">f_avg</text>';
+        
+        // If xi is set, show the point
+        if (xi !== null) {
+            var xiY = fSin(xi);
+            content += '<circle cx="'+xScale(xi)+'" cy="'+yScale(xiY)+'" r="8" fill="'+colors.curve2+'" stroke="white" stroke-width="2"/>';
+            content += '<line x1="'+xScale(xi)+'" y1="'+yScale(0)+'" x2="'+xScale(xi)+'" y2="'+yScale(xiY)+'" stroke="'+colors.curve2+'" stroke-width="2" stroke-dasharray="4,2"/>';
+            content += '<text x="'+xScale(xi)+'" y="'+(yScale(0)+18)+'" fill="'+colors.curve2+'" font-size="14" text-anchor="middle" font-family="serif" font-style="italic">ξ = '+xi.toFixed(3)+'</text>';
+        }
+        
+        // Axis
+        content += '<line x1="'+margin.left+'" y1="'+yScale(0)+'" x2="'+(width-margin.right)+'" y2="'+yScale(0)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        content += '<line x1="'+xScale(0)+'" y1="'+margin.top+'" x2="'+xScale(0)+'" y2="'+(height-margin.bottom)+'" stroke="'+colors.axis+'" stroke-width="2"/>';
+        
+        // Title
+        content += '<text x="'+(width/2)+'" y="22" fill="'+colors.text+'" font-size="14" text-anchor="middle" font-family="JetBrains Mono">f(x) = sin(πx) 在 [0, 1] 上</text>';
+        
+        svg.innerHTML = content;
+        
+        document.getElementById('mvtArea').textContent = avg.toFixed(4);
+        document.getElementById('mvtAvg').textContent = avg.toFixed(4);
+        document.getElementById('mvtXi').textContent = xi !== null ? xi.toFixed(3) : '—';
+        document.getElementById('mvtRect').textContent = avg.toFixed(4);
+    }
+    
+    document.getElementById('mvtAnimate').addEventListener('click', function() {
+        var btn = this;
+        if (mvtAnimating) return;
+        
+        mvtAnimating = true;
+        btn.innerHTML = '⏳ 搜索中...';
+        
+        var avg = 2 / Math.PI;
+        var searchX = 0;
+        
+        function search() {
+            if (!mvtAnimating) return;
+            
+            searchX += 0.01;
+            drawMVT(searchX);
+            
+            var y = fSin(searchX);
+            if (Math.abs(y - avg) < 0.005 || searchX >= 1) {
+                // Found it
+                mvtXi = searchX;
+                mvtAnimating = false;
+                btn.innerHTML = '✓ 找到 ξ';
+                drawMVT(mvtXi);
+                return;
+            }
+            
+            setTimeout(search, 30);
+        }
+        
+        search();
+    });
+    
+    document.getElementById('mvtReset').addEventListener('click', function() {
+        mvtAnimating = false;
+        mvtXi = null;
+        document.getElementById('mvtAnimate').innerHTML = '▶ 寻找 ξ';
+        drawMVT(null);
+    });
+    
+    // ========== REDRAW ==========
+    function redrawAll() {
+        var c = parseInt(addSlider.value) / 100;
+        drawAdditivity(c);
+        
+        var alpha = (parseInt(alphaSlider.value) - 10) / 10;
+        var beta = (parseInt(betaSlider.value) - 10) / 10;
+        drawLinear(alpha, beta);
+        
+        drawCompare();
+        
+        var freq = parseInt(absSlider.value) / 10;
+        drawAbs(freq);
+        
+        drawMVT(mvtXi);
+    }
+    
+    // ========== INIT ==========
+    drawAdditivity(0.5);
+    drawLinear(1, 1);
+    drawCompare();
+    drawAbs(2);
+    drawMVT(null);
+    
+    // ========== KATEX ==========
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'function') {
+            renderMathInElement(app, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError: false
+            });
+        } else {
+            setTimeout(initKaTeX, 100);
+        }
+    }
+    initKaTeX();
+})();
+</script>
+
+</body>
+</html>

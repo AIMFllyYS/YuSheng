@@ -29,7 +29,13 @@ export function FeatureWindow({
   const [toast, setToast] = useState("");
   const [closing, setClosing] = useState(false);
   const [entered, setEntered] = useState(false);
+  const [activeIframe, setActiveIframe] = useState<{url: string, title: string} | null>(null);
   const windowRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setActiveIframe(null);
+    setPathStack([]);
+  }, [data]);
 
   const current = useMemo(() => {
     let cursor = data;
@@ -189,10 +195,23 @@ export function FeatureWindow({
           </div>
 
           {/* 右侧内容区 */}
-          <div className="flex-1 flex flex-col overflow-hidden bg-black/10">
-            <div className="h-12 bg-white/5 dark:bg-black/20 flex items-center px-8 text-sm gap-2 backdrop-blur-sm">
+          <div className="flex-1 flex flex-col overflow-hidden bg-black/10 relative">
+            <div className="h-12 bg-white/5 dark:bg-black/20 flex items-center px-8 text-sm gap-2 backdrop-blur-sm z-10 relative">
               <div className="flex items-center gap-2 w-full">
-                {pathStack.length === 0 ? (
+                {activeIframe ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setActiveIframe(null)}
+                      className="flex items-center gap-1 text-indigo-300 hover:underline font-bold"
+                    >
+                      <i className="fa fa-arrow-left" /> 返回列表
+                    </button>
+                    <span className="opacity-30 mx-1">/</span>
+                    <i className="fa fa-file-code text-gray-300" />
+                    <span className="text-gray-100">{activeIframe.title}</span>
+                  </>
+                ) : pathStack.length === 0 ? (
                   <>
                     <i className="fa fa-desktop text-gray-300" />
                     <span className="font-bold text-gray-100">此电脑</span>
@@ -214,10 +233,16 @@ export function FeatureWindow({
               </div>
             </div>
 
-            <div
-              id="content-grid"
-              className="flex-1 p-8 overflow-y-auto no-scrollbar grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 content-start"
-            >
+            {activeIframe ? (
+              <div className="flex-1 w-full bg-white relative animate-fade-up overflow-hidden rounded-bl-none rounded-br-2xl">
+                <iframe src={activeIframe.url} className="w-full h-full border-none" sandbox="allow-scripts allow-same-origin allow-popups allow-forms" />
+              </div>
+            ) : (
+              <>
+                <div
+                  id="content-grid"
+                  className="flex-1 p-8 overflow-y-auto no-scrollbar grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 content-start"
+                >
               {current.items.length === 0 ? (
                 <div className="col-span-full text-center text-gray-400 mt-20 opacity-50">空文件夹</div>
               ) : (
@@ -237,7 +262,11 @@ export function FeatureWindow({
                         setTimeout(() => setToast(""), 2000);
                         return;
                       }
-                      window.open(item.url, "_blank");
+                      if (item.url.startsWith("http")) {
+                        window.open(item.url, "_blank");
+                      } else {
+                        setActiveIframe({ url: item.url, title: item.name });
+                      }
                     }}
                   >
                     <div
@@ -253,12 +282,14 @@ export function FeatureWindow({
                   </button>
                 ))
               )}
-            </div>
+                </div>
 
-            <div className="h-8 bg-white/5 dark:bg-black/30 flex items-center justify-between px-8 text-xs opacity-70">
-              <span id="item-count">{current.items.length} 个项目</span>
-              <span>{subtitle}</span>
-            </div>
+                <div className="h-8 bg-white/5 dark:bg-black/30 flex items-center justify-between px-8 text-xs opacity-70">
+                  <span id="item-count">{current.items.length} 个项目</span>
+                  <span>{subtitle}</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

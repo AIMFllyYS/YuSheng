@@ -47,6 +47,7 @@ export const notesData: FeatureItem[] = [
     icon: "fa-calculator",
     color: "text-blue-400",
     children: [
+      { type: "file", name: "微积分·积分可视化", url: "/tools/微积分·积分方法可视化学习系统.html", icon: "fa-area-chart" },
       { type: "file", name: "高等数学", url: "#", icon: "fa-superscript" },
       { type: "file", name: "线性代数", url: "#", icon: "fa-th" },
       { type: "file", name: "概率统计", url: "#", icon: "fa-line-chart" },
@@ -69,6 +70,8 @@ export const notesData: FeatureItem[] = [
     icon: "fa-code",
     color: "text-yellow-300",
     children: [
+      { type: "file", name: "期中考试模拟复习01", url: "/tools/Python期中考试模拟复习01.html", icon: "fa-laptop" },
+      { type: "file", name: "期中考试模拟02", url: "/tools/python期中模拟考试02.html", icon: "fa-laptop" },
       { type: "file", name: "爬虫实战", url: "#", icon: "fa-bug" },
       { type: "file", name: "数据分析", url: "#", icon: "fa-pie-chart" },
       { type: "file", name: "机器学习", url: "#", icon: "fa-cogs" },
@@ -107,6 +110,8 @@ export const memoryData: FeatureItem[] = [
     icon: "fa-calendar-check-o",
     color: "text-sky-300",
     children: [
+      { type: "file", name: "特色团日-光药医路", url: "/tools/特色团日-光药医路.html", icon: "fa-flag" },
+      { type: "file", name: "会长汪欣悦的生日", url: "/tools/会长汪欣悦的生日.html", icon: "fa-birthday-cake" },
       { type: "file", name: "迎新晚会 · 舞台灯光下的自己", url: "#", icon: "fa-star" },
       { type: "file", name: "读书会 · 一起翻过的书页", url: "#", icon: "fa-book" },
       { type: "file", name: "社团招新 · 摊位后的故事", url: "#", icon: "fa-handshake-o" },
@@ -158,6 +163,8 @@ export const shareData: FeatureItem[] = [
     icon: "fa-folder-open",
     color: "text-sky-300",
     children: [
+      { type: "file", name: "三体可视化人物介绍", url: "/tools/三体可视化人物介绍.html", icon: "fa-globe" },
+      { type: "file", name: "三体可视化语录", url: "/tools/三体可视化语录.html", icon: "fa-quote-left" },
       { type: "file", name: "个人主页主题（自介 plus）", url: "#", icon: "fa-html5" },
       { type: "file", name: "前端小组件集合（导航栏 / 卡片）", url: "#", icon: "fa-puzzle-piece" },
       { type: "file", name: "学习可视化工具 Demo", url: "#", icon: "fa-bar-chart" },
@@ -233,6 +240,7 @@ export const revelationData: FeatureItem[] = [
     icon: "fa-leaf",
     color: "text-emerald-300",
     children: [
+      { type: "file", name: "书籍体验-自伤自恋精神分析", url: "/tools/书籍体验-自伤自恋的精神分析.html", icon: "fa-book" },
       { type: "file", name: "生命的韧性与成长", icon: "fa-seedling", url: "#" },
       { type: "file", name: "在不确定中寻找确定", icon: "fa-compass", url: "#" },
     ],

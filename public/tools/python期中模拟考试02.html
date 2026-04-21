@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 阶段性测验 - 模拟考试系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- 核心修复：强制隐藏与样式重置 --- */
+        .hidden { display: none !important; }
+
+        * { font-family: 'Noto Sans SC', 'IBM Plex Sans', sans-serif; }
+        code, pre, .mono { font-family: 'IBM Plex Mono', monospace !important; }
+
+        :root {
+            --primary: #2563EB;
+            --success: #10B981;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --text: #1E293B;
+        }
+
+        body {
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+            color: var(--text);
+        }
+
+        .exam-header {
+            background: linear-gradient(135deg, #1E40AF, #3B82F6);
+            color: white;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #E2E8F0;
+        }
+
+        /* --- 核心修复：选项样式适配 --- */
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+            position: relative;
+        }
+
+        .option-label:hover {
+            border-color: #93C5FD;
+            background: #EFF6FF;
+        }
+
+        .option-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+        }
+
+        .option-label span {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* 选项前的圆圈 */
+        .option-label span::before {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #CBD5E1;
+            border-radius: 50%;
+            margin-right: 12px;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            background: white;
+        }
+
+        /* 选中状态 */
+        .option-input:checked + span::before {
+            border-color: var(--primary);
+            background: var(--primary);
+            box-shadow: inset 0 0 0 3px white;
+        }
+
+        .option-input:checked + span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* 选中时改变父框背景 (现代浏览器) */
+        .option-label:has(.option-input:checked) {
+            border-color: var(--primary);
+            background: #DBEAFE;
+        }
+
+        .code-editor {
+            background: #1E293B;
+            color: #E2E8F0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'IBM Plex Mono', monospace;
+            border: 2px solid #334155;
+        }
+
+        .timer-box {
+            background: white;
+            border: 3px solid var(--primary);
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .timer-display {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'IBM Plex Mono', monospace;
+            line-height: 1;
+        }
+
+        .question-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            font-weight: 700;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-mcq { background: #DBEAFE; color: #1E40AF; }
+        .badge-code { background: #FEF3C7; color: #92400E; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #3B82F6);
+            color: white;
+            padding: 1rem 3rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.125rem;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+            filter: grayscale(0.5);
+        }
+
+        .result-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(4px);
+        }
+
+        .result-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-size: 3rem;
+            font-weight: 700;
+            border: 8px solid;
+            margin: 0 auto;
+        }
+
+        .score-excellent { border-color: #10B981; color: #065F46; background: #ECFDF5; }
+        .score-good { border-color: #3B82F6; color: #1E40AF; background: #EFF6FF; }
+        .score-pass { border-color: #F59E0B; color: #92400E; background: #FFFBEB; }
+        .score-fail { border-color: #EF4444; color: #991B1B; background: #FEF2F2; }
+
+        .error-item {
+            border-left: 4px solid var(--danger);
+            background: #FEF2F2;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .correct-answer {
+            background: #F0FDF4;
+            border-left: 4px solid var(--success);
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+
+        .warning-box {
+            background: #FFFBEB;
+            border: 2px solid #FCD34D;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            color: #92400E;
+        }
+        
+        .section-divider {
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+            margin: 3rem 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8"> <div class="exam-header p-6 md:p-8 rounded-2xl mb-8"> <div class="max-w-6xl mx-auto"> <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"> <div> <h1 class="text-3xl md:text-4xl font-bold mb-2">Python 阶段性测验</h1> <p class="text-lg opacity-90">考试时间：60分钟 | 总分：100分</p> </div> <div class="timer-box"> <div class="text-xs text-gray-500 mb-1">剩余时间</div> <div class="timer-display" id="timer">60:00</div> </div> </div> </div> </div>
+php-template
+复制代码
+<div class="max-w-6xl mx-auto">
+    <div class="warning-box">
+        <h3 class="text-xl font-bold mb-3">📋 考试须知</h3>
+        <ul class="list-disc list-inside space-y-1">
+            <li>本次考试共100分，包含20道单选题（40分）和2道编程题（60分）</li>
+            <li>考试时间为60分钟，请合理分配时间</li>
+            <li>单选题每题2分，编程题每题30分</li>
+            <li>请在规定时间内完成所有题目并提交，提交后系统将自动评分</li>
+        </ul>
+    </div>
+
+    <div class="card p-6 md:p-8 mb-8">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold">一、单选题（共20题，每题2分，共40分）</h2>
+            <span class="badge badge-mcq">选择题</span>
+        </div>
+
+        <div class="space-y-6">
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">1</span>
+                    <p class="flex-1 text-lg">计算机的五大组成部分中，负责执行算术和逻辑运算的是？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q1" value="A" class="option-input"><span>A. 控制器</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="B" class="option-input"><span>B. 运算器</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="C" class="option-input"><span>C. 存储器</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="D" class="option-input"><span>D. 输入设备</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">2</span>
+                    <p class="flex-1 text-lg">以下哪个不属于系统软件？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q2" value="A" class="option-input"><span>A. 操作系统</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="B" class="option-input"><span>B. 编译器</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="C" class="option-input"><span>C. Microsoft Word</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="D" class="option-input"><span>D. 数据库管理系统</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">3</span>
+                    <p class="flex-1 text-lg">二进制数 1101 转换为十进制数是？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q3" value="A" class="option-input"><span>A. 11</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="B" class="option-input"><span>B. 12</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="C" class="option-input"><span>C. 13</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="D" class="option-input"><span>D. 14</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">4</span>
+                    <p class="flex-1 text-lg">十进制数 25 转换为二进制数是？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q4" value="A" class="option-input"><span>A. 11001</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="B" class="option-input"><span>B. 11010</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="C" class="option-input"><span>C. 10111</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="D" class="option-input"><span>D. 11100</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">5</span>
+                    <p class="flex-1 text-lg">十六进制数 0x2F 转换为十进制数是？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q5" value="A" class="option-input"><span>A. 45</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="B" class="option-input"><span>B. 46</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="C" class="option-input"><span>C. 47</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="D" class="option-input"><span>D. 48</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">6</span>
+                    <p class="flex-1 text-lg">ASCII码中，字符'A'的十进制值是？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q6" value="A" class="option-input"><span>A. 64</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="B" class="option-input"><span>B. 65</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="C" class="option-input"><span>C. 66</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="D" class="option-input"><span>D. 97</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">7</span>
+                    <p class="flex-1 text-lg">Python是一种什么类型的编程语言？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q7" value="A" class="option-input"><span>A. 编译型语言</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="B" class="option-input"><span>B. 解释型语言</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="C" class="option-input"><span>C. 汇编语言</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="D" class="option-input"><span>D. 机器语言</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">8</span>
+                    <p class="flex-1 text-lg">八进制数 0o17 转换为十进制数是？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q8" value="A" class="option-input"><span>A. 13</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="B" class="option-input"><span>B. 15</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="C" class="option-input"><span>C. 14</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="D" class="option-input"><span>D. 17</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">9</span>
+                    <p class="flex-1 text-lg">以下哪个是合法的Python变量名？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q9" value="A" class="option-input"><span>A. 2variable</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="B" class="option-input"><span>B. variable-name</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="C" class="option-input"><span>C. variable_name</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="D" class="option-input"><span>D. for</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">10</span>
+                    <p class="flex-1 text-lg">Python中，input()函数返回的数据类型是？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q10" value="A" class="option-input"><span>A. int</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="B" class="option-input"><span>B. float</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="C" class="option-input"><span>C. str</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="D" class="option-input"><span>D. bool</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">11</span>
+                    <p class="flex-1 text-lg">表达式 10 // 3 的结果是？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q11" value="A" class="option-input"><span>A. 3.33</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="B" class="option-input"><span>B. 3</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="C" class="option-input"><span>C. 4</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="D" class="option-input"><span>D. 1</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">12</span>
+                    <p class="flex-1 text-lg">表达式 2 ** 3 的结果是？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q12" value="A" class="option-input"><span>A. 5</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="B" class="option-input"><span>B. 6</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="C" class="option-input"><span>C. 8</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="D" class="option-input"><span>D. 9</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">13</span>
+                    <p class="flex-1 text-lg">以下关于print()函数的说法，错误的是？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q13" value="A" class="option-input"><span>A. 可以同时输出多个值</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="B" class="option-input"><span>B. sep参数可以指定分隔符</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="C" class="option-input"><span>C. end参数默认值是空格</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="D" class="option-input"><span>D. 可以输出到文件</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">14</span>
+                    <p class="flex-1 text-lg">range(1, 10, 2) 会生成哪些数字？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q14" value="A" class="option-input"><span>A. 1, 3, 5, 7, 9</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="B" class="option-input"><span>B. 1, 3, 5, 7</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="C" class="option-input"><span>C. 2, 4, 6, 8, 10</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="D" class="option-input"><span>D. 2, 4, 6, 8</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">15</span>
+                    <p class="flex-1 text-lg">random.randint(1, 10) 可能返回的值范围是？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q15" value="A" class="option-input"><span>A. 1到9</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="B" class="option-input"><span>B. 1到10</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="C" class="option-input"><span>C. 0到10</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="D" class="option-input"><span>D. 0到9</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">16</span>
+                    <p class="flex-1 text-lg">以下哪个是Python的关键字？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q16" value="A" class="option-input"><span>A. print</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="B" class="option-input"><span>B. input</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="C" class="option-input"><span>C. while</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="D" class="option-input"><span>D. random</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">17</span>
+                    <p class="flex-1 text-lg">在Python中，使用math库需要先执行什么操作？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q17" value="A" class="option-input"><span>A. include math</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="B" class="option-input"><span>B. import math</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="C" class="option-input"><span>C. using math</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="D" class="option-input"><span>D. require math</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">18</span>
+                    <p class="flex-1 text-lg">表达式 bool(0) 的结果是？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q18" value="A" class="option-input"><span>A. True</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="B" class="option-input"><span>B. False</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="C" class="option-input"><span>C. 0</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="D" class="option-input"><span>D. None</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">19</span>
+                    <p class="flex-1 text-lg">break语句的作用是？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q19" value="A" class="option-input"><span>A. 跳过本次循环，继续下一次</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="B" class="option-input"><span>B. 跳出整个循环</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="C" class="option-input"><span>C. 暂停程序执行</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="D" class="option-input"><span>D. 结束程序</span></label>
+                </div>
+            </div>
+
+            <div class="question-card card p-6">
+                <div class="flex items-start mb-4">
+                    <span class="question-number">20</span>
+                    <p class="flex-1 text-lg">在try-except结构中，finally代码块的作用是？</p>
+                </div>
+                <div class="space-y-3 pl-10 md:pl-12">
+                    <label class="option-label"><input type="radio" name="q20" value="A" class="option-input"><span>A. 只在发生异常时执行</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="B" class="option-input"><span>B. 只在没有异常时执行</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="C" class="option-input"><span>C. 无论是否有异常都会执行</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="D" class="option-input"><span>D. 用于捕获异常</span></label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div class="card p-6 md:p-8 mb-8">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold">二、编程题（共2题，每题30分，共60分）</h2>
+            <span class="badge badge-code">编程题</span>
+        </div>
+
+        <div class="question-card card p-6 mb-8">
+            <div class="flex items-start mb-4">
+                <span class="question-number" style="background: #F59E0B;">1</span>
+                <div class="flex-1">
+                    <p class="text-lg font-semibold mb-3">分支结构题（30分）</p>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+                        <p class="font-semibold mb-2">题目要求：</p>
+                        <p class="mb-2">编写一个程序，输入一个学生的成绩（0-100），根据以下标准输出等级：</p>
+                        <ul class="list-disc list-inside space-y-1 text-sm ml-4">
+                            <li>90分及以上：优秀</li>
+                            <li>80-89分：良好</li>
+                            <li>70-79分：中等</li>
+                            <li>60-69分：及格</li>
+                            <li>60分以下：不及格</li>
+                            <li>如果成绩不在0-100范围内，输出"成绩无效"</li>
+                        </ul>
+                    </div>
+                    <div class="bg-amber-50 border-l-4 border-amber-500 p-4">
+                        <p class="font-semibold mb-2">示例：</p>
+                        <code class="text-sm block">
+                            输入：85<br>
+                            输出：良好<br><br>
+                            输入：55<br>
+                            输出：不及格<br><br>
+                            输入：105<br>
+                            输出：成绩无效
+                        </code>
+                    </div>
+                </div>
+            </div>
+            <div class="pl-0 md:pl-12">
+                <label class="block font-semibold mb-3">请在下方编写代码：</label>
+                <textarea id="code1" class="w-full h-64 code-editor resize-y focus:outline-none" spellcheck="false"># 请在此处编写分支结构代码
+</textarea> </div> </div>
+php-template
+复制代码
+        <div class="question-card card p-6">
+            <div class="flex items-start mb-4">
+                <span class="question-number" style="background: #F59E0B;">2</span>
+                <div class="flex-1">
+                    <p class="text-lg font-semibold mb-3">循环结构题（30分）</p>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+                        <p class="font-semibold mb-2">题目要求：</p>
+                        <p class="mb-2">编写一个程序，输入一个正整数n，计算并输出1到n之间所有能被3整除的数的和。</p>
+                        <ul class="list-disc list-inside space-y-1 text-sm ml-4">
+                            <li>使用循环结构实现</li>
+                            <li>输出格式："1到n之间能被3整除的数的和为：结果"</li>
+                        </ul>
+                    </div>
+                    <div class="bg-amber-50 border-l-4 border-amber-500 p-4">
+                        <p class="font-semibold mb-2">示例：</p>
+                        <code class="text-sm block">
+                            输入：10<br>
+                            输出：1到10之间能被3整除的数的和为：18<br>
+                            （说明：3 + 6 + 9 = 18）<br><br>
+                            输入：15<br>
+                            输出：1到15之间能被3整除的数的和为：45<br>
+                            （说明：3 + 6 + 9 + 12 + 15 = 45）
+                        </code>
+                    </div>
+                </div>
+            </div>
+            <div class="pl-0 md:pl-12">
+                <label class="block font-semibold mb-3">请在下方编写代码：</label>
+                <textarea id="code2" class="w-full h-64 code-editor resize-y focus:outline-none" spellcheck="false"># 请在此处编写循环结构代码
+</textarea> </div> </div> </div>
+php-template
+复制代码
+    <div class="text-center mb-12">
+        <button id="submit-btn" class="btn-primary">
+            📝 提交试卷并评分
+        </button>
+        <p class="text-sm text-gray-600 mt-4">请确认所有题目已完成后再提交</p>
+    </div>
+</div>
+
+<div id="result-modal" class="result-modal hidden">
+    <div class="result-content">
+        <div class="p-6 md:p-8">
+            <h2 class="text-2xl md:text-3xl font-bold text-center mb-6">考试成绩报告</h2>
+            
+            <div id="score-display" class="mb-8">
+                </div>
+
+            <div class="grid grid-cols-3 gap-2 md:gap-4 mb-8">
+                <div class="card p-3 md:p-4 text-center">
+                    <div class="text-3xl mb-2">📝</div>
+                    <p class="text-xs text-gray-500">单选题得分</p>
+                    <p class="text-xl md:text-2xl font-bold text-blue-600" id="mcq-score">0</p>
+                </div>
+                <div class="card p-3 md:p-4 text-center">
+                    <div class="text-3xl mb-2">💻</div>
+                    <p class="text-xs text-gray-500">编程题得分</p>
+                    <p class="text-xl md:text-2xl font-bold text-green-600" id="code-score">0</p>
+                </div>
+                <div class="card p-3 md:p-4 text-center">
+                    <div class="text-3xl mb-2">📊</div>
+                    <p class="text-xs text-gray-500">总分</p>
+                    <p class="text-xl md:text-2xl font-bold text-purple-600" id="total-score">0</p>
+                </div>
+            </div>
+
+            <div id="error-section" class="mb-8">
+                </div>
+
+            <div class="text-center">
+                <button id="close-modal-btn" class="btn-primary">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 关键修复：所有逻辑包裹在 DOMContentLoaded 中，并使用 addEventListener 绑定事件
+    document.addEventListener('DOMContentLoaded', function() {
+        // -------------------------------------------------------------------------
+        // 1. 数据定义 (完整版)
+        // -------------------------------------------------------------------------
+        const answers = {
+            q1: 'B', q2: 'C', q3: 'C', q4: 'A', q5: 'C',
+            q6: 'B', q7: 'B', q8: 'B', q9: 'C', q10: 'C',
+            q11: 'B', q12: 'C', q13: 'C', q14: 'A', q15: 'B',
+            q16: 'C', q17: 'B', q18: 'B', q19: 'B', q20: 'C'
+        };
+
+        const questionTexts = {
+            q1: '计算机的五大组成部分中，负责执行算术和逻辑运算的是？',
+            q2: '以下哪个不属于系统软件？',
+            q3: '二进制数 1101 转换为十进制数是？',
+            q4: '十进制数 25 转换为二进制数是？',
+            q5: '十六进制数 0x2F 转换为十进制数是？',
+            q6: 'ASCII码中，字符\'A\'的十进制值是？',
+            q7: 'Python是一种什么类型的编程语言？',
+            q8: '八进制数 0o17 转换为十进制数是？',
+            q9: '以下哪个是合法的Python变量名？',
+            q10: 'Python中，input()函数返回的数据类型是？',
+            q11: '表达式 10 // 3 的结果是？',
+            q12: '表达式 2 ** 3 的结果是？',
+            q13: '以下关于print()函数的说法，错误的是？',
+            q14: 'range(1, 10, 2) 会生成哪些数字？',
+            q15: 'random.randint(1, 10) 可能返回的值范围是？',
+            q16: '以下哪个是Python的关键字？',
+            q17: '在Python中，使用math库需要先执行什么操作？',
+            q18: '表达式 bool(0) 的结果是？',
+            q19: 'break语句的作用是？',
+            q20: '在try-except结构中，finally代码块的作用是？'
+        };
+
+        const explanations = {
+            q1: '运算器（ALU）负责执行所有的算术运算（加减乘除）和逻辑运算（与或非等）。控制器负责指挥协调，存储器负责存储数据。',
+            q2: 'Microsoft Word是应用软件，用于文字处理。操作系统、编译器、数据库管理系统都属于系统软件。',
+            q3: '1101(二进制) = 1×2³ + 1×2² + 0×2¹ + 1×2⁰ = 8 + 4 + 0 + 1 = 13',
+            q4: '25÷2=12余1, 12÷2=6余0, 6÷2=3余0, 3÷2=1余1, 1÷2=0余1，从下往上读余数：11001',
+            q5: '0x2F = 2×16¹ + 15×16⁰ = 32 + 15 = 47 (其中F在十六进制中代表15)',
+            q6: 'ASCII码规定：大写字母A的十进制值是65，小写字母a是97。',
+            q7: 'Python是解释型语言，代码逐行解释执行。C/C++是编译型语言，需要先编译成机器码。',
+            q8: '0o17(八进制) = 1×8¹ + 7×8⁰ = 8 + 7 = 15',
+            q9: 'Python变量名只能以字母或下划线开头，不能以数字开头，不能包含减号或空格，不能使用关键字。variable_name符合规范。',
+            q10: 'input()函数总是返回字符串类型(str)，即使输入的是数字，也需要用int()或float()转换。',
+            q11: '//是整除运算符，10 // 3 = 3（只保留整数部分，舍弃小数）',
+            q12: '**是幂运算符，2 ** 3 = 2³ = 8',
+            q13: 'print()函数的end参数默认值是换行符\\n，不是空格。sep参数默认是空格。',
+            q14: 'range(1, 10, 2)：从1开始，到10结束（不含10），步长为2，所以生成 1, 3, 5, 7, 9',
+            q15: 'random.randint(a, b) 返回[a, b]范围内的随机整数，包含a和b两端，所以是1到10。',
+            q16: 'while是Python的关键字，用于循环。print、input是内置函数，random是库名。',
+            q17: '使用任何Python库之前都需要先用import语句导入，如：import math',
+            q18: 'bool(0)的结果是False。在Python中，0、空字符串""、空列表[]等都会转换为False。',
+            q19: 'break语句用于跳出整个循环，不再执行后续迭代。continue是跳过本次循环继续下一次。',
+            q20: 'finally代码块无论是否发生异常都会执行，常用于清理资源（如关闭文件）。'
+        };
+
+        const optionLabels = {
+            q1: { A: '控制器', B: '运算器', C: '存储器', D: '输入设备' },
+            q2: { A: '操作系统', B: '编译器', C: 'Microsoft Word', D: '数据库管理系统' },
+            q3: { A: '11', B: '12', C: '13', D: '14' },
+            q4: { A: '11001', B: '11010', C: '10111', D: '11100' },
+            q5: { A: '45', B: '46', C: '47', D: '48' },
+            q6: { A: '64', B: '65', C: '66', D: '97' },
+            q7: { A: '编译型语言', B: '解释型语言', C: '汇编语言', D: '机器语言' },
+            q8: { A: '13', B: '15', C: '14', D: '17' },
+            q9: { A: '2variable', B: 'variable-name', C: 'variable_name', D: 'for' },
+            q10: { A: 'int', B: 'float', C: 'str', D: 'bool' },
+            q11: { A: '3.33', B: '3', C: '4', D: '1' },
+            q12: { A: '5', B: '6', C: '8', D: '9' },
+            q13: { A: '可以同时输出多个值', B: 'sep参数可以指定分隔符', C: 'end参数默认值是空格', D: '可以输出到文件' },
+            q14: { A: '1, 3, 5, 7, 9', B: '1, 3, 5, 7', C: '2, 4, 6, 8, 10', D: '2, 4, 6, 8' },
+            q15: { A: '1到9', B: '1到10', C: '0到10', D: '0到9' },
+            q16: { A: 'print', B: 'input', C: 'while', D: 'random' },
+            q17: { A: 'include math', B: 'import math', C: 'using math', D: 'require math' },
+            q18: { A: 'True', B: 'False', C: '0', D: 'None' },
+            q19: { A: '跳过本次循环，继续下一次', B: '跳出整个循环', C: '暂停程序执行', D: '结束程序' },
+            q20: { A: '只在发生异常时执行', B: '只在没有异常时执行', C: '无论是否有异常都会执行', D: '用于捕获异常' }
+        };
+
+        // -------------------------------------------------------------------------
+        // 2. 初始化与计时器
+        // -------------------------------------------------------------------------
+        let timeLeft = 60 * 60;
+        let timerInterval;
+        
+        function startTimer() {
+            const timerEl = document.getElementById('timer');
+            if (!timerEl) return;
+            
+            timerInterval = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert('考试时间到！系统将自动提交试卷。');
+                    handleSubmit();
+                }
+                 // Warning when 5 minutes left
+                if (timeLeft === 300) {
+                    alert('提醒：还剩5分钟！');
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        // Pyodide 初始化
+        let pyodide = null;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+            if (pyodideReady) return true;
+            try {
+                if (typeof loadPyodide !== 'undefined') {
+                    pyodide = await loadPyodide();
+                    pyodideReady = true;
+                    return true;
+                }
+                console.warn("Pyodide CDN尚未加载完成");
+                return false;
+            } catch (error) {
+                console.error('Pyodide 加载失败:', error);
+                return false;
+            }
+        }
+
+        // -------------------------------------------------------------------------
+        // 3. 核心逻辑：评分
+        // -------------------------------------------------------------------------
+        async function testCode(code, testCases) {
+            // 尝试初始化环境
+            if (!pyodideReady) {
+                await initPyodide();
+            }
+            
+            // 如果环境依然没准备好，直接返回0分，不卡死界面
+            if (!pyodideReady) {
+                return { score: 0, results: [{ passed: false, actual: "Python环境加载失败（可能是网络原因），无法评分代码题。" }] };
+            }
+
+            let passedTests = 0;
+            const results = [];
+
+            for (const test of testCases) {
+                try {
+                    pyodide.runPython(`
+import sys
+import io
+sys.stdin = io.StringIO("${test.input}")
+sys.stdout = io.StringIO()
+`);
+pyodide.runPython(code);
+const output = pyodide.runPython('sys.stdout.getvalue()').trim();
+
+javascript
+复制代码
+                    // 宽松匹配：只要包含期望结果就算对
+                    const passed = output.includes(test.expected) || output == test.expected;
+                    if (passed) passedTests++;
+                    
+                    results.push({ input: test.input, expected: test.expected, actual: output, passed: passed });
+                } catch (error) {
+                    results.push({ input: test.input, expected: test.expected, actual: "代码错误", passed: false });
+                }
+            }
+            return { score: Math.round((passedTests / testCases.length) * 30), results };
+        }
+
+        async function handleSubmit() {
+            const submitBtn = document.getElementById('submit-btn');
+            if(submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = '正在评分...';
+            }
+
+            try {
+                clearInterval(timerInterval);
+
+                // 1. 评分单选题
+                let mcqScore = 0;
+                const errors = [];
+                for (let i = 1; i <= 20; i++) {
+                    const el = document.querySelector(`input[name="q${i}"]:checked`);
+                    const userVal = el ? el.value : '未作答';
+                    const correctVal = answers[`q${i}`];
+                    
+                    if (userVal === correctVal) {
+                        mcqScore += 2;
+                    } else {
+                        errors.push({ 
+                            number: i, 
+                            question: questionTexts[`q${i}`],
+                            selected: userVal, 
+                            correct: correctVal 
+                        });
+                    }
+                }
+
+                // 2. 评分编程题
+                const code1 = document.getElementById('code1')?.value || "";
+                const code2 = document.getElementById('code2')?.value || "";
+                
+                // 测试用例 1
+                const testCases1 = [
+                    { input: '85', expected: '良好' },
+                    { input: '92', expected: '优秀' },
+                    { input: '75', expected: '中等' },
+                    { input: '65', expected: '及格' },
+                    { input: '55', expected: '不及格' },
+                    { input: '105', expected: '成绩无效' },
+                    { input: '-5', expected: '成绩无效' }
+                ];
+                // 测试用例 2
+                const testCases2 = [
+                    { input: '10', expected: '18' },
+                    { input: '15', expected: '45' },
+                    { input: '20', expected: '63' },
+                    { input: '5', expected: '3' }
+                ];
+
+                let code1Res = { score: 0, results: [] };
+                let code2Res = { score: 0, results: [] };
+
+                if(code1.trim()) code1Res = await testCode(code1, testCases1);
+                if(code2.trim()) code2Res = await testCode(code2, testCases2);
+
+                const totalCodeScore = code1Res.score + code2Res.score;
+                const totalScore = mcqScore + totalCodeScore;
+
+                // 3. 显示结果
+                showResults(mcqScore, totalCodeScore, totalScore, errors, code1Res, code2Res);
+
+            } catch (e) {
+                console.error(e);
+                alert("评分过程中发生错误: " + e.message);
+            } finally {
+                // 无论成功失败，恢复按钮状态
+                if(submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '📝 提交试卷并评分';
+                }
+            }
+        }
+
+        function showResults(mcq, code, total, errors, code1Res, code2Res) {
+            // 更新分数DOM
+            document.getElementById('mcq-score').textContent = `${mcq}/40`;
+            document.getElementById('code-score').textContent = `${code}/60`;
+            document.getElementById('total-score').textContent = `${total}/100`;
+
+            // 等级判定
+            let gradeClass, gradeText;
+            if (total >= 90) { gradeClass = 'score-excellent'; gradeText = '优秀'; } 
+            else if (total >= 80) { gradeClass = 'score-good'; gradeText = '良好'; }
+            else if (total >= 60) { gradeClass = 'score-pass'; gradeText = '及格'; }
+            else { gradeClass = 'score-fail'; gradeText = '不及格'; }
+            
+            document.getElementById('score-display').innerHTML = `
+                <div class="score-circle ${gradeClass}">
+                    <div>
+                        <div>${total}</div>
+                        <div style="font-size: 1.25rem; font-weight: 500;">${gradeText}</div>
+                    </div>
+                </div>
+            `;
+
+            // 错题展示 HTML 构建
+            let errorHTML = '<h3 class="text-xl font-bold mb-4">📊 答题详情与解析</h3>';
+            
+            // --- 单选题部分 ---
+            errorHTML += '<div class="mb-6"><h4 class="text-lg font-semibold mb-3 text-blue-700">一、单选题详情</h4>';
+            if (errors.length > 0) {
+                errorHTML += '<div class="space-y-4 mb-4"><p class="text-red-600 font-semibold">❌ 错题列表：</p>';
+                errors.forEach(error => {
+                    const qKey = `q${error.number}`;
+                    const selectedText = error.selected === '未作答' ? '未作答' : `${error.selected}. ${optionLabels[qKey][error.selected]}`;
+                    const correctText = `${error.correct}. ${optionLabels[qKey][error.correct]}`;
+                    
+                    errorHTML += `
+                        <div class="error-item">
+                            <p class="font-semibold mb-2">第 ${error.number} 题（-2分）</p>
+                            <p class="text-sm mb-2">${error.question}</p>
+                            <p class="text-sm mb-1">你的答案: <span class="font-mono font-semibold text-red-600">${selectedText}</span></p>
+                            <div class="correct-answer">
+                                <p class="text-sm font-semibold text-green-700">✓ 正确答案: ${correctText}</p>
+                                <p class="text-sm text-gray-700 mt-2">💡 解析：${explanations[qKey]}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                errorHTML += '</div>';
+            } else {
+                errorHTML += '<p class="text-green-600 text-center font-semibold py-4 bg-green-50 rounded-lg">🎉 单选题全部正确！</p>';
+            }
+            errorHTML += '</div>';
+
+            // --- 编程题部分 ---
+            errorHTML += '<div class="mt-8"><h4 class="text-lg font-semibold mb-3 text-green-700">二、编程题详情</h4>';
+            
+            // 编程题 1 结果
+            errorHTML += '<div class="card p-4 mb-4">';
+            errorHTML += `<p class="font-semibold mb-2">第1题得分: <span class="${code1Res.score >= 20 ? 'text-green-600' : 'text-red-600'}">${code1Res.score}/30</span></p>`;
+            if(code1Res.results.length > 0) {
+                 errorHTML += '<div class="space-y-2 text-sm">';
+                 code1Res.results.forEach((r, i) => {
+                     errorHTML += `<div class="flex justify-between p-2 rounded ${r.passed ? 'bg-green-50' : 'bg-red-50'}">
+                        <span>测试点 ${i+1}</span>
+                        <span class="${r.passed ? 'text-green-700' : 'text-red-700'}">${r.passed ? '✓ 通过' : '✗ 失败'}</span>
+                     </div>`;
+                 });
+                 errorHTML += '</div>';
+            }
+            errorHTML += '</div>';
+
+            // 编程题 2 结果
+            errorHTML += '<div class="card p-4 mb-4">';
+            errorHTML += `<p class="font-semibold mb-2">第2题得分: <span class="${code2Res.score >= 20 ? 'text-green-600' : 'text-red-600'}">${code2Res.score}/30</span></p>`;
+            if(code2Res.results.length > 0) {
+                 errorHTML += '<div class="space-y-2 text-sm">';
+                 code2Res.results.forEach((r, i) => {
+                     errorHTML += `<div class="flex justify-between p-2 rounded ${r.passed ? 'bg-green-50' : 'bg-red-50'}">
+                        <span>测试点 ${i+1}</span>
+                        <span class="${r.passed ? 'text-green-700' : 'text-red-700'}">${r.passed ? '✓ 通过' : '✗ 失败'}</span>
+                     </div>`;
+                 });
+                 errorHTML += '</div>';
+            }
+            errorHTML += '</div></div>';
+
+            document.getElementById('error-section').innerHTML = errorHTML;
+
+            // 显示弹窗
+            document.getElementById('result-modal').classList.remove('hidden');
+        }
+
+        // -------------------------------------------------------------------------
+        // 4. 事件绑定 (修复 "无法点击" 的关键)
+        // -------------------------------------------------------------------------
+        
+        // 绑定提交按钮
+        const submitBtn = document.getElementById('submit-btn');
+        if(submitBtn) {
+            submitBtn.addEventListener('click', handleSubmit);
+        } else {
+            console.error("找不到提交按钮");
+        }
+
+        // 绑定关闭按钮
+        const closeBtn = document.getElementById('close-modal-btn');
+        if(closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                document.getElementById('result-modal').classList.add('hidden');
+            });
+        }
+
+        // 启动流程
+        startTimer();
+        initPyodide(); // 预加载
+        console.log("考试系统已就绪");
+    });
+</script>
+</body> </html>
