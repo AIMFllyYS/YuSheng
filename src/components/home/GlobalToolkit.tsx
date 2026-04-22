@@ -68,7 +68,7 @@ export function GlobalToolkit({ goPage, toggleTheme, themeLight }: GlobalToolkit
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="relative w-full max-w-[600px] bg-[var(--bg-color)] border border-[var(--glass-border)] rounded-2xl shadow-2xl overflow-hidden"
+              className="relative w-full max-w-[600px] glass-card rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden border border-white/10"
             >
               <Command className="w-full bg-transparent" label="Global Command Menu">
                 <div className="flex items-center px-4 py-4 border-b border-[var(--glass-border)]">
