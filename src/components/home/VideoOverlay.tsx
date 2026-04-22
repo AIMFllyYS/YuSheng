@@ -14,7 +14,6 @@ export function VideoOverlay({ open, onCloseClick, onOverlayMouseEnter, onOverla
     <div
       id="video-overlay"
       className={open ? "show" : ""}
-      style={{ display: open ? "flex" : "none" }}
       onMouseEnter={onOverlayMouseEnter}
       onMouseLeave={onOverlayMouseLeave}
     >

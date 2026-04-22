@@ -56,6 +56,8 @@ export function JourneyOverlay({ open, onClose }: Props) {
   useEffect(() => {
     if (!open || !containerRef.current || mode !== 'journey') return;
     const container = containerRef.current;
+    let rafId = 0;
+
     const startDrag = (x: number, y: number) => { isDragging.current = true; container.style.cursor = "grabbing"; startX.current = x; startY.current = y; };
     const dragTo = (x: number, y: number) => {
       if (!isDragging.current) return;
@@ -63,8 +65,14 @@ export function JourneyOverlay({ open, onClose }: Props) {
       viewY.current += y - startY.current;
       startX.current = x;
       startY.current = y;
-      updateViewportTransform();
-      updateMinimap();
+      // rAF throttle: batch DOM writes to compositor tick (60fps max)
+      if (!rafId) {
+        rafId = requestAnimationFrame(() => {
+          updateViewportTransform();
+          updateMinimap();
+          rafId = 0;
+        });
+      }
     };
     const endDrag = () => { isDragging.current = false; container.style.cursor = "grab"; };
     const onMouseDown = (e: MouseEvent) => startDrag(e.clientX, e.clientY);
@@ -81,6 +89,7 @@ export function JourneyOverlay({ open, onClose }: Props) {
     container.addEventListener("touchend", endDrag);
     container.addEventListener("wheel", onWheel, { passive: false });
     return () => {
+      if (rafId) cancelAnimationFrame(rafId);
       container.removeEventListener("mousedown", onMouseDown);
       container.removeEventListener("mousemove", onMouseMove);
       container.removeEventListener("mouseup", endDrag);

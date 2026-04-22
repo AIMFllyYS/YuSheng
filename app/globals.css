@@ -2,18 +2,23 @@
 :root{--h-main:45;--h-sub:210;--accent-main:hsl(45,85%,65%);--accent-sub:hsl(210,85%,65%);--glass-bg:rgba(255,255,255,.04);--glass-border:rgba(255,255,255,.08);--bg-color:#0a0f1a;--text-color:#f1f5f9}
 :root.light-theme{--bg-color:#f9fafb;--text-color:#020617;--glass-bg:rgba(255,255,255,.85);--glass-border:rgba(148,163,184,.6)}
 .light-theme body{cursor:auto}*{box-sizing:border-box}
-body{margin:0;overflow-x:hidden;font-family:var(--font-noto),"Noto Serif SC",serif;color:var(--text-color);background:var(--bg-color);cursor:none}
+body{margin:0;overflow-x:hidden;font-family:"Noto Serif SC",serif;color:var(--text-color);background:var(--bg-color);cursor:none}
 @media (max-width:768px){body{cursor:auto}#cursor-dot,#cursor-ring{display:none!important}#kb-app{cursor:auto}}
 #bg-canvas,.bg-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:-2}
-#cursor-dot,#cursor-ring{position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:opacity .2s}
+/* Cursor: left/top fixed at 0; transform drives position — compositor only, zero reflow */
+#cursor-dot,#cursor-ring{position:fixed;pointer-events:none;z-index:9999;left:0;top:0;will-change:transform;transition:opacity .2s}
 #cursor-dot{width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 12px rgba(255,255,255,.9),0 0 24px var(--accent-main)}
 #cursor-ring{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.4);box-shadow:0 0 20px rgba(255,255,255,.2);backdrop-filter:blur(2px)}
-.glass-card{background:var(--glass-bg);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--glass-border);border-radius:20px;transition:all .4s cubic-bezier(.175,.885,.32,1.275);box-shadow:0 8px 32px rgba(0,0,0,.3)}
-.glass-card:hover{background:rgba(255,255,255,.08);transform:translateY(-4px) scale(1.01);border-color:rgba(255,255,255,.2);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+/* glass-card: hover shadow via ::after opacity (compositor only — avoids paint on box-shadow change) */
+.glass-card{position:relative;background:var(--glass-bg);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--glass-border);border-radius:20px;transition:background .4s cubic-bezier(.175,.885,.32,1.275),border-color .4s,transform .4s cubic-bezier(.175,.885,.32,1.275);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.glass-card::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:0 20px 50px rgba(0,0,0,.4);opacity:0;transition:opacity .4s;pointer-events:none}
+.glass-card:hover{background:rgba(255,255,255,.08);transform:translateY(-4px) scale(1.01);border-color:rgba(255,255,255,.2)}
+.glass-card:hover::after{opacity:1}
 .font-art{font-family:"Ma Shan Zheng",cursive}.font-english{font-family:"Playfair Display",serif}.font-cinzel{font-family:Cinzel,serif}.font-kuaile{font-family:"ZCOOL KuaiLe",cursive}
 .text-gradient{background:linear-gradient(135deg,var(--accent-main),#fff,var(--accent-sub));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.page-section{display:none;opacity:0;min-height:calc(100vh - 100px);padding-top:100px;padding-bottom:120px}.page-section.active{display:block;animation:fadeInPage .7s ease-out forwards}
-@keyframes fadeInPage{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+/* page-section: shorter animation = less time glass children spend compositing during transition */
+.page-section{display:none;opacity:0;min-height:calc(100vh - 100px);padding-top:100px;padding-bottom:120px}.page-section.active{display:block;animation:fadeInPage .42s ease-out forwards}
+@keyframes fadeInPage{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 #video-overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);display:none;justify-content:center;align-items:center;opacity:0;transition:opacity .4s ease}
 #video-overlay.show{display:flex;opacity:1}#video-container{width:90%;max-width:900px;aspect-ratio:16/9;border-radius:16px;overflow:hidden;box-shadow:0 0 80px rgba(255,255,255,.1);transform:scale(.9);transition:transform .4s ease}
 #video-overlay.show #video-container{transform:scale(1)}#video-container iframe{width:100%;height:100%;border:none}
@@ -37,7 +42,8 @@ body{margin:0;overflow-x:hidden;font-family:var(--font-noto),"Noto Serif SC",ser
 #journey-close{position:fixed;top:20px;right:30px;font-size:1.5rem;color:#fff;cursor:pointer;z-index:210;width:50px;height:50px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.1);backdrop-filter:blur(10px);transition:all .3s}
 #journey-close:hover{transform:rotate(90deg);background:var(--accent-main);color:#0a0f1a}
 #journey-canvas-container{width:100%;height:100%;overflow:hidden;cursor:grab;position:relative}#journey-canvas-container:active{cursor:grabbing}
-#journey-viewport{position:absolute;width:3000px;height:2000px;transform-origin:center center;transition:transform .1s ease-out}
+/* journey-viewport: will-change promotes to GPU compositing layer for smooth drag */
+#journey-viewport{position:absolute;width:3000px;height:2000px;transform-origin:center center;will-change:transform;transition:transform .1s ease-out}
 #path-svg{position:absolute;width:100%;height:100%;pointer-events:none}
 .journey-path{fill:none;stroke:url(#pathGradient);stroke-width:8;stroke-linecap:round;stroke-dasharray:20 10;filter:drop-shadow(0 0 15px rgba(255,200,100,.4))}
 .journey-path-glow{fill:none;stroke:rgba(255,200,100,.15);stroke-width:40;stroke-linecap:round;filter:blur(10px)}
