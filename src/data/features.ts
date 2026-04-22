@@ -5,6 +5,12 @@ export type FeatureItem = {
   color?: string;
   url?: string;
   children?: FeatureItem[];
+  /** Brief description shown in detail pane */
+  description?: string;
+  /** Unique slug for fullscreen route /app/[slug] */
+  slug?: string;
+  /** Tags for categorization */
+  tags?: string[];
 };
 
 export const notesData: FeatureItem[] = [
@@ -47,7 +53,7 @@ export const notesData: FeatureItem[] = [
     icon: "fa-calculator",
     color: "text-blue-400",
     children: [
-      { type: "file", name: "微积分·积分可视化", url: "/tools/微积分·积分方法可视化学习系统.html", icon: "fa-area-chart" },
+      { type: "file", name: "微积分·积分可视化", url: "/tools/微积分·积分方法可视化学习系统.html", icon: "fa-area-chart", slug: "calculus-viz", description: "微积分积分方法的交互式可视化学习工具，支持多种积分方法的动态演示。", tags: ["数学", "可视化"] },
       { type: "file", name: "高等数学", url: "#", icon: "fa-superscript" },
       { type: "file", name: "线性代数", url: "#", icon: "fa-th" },
       { type: "file", name: "概率统计", url: "#", icon: "fa-line-chart" },
@@ -70,8 +76,8 @@ export const notesData: FeatureItem[] = [
     icon: "fa-code",
     color: "text-yellow-300",
     children: [
-      { type: "file", name: "期中考试模拟复习01", url: "/tools/Python期中考试模拟复习01.html", icon: "fa-laptop" },
-      { type: "file", name: "期中考试模拟02", url: "/tools/python期中模拟考试02.html", icon: "fa-laptop" },
+      { type: "file", name: "期中考试模拟复习01", url: "/tools/Python期中考试模拟复习01.html", icon: "fa-laptop", slug: "python-exam-01", description: "Python 期中考试模拟练习，涵盖基础语法与常见题型。", tags: ["Python", "考试"] },
+      { type: "file", name: "期中考试模拟02", url: "/tools/python期中模拟考试02.html", icon: "fa-laptop", slug: "python-exam-02", description: "Python 期中考试第二套模拟题，侧重函数与数据结构。", tags: ["Python", "考试"] },
       { type: "file", name: "爬虫实战", url: "#", icon: "fa-bug" },
       { type: "file", name: "数据分析", url: "#", icon: "fa-pie-chart" },
       { type: "file", name: "机器学习", url: "#", icon: "fa-cogs" },
@@ -110,8 +116,8 @@ export const memoryData: FeatureItem[] = [
     icon: "fa-calendar-check-o",
     color: "text-sky-300",
     children: [
-      { type: "file", name: "特色团日-光药医路", url: "/tools/特色团日-光药医路.html", icon: "fa-flag" },
-      { type: "file", name: "会长汪欣悦的生日", url: "/tools/会长汪欣悦的生日.html", icon: "fa-birthday-cake" },
+      { type: "file", name: "特色团日-光药医路", url: "/tools/特色团日-光药医路.html", icon: "fa-flag", slug: "team-day", description: "特色团日活动「光药医路」的互动展示页面。", tags: ["活动", "团日"] },
+      { type: "file", name: "会长汪欣悦的生日", url: "/tools/会长汪欣悦的生日.html", icon: "fa-birthday-cake", slug: "birthday-wxy", description: "为会长汪欣悦制作的生日祝福互动页面。", tags: ["生日", "纪念"] },
       { type: "file", name: "迎新晚会 · 舞台灯光下的自己", url: "#", icon: "fa-star" },
       { type: "file", name: "读书会 · 一起翻过的书页", url: "#", icon: "fa-book" },
       { type: "file", name: "社团招新 · 摊位后的故事", url: "#", icon: "fa-handshake-o" },
@@ -163,8 +169,8 @@ export const shareData: FeatureItem[] = [
     icon: "fa-folder-open",
     color: "text-sky-300",
     children: [
-      { type: "file", name: "三体可视化人物介绍", url: "/tools/三体可视化人物介绍.html", icon: "fa-globe" },
-      { type: "file", name: "三体可视化语录", url: "/tools/三体可视化语录.html", icon: "fa-quote-left" },
+      { type: "file", name: "三体可视化人物介绍", url: "/tools/三体可视化人物介绍.html", icon: "fa-globe", slug: "santi-characters", description: "《三体》系列小说主要角色的可视化介绍与关系图谱。", tags: ["三体", "可视化"] },
+      { type: "file", name: "三体可视化语录", url: "/tools/三体可视化语录.html", icon: "fa-quote-left", slug: "santi-quotes", description: "《三体》经典语录的视觉化呈现与交互浏览。", tags: ["三体", "语录"] },
       { type: "file", name: "个人主页主题（自介 plus）", url: "#", icon: "fa-html5" },
       { type: "file", name: "前端小组件集合（导航栏 / 卡片）", url: "#", icon: "fa-puzzle-piece" },
       { type: "file", name: "学习可视化工具 Demo", url: "#", icon: "fa-bar-chart" },
@@ -240,7 +246,7 @@ export const revelationData: FeatureItem[] = [
     icon: "fa-leaf",
     color: "text-emerald-300",
     children: [
-      { type: "file", name: "书籍体验-自伤自恋精神分析", url: "/tools/书籍体验-自伤自恋的精神分析.html", icon: "fa-book" },
+      { type: "file", name: "书籍体验-自伤自恋精神分析", url: "/tools/书籍体验-自伤自恋的精神分析.html", icon: "fa-book", slug: "book-narcissism", description: "《自伤自恋的精神分析》的沉浸式阅读体验页面。", tags: ["书籍", "心理学"] },
       { type: "file", name: "生命的韧性与成长", icon: "fa-seedling", url: "#" },
       { type: "file", name: "在不确定中寻找确定", icon: "fa-compass", url: "#" },
     ],
@@ -329,7 +335,8 @@ export const appsData: FeatureItem[] = [
     icon: "fa-university",
     color: "text-sky-300",
     children: [
-      { type: "file", name: "教务系统入口", url: "#", icon: "fa-graduation-cap" },
+      { type: "file", name: "MyGPA 计算器", url: "app://mygpa", icon: "fa-graduation-cap", slug: "mygpa", description: "GPA 计算与学期成绩管理工具，支持多学期成绩录入与加权计算。", tags: ["校园", "工具"] },
+      { type: "file", name: "教务系统入口", url: "#", icon: "fa-university" },
       { type: "file", name: "图书馆检索", url: "#", icon: "fa-book" },
       { type: "file", name: "校园网登录页", url: "#", icon: "fa-wifi" },
     ],
@@ -338,7 +345,7 @@ export const appsData: FeatureItem[] = [
     type: "folder",
     name: "创意与设计",
     icon: "fa-paint-brush",
-    color: "text-purple-300",
+    color: "text-rose-300",
     children: [
       { type: "file", name: "在线白板工具", url: "#", icon: "fa-object-group" },
       { type: "file", name: "思维导图", url: "#", icon: "fa-sitemap" },
