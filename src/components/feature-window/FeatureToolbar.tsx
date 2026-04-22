@@ -105,32 +105,44 @@ export function FeatureToolbar({
           )
         ) : (
           /* View mode toggle when browsing files */
-          <>
+          <div className="flex bg-black/20 rounded-lg p-0.5 border border-white/5">
             <button
               type="button"
               onClick={() => setViewMode("icon")}
-              className={`w-8 h-8 rounded-md flex items-center justify-center transition-all ${
+              className={`w-7 h-7 rounded-md flex items-center justify-center transition-all ${
                 viewMode === "icon"
-                  ? "bg-white/15 text-white"
-                  : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
+                  ? "bg-white/15 text-white shadow-sm"
+                  : "text-gray-500 hover:text-gray-300"
               }`}
               title="图标视图"
             >
-              <i className="fa fa-th-large text-sm" />
+              <svg className="w-[15px] h-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="4" y="4" width="6" height="6" rx="1.5" />
+                <rect x="14" y="4" width="6" height="6" rx="1.5" />
+                <rect x="14" y="14" width="6" height="6" rx="1.5" />
+                <rect x="4" y="14" width="6" height="6" rx="1.5" />
+              </svg>
             </button>
             <button
               type="button"
               onClick={() => setViewMode("list")}
-              className={`w-8 h-8 rounded-md flex items-center justify-center transition-all ${
+              className={`w-7 h-7 rounded-md flex items-center justify-center transition-all ${
                 viewMode === "list"
-                  ? "bg-white/15 text-white"
-                  : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
+                  ? "bg-white/15 text-white shadow-sm"
+                  : "text-gray-500 hover:text-gray-300"
               }`}
               title="列表视图"
             >
-              <i className="fa fa-list text-sm" />
+              <svg className="w-[15px] h-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="9" y1="6" x2="20" y2="6" />
+                <line x1="9" y1="12" x2="20" y2="12" />
+                <line x1="9" y1="18" x2="20" y2="18" />
+                <circle cx="4.5" cy="6" r="1.5" fill="currentColor" stroke="none" />
+                <circle cx="4.5" cy="12" r="1.5" fill="currentColor" stroke="none" />
+                <circle cx="4.5" cy="18" r="1.5" fill="currentColor" stroke="none" />
+              </svg>
             </button>
-          </>
+          </div>
         )}
       </div>
     </div>

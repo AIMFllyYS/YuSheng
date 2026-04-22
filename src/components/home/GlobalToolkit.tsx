@@ -34,17 +34,17 @@ export function GlobalToolkit({ goPage, toggleTheme, themeLight }: GlobalToolkit
 
   return (
     <>
-      <div className="fixed bottom-8 right-8 z-[1000] flex flex-col items-center gap-3">
+      <div className="fixed bottom-6 right-6 z-[1000] flex flex-col items-center gap-2 group">
         {/* Tooltip hint */}
-        <div className="text-[10px] bg-black/40 text-white/80 px-2 py-0.5 rounded backdrop-blur-md opacity-60 pointer-events-none">
+        <div className="text-[10px] bg-black/50 text-white/70 px-2 py-0.5 rounded backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none translate-y-1 group-hover:translate-y-0 border border-white/5">
           Cmd K
         </div>
         
         <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => setOpen(true)}
-          className="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-[var(--accent-main)] to-[var(--accent-sub)] rounded-full text-white shadow-[0_0_20px_rgba(255,200,100,0.3)] flex items-center justify-center text-lg md:text-xl backdrop-blur-md border border-white/20"
+          className="w-9 h-9 md:w-11 md:h-11 bg-white/5 hover:bg-white/10 rounded-full text-white/50 hover:text-white/90 shadow-[0_4px_15px_rgba(0,0,0,0.3)] flex items-center justify-center text-sm md:text-base backdrop-blur-md border border-white/10 transition-all"
         >
           <i className="fas fa-terminal"></i>
         </motion.button>

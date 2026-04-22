@@ -120,7 +120,7 @@ export function HomeClient() {
         />
       )}
 
-      <nav className="fixed w-full z-50 top-0 p-4">
+      <nav className="fixed w-full z-[60] top-0 pt-2 pb-0 px-4">
         <div className="max-w-6xl mx-auto flex justify-between items-center glass-card px-6 py-3 rounded-full">
           <button type="button" onClick={() => goPage("home")} className="text-2xl font-bold font-art tracking-widest text-gradient">
             羽升
