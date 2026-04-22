@@ -62,14 +62,24 @@ body{margin:0;overflow-x:hidden;font-family:var(--font-noto),"Noto Serif SC",ser
 .minimap-viewport{position:absolute;border:2px solid var(--accent-main);background:rgba(255,200,100,.1);border-radius:3px;transition:all .1s}.minimap-path{stroke:rgba(255,200,100,.5);stroke-width:2;fill:none}.minimap-dot{fill:var(--accent-main)}
 #kb-app{position:fixed;inset:0;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;font-family:"ZCOOL XiaoWei",serif;color:var(--text-color);background:var(--bg-color);cursor:none}
 .feature-kb #cursor-dot,.feature-kb #cursor-ring{z-index:9999}
+
+/* FeatureWindow glass (legacy v1) */
 html.dark .glass-window-feature{background:rgba(30,41,59,.9);border:1px solid rgba(148,163,184,.6);box-shadow:0 8px 32px 0 rgba(0,0,0,.8)}
 .glass-window-feature{background:rgba(255,255,255,.06);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.15);box-shadow:0 8px 32px 0 rgba(0,0,0,.4)}
+
+/* FeatureWindow glass v2 — enhanced glassmorphism */
+.glass-window-feature-v2{background:linear-gradient(135deg,rgba(255,255,255,.07) 0%,rgba(255,255,255,.03) 100%);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border:1px solid rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(255,255,255,.04),0 20px 60px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.2)}
+html.dark .glass-window-feature-v2{background:linear-gradient(135deg,rgba(15,23,42,.92) 0%,rgba(30,41,59,.88) 100%);border-color:rgba(148,163,184,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 20px 60px rgba(0,0,0,.7),0 0 0 1px rgba(0,0,0,.3)}
+.light-theme .glass-window-feature-v2{background:linear-gradient(135deg,rgba(255,255,255,.92) 0%,rgba(248,250,252,.88) 100%);border-color:rgba(148,163,184,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 20px 60px rgba(0,0,0,.15),0 0 0 1px rgba(0,0,0,.05)}
+
+/* Animations */
 @keyframes fadeUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
 @keyframes zoomOut{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.97)}}
 @keyframes revealFromPoint{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
 .animate-fade-up{animation:fadeUp .5s ease-out forwards}
 .animate-zoom-out{animation:zoomOut .3s cubic-bezier(0, 0, 0, 1) forwards}
 .animate-reveal-from-point{animation:revealFromPoint .4s cubic-bezier(0, 0, 0, 1) forwards}
+.initial-hidden{opacity:0}
 .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
 
 /* cmdk custom styles */

@@ -113,6 +113,7 @@ export function HomeClient() {
 
       {featureOpen && featureSlug && FEATURE_PAGE_CONFIG[featureSlug] && (
         <FeatureWindow
+          slug={featureSlug}
           {...FEATURE_PAGE_CONFIG[featureSlug]}
           onClose={() => setFeatureOpen(false)}
           openFeature={openFeature}
