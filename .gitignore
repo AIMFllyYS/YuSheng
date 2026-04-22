@@ -11,3 +11,6 @@ coverage/
 .env.production.local
 node_modules
 .agent
+.vscode/
+*.tsbuildinfo
+tsconfig.tsbuildinfo
