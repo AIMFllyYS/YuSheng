@@ -44,7 +44,7 @@ export function FeatureIconView({ items, selectedIndex, onClick, onDoubleClick }
                     : "text-gray-400 dark:text-gray-300 group-hover:text-blue-300"
               }`}
             >
-              <i className={`fa ${item.icon || "fa-file"}`} />
+              <i className={`fas ${item.icon || "fa-file"}`} />
             </div>
             <span className="text-xs font-medium text-center text-gray-100 line-clamp-2 w-full break-words leading-relaxed">
               {item.name}

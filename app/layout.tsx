@@ -20,9 +20,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Ma+Shan+Zheng&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600;700&family=ZCOOL+KuaiLe&family=ZCOOL+XiaoWei&display=swap"
         />
-        {/* Font Awesome 6 (primary) — FA4-style classes handled by v4-shims */}
+        {/* Font Awesome 6 — all icons migrated to FA6-native classes */}
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/v4-shims.min.css" />
       </head>
       <body className="antialiased selection:bg-yellow-400 selection:text-black">{children}</body>
     </html>

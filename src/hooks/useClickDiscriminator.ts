@@ -21,7 +21,7 @@ export function useClickDiscriminator(
 
   const onClick = useCallback(
     (index: number) => {
-      // Fire select immediately â€” zero perceived latency
+      // Fire select immediately â€?zero perceived latency
       singleRef.current(index);
 
       // Set a timer so that a subsequent dblclick can be distinguished

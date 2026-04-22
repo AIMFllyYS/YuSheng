@@ -55,7 +55,7 @@ export function BackgroundCanvas() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    // Use pointermove only â€” it's a superset of mousemove with coalesced events
+    // Use pointermove only â€?it's a superset of mousemove with coalesced events
     const onPointer = (e: PointerEvent) => {
       const events = e.getCoalescedEvents?.() ?? [e];
       const last = events[events.length - 1]!;
@@ -117,7 +117,7 @@ export function BackgroundCanvas() {
       px += (tx - px) * Math.min(0.35 * smooth, 0.95);
       py += (ty - py) * Math.min(0.35 * smooth, 0.95);
 
-      // Compositor-only cursor update â€” transform instead of left/top (no layout reflow)
+      // Compositor-only cursor update â€?transform instead of left/top (no layout reflow)
       if (cursorDot && cursorRing) {
         const t = `translate(${px}px,${py}px) translate(-50%,-50%)`;
         cursorDot.style.transform = t;
@@ -136,7 +136,7 @@ export function BackgroundCanvas() {
       ctx.fillStyle = "rgba(4, 7, 20, 0.45)";
       ctx.fillRect(0, 0, width, height);
 
-      // Orb render with pre-cached gradients â€” zero createRadialGradient calls per frame
+      // Orb render with pre-cached gradients â€?zero createRadialGradient calls per frame
       ctx.globalCompositeOperation = "screen";
       for (const o of orbs) {
         o.x += o.vx; o.y += o.vy;

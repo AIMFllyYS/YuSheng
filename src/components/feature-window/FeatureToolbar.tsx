@@ -49,10 +49,10 @@ export function FeatureToolbar({
               onClick={onBackToList}
               className="flex items-center gap-1.5 text-amber-400 hover:text-amber-300 transition-colors font-bold shrink-0"
             >
-              <i className="fa fa-arrow-left text-xs" /> 返回列表
+              <i className="fas fa-arrow-left text-xs" /> 返回列表
             </button>
             <span className="opacity-30 mx-1">/</span>
-            <i className="fa fa-th-large text-gray-400 text-xs" />
+            <i className="fas fa-th-large text-gray-400 text-xs" />
             <span className="text-gray-100 truncate">{activeApp.title}</span>
           </>
         ) : activeIframe ? (
@@ -62,16 +62,16 @@ export function FeatureToolbar({
               onClick={onBackToList}
               className="flex items-center gap-1.5 text-sky-400 hover:text-sky-300 transition-colors font-bold shrink-0"
             >
-              <i className="fa fa-arrow-left text-xs" /> 返回列表
+              <i className="fas fa-arrow-left text-xs" /> 返回列表
             </button>
             <span className="opacity-30 mx-1">/</span>
-            <i className="fa fa-file-code text-gray-400 text-xs" />
+            <i className="fas fa-file-code text-gray-400 text-xs" />
             <span className="text-gray-100 truncate">{activeIframe.title}</span>
           </>
         ) : pathStack.length === 0 ? (
           <>
-            <i className="fa fa-desktop text-gray-400 text-xs" />
-            <span className="font-bold text-gray-100">此电脑</span>
+            <i className="fas fa-desktop text-gray-400 text-xs" />
+            <span className="font-bold text-gray-100">此电�?/span>
           </>
         ) : (
           <>
@@ -80,10 +80,10 @@ export function FeatureToolbar({
               onClick={onBack}
               className="flex items-center gap-1.5 text-sky-400 hover:text-sky-300 transition-colors font-bold shrink-0"
             >
-              <i className="fa fa-arrow-left text-xs" /> 返回
+              <i className="fas fa-arrow-left text-xs" /> 返回
             </button>
             <span className="opacity-30 mx-1">/</span>
-            <i className="fa fa-folder-open text-gray-400 text-xs" />
+            <i className="fas fa-folder-open text-gray-400 text-xs" />
             <span className="text-gray-100 truncate">{currentTitle}</span>
           </>
         )}
@@ -100,7 +100,7 @@ export function FeatureToolbar({
               className="w-8 h-8 rounded-md flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all"
               title="全屏打开"
             >
-              <i className="fa fa-expand" />
+              <i className="fas fa-expand" />
             </button>
           )
         ) : (

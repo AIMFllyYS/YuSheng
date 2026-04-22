@@ -124,7 +124,7 @@ export function JourneyOverlay({ open, onClose }: Props) {
             <path className="journey-path" d="M 200,1000 C 400,1000 500,700 700,700 S 900,900 1100,850 S 1400,600 1600,650 S 1900,800 2100,750 S 2400,500 2600,550 S 2800,700 2900,650" />
           </svg>
           {JOURNEY_TREE_DECORATIONS.map((deco) => <div key={`${deco.left}-${deco.top}`} className="journey-decoration decoration-tree" style={{ left: deco.left, top: deco.top }}>{deco.label}</div>)}
-          {JOURNEY_STAR_DECORATIONS.map((deco) => <div key={`${deco.left}-${deco.top}`} className="journey-decoration decoration-star" style={{ left: deco.left, top: deco.top, animationDelay: deco.animationDelay }}>âœ¦</div>)}
+          {JOURNEY_STAR_DECORATIONS.map((deco) => <div key={`${deco.left}-${deco.top}`} className="journey-decoration decoration-star" style={{ left: deco.left, top: deco.top, animationDelay: deco.animationDelay }}>âœ?/div>)}
           {JOURNEY_NODES.map((node) => (
             <JourneyNode key={node.id} {...node} expanded={expandedId === node.id} onToggle={() => setExpandedId((prev) => (prev === node.id ? null : node.id))} onCloseDetail={() => setExpandedId(null)} />
           ))}

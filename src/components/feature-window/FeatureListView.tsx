@@ -10,18 +10,18 @@ type Props = {
 };
 
 function getTypeLabel(item: FeatureItem): string {
-  if (item.type === "folder") return "文件夹";
-  if (!item.url || item.url === "#") return "待上线";
-  if (item.url.startsWith("app://")) return "微应用";
+  if (item.type === "folder") return "文件�?;
+  if (!item.url || item.url === "#") return "待上�?;
+  if (item.url.startsWith("app://")) return "微应�?;
   if (item.url.startsWith("http")) return "外部链接";
   return "内嵌页面";
 }
 
 function getTargetDisplay(item: FeatureItem): string {
   if (item.type === "folder") return `${item.children?.length ?? 0} 个子项`;
-  if (!item.url || item.url === "#") return "—";
+  if (!item.url || item.url === "#") return "�?;
   if (item.url.startsWith("app://")) return item.url;
-  if (item.url.length > 40) return item.url.slice(0, 37) + "…";
+  if (item.url.length > 40) return item.url.slice(0, 37) + "�?;
   return item.url;
 }
 
@@ -63,7 +63,7 @@ export function FeatureListView({ items, selectedIndex, onClick, onDoubleClick }
               {/* Name column */}
               <div className="flex-1 min-w-0 flex items-center gap-2.5 pl-2">
                 <i
-                  className={`fa ${item.icon || "fa-file"} w-4 text-center text-base ${
+                  className={`fas ${item.icon || "fa-file"} w-4 text-center text-base ${
                     item.type === "folder"
                       ? item.color || "text-yellow-300"
                       : "text-gray-400"

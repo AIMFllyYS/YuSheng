@@ -74,7 +74,7 @@ export function GlobalToolkit({ goPage, toggleTheme, themeLight }: GlobalToolkit
                 <div className="flex items-center px-4 py-4 border-b border-[var(--glass-border)]">
                   <i className="fas fa-search text-[var(--accent-main)] mr-3"></i>
                   <Command.Input 
-                    placeholder="搜点什么... (路由、工具、设置)" 
+                    placeholder="搜点什�?.. (路由、工具、设�?" 
                     className="flex-1 bg-transparent border-none outline-none text-[var(--text-color)] placeholder:text-gray-500 text-sm md:text-base"
                     autoFocus
                   />
@@ -83,7 +83,7 @@ export function GlobalToolkit({ goPage, toggleTheme, themeLight }: GlobalToolkit
 
                 <Command.List className="max-h-[350px] overflow-y-auto p-2 outline-none cmdk-list">
                   <Command.Empty className="py-8 text-center text-gray-500 text-sm">
-                    未找到相关功能...
+                    未找到相关功�?..
                   </Command.Empty>
 
                   <Command.Group heading="📌 页面导航" className="text-xs text-gray-500/80 font-semibold mb-1 mt-2 px-3 pt-2">
@@ -93,7 +93,7 @@ export function GlobalToolkit({ goPage, toggleTheme, themeLight }: GlobalToolkit
                     </Command.Item>
                     <Command.Item onSelect={() => runCommand(() => goPage("portal"))} className="cmdk-item">
                       <i className="fas fa-th-large w-6 text-center"></i>
-                      <span>功能聚合页</span>
+                      <span>功能聚合�?/span>
                     </Command.Item>
                     <Command.Item onSelect={() => runCommand(() => goPage("stories"))} className="cmdk-item">
                       <i className="fas fa-book w-6 text-center"></i>

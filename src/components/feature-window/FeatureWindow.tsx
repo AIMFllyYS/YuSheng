@@ -64,7 +64,7 @@ export function FeatureWindow({
   // Compute current directory items
   const current = useMemo(() => {
     let cursor = data;
-    let currentTitle = "此电脑";
+    let currentTitle = "此电�?;
     for (const idx of pathStack) {
       currentTitle = cursor[idx]?.name || currentTitle;
       cursor = cursor[idx]?.children || [];
@@ -155,11 +155,11 @@ export function FeatureWindow({
         return;
       }
       if (!item.url || item.url === "#") {
-        setToast("内容即将上线，敬请期待");
+        setToast("内容即将上线，敬请期�?);
         setTimeout(() => setToast(""), 2000);
         return;
       }
-      // app:// protocol → micro-app
+      // app:// protocol �?micro-app
       const appMeta = resolveAppUrl(item.url);
       if (appMeta && appMeta.render.type === "component") {
         setActiveApp({ id: appMeta.id, title: appMeta.name, slug: item.slug });
@@ -222,7 +222,7 @@ export function FeatureWindow({
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={closeWindow} />
 
-      {/* Window — top-aligned, expanded */}
+      {/* Window �?top-aligned, expanded */}
       <div
         id="main-window"
         ref={windowRef}
@@ -232,7 +232,7 @@ export function FeatureWindow({
         <div className="h-14 border-b border-white/8 flex items-center justify-between px-6 select-none bg-black/10 backdrop-blur-sm shrink-0">
           <div className="flex items-center gap-3">
             <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${headerGradientClass} flex items-center justify-center text-white shadow-md text-sm`}>
-              <i className={`fa ${headerIcon}`} />
+              <i className={`fas ${headerIcon}`} />
             </div>
             <span className="text-lg font-bold tracking-wider">{title}</span>
           </div>
@@ -241,9 +241,9 @@ export function FeatureWindow({
             id="feature-close-btn"
             onClick={closeWindow}
             className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
-            title="退出"
+            title="退�?
           >
-            <i className="fa fa-times" />
+            <i className="fas fa-times" />
           </button>
         </div>
 
@@ -303,7 +303,7 @@ export function FeatureWindow({
 
                   {/* Footer / Status bar */}
                   <div className="h-7 bg-white/3 dark:bg-black/20 flex items-center justify-between px-6 text-[11px] text-gray-500 shrink-0 border-t border-white/5">
-                    <span>{current.items.length} 个项目</span>
+                    <span>{current.items.length} 个项�?/span>
                     <span>{subtitle}</span>
                   </div>
                 </div>
