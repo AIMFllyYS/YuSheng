@@ -4,6 +4,20 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "AIMflly - 羽升 | 羽化成蝶 升生不息",
   description: "AIMFlly personal intro",
+  robots: {
+    index: false,
+    follow: false,
+    noarchive: true,
+    nosnippet: true,
+    noimageindex: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noarchive: true,
+      nosnippet: true,
+      noimageindex: true,
+    },
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
