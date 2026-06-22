@@ -1,5 +1,5 @@
 /**
- * App Registry �?Single source of truth for all micro-apps.
+ * App Registry  Single source of truth for all micro-apps.
  * Adding a new app = adding one entry here + creating its component (or pointing to an iframe URL).
  */
 
@@ -34,11 +34,11 @@ export type AppMeta = {
 export const APP_REGISTRY: Record<AppId, AppMeta> = {
   mygpa: {
     id: "mygpa",
-    name: "MyGPA 计算�?,
+    name: "MyGPA 计算噀,
     icon: "fa-graduation-cap",
     color: "text-amber-400",
     category: "campus",
-    description: "GPA 计算与学期成绩管�?,
+    description: "GPA 计算与学期成绩管琀,
     render: { type: "component", id: "mygpa" },
   },
   "calculus-viz": {
@@ -88,21 +88,21 @@ export const APP_REGISTRY: Record<AppId, AppMeta> = {
   },
   "santi-characters": {
     id: "santi-characters",
-    name: "三体可视化人物介�?,
+    name: "三体可视化人物介绀,
     icon: "fa-globe",
     color: "text-sky-300",
     category: "share",
     description: "《三体》主要角色可视化介绍",
-    render: { type: "iframe", url: "/tools/三体可视化人物介�?html" },
+    render: { type: "iframe", url: "/tools/三体可视化人物介绀html" },
   },
   "santi-quotes": {
     id: "santi-quotes",
-    name: "三体可视化语�?,
+    name: "三体可视化语彀,
     icon: "fa-quote-left",
     color: "text-indigo-300",
     category: "share",
     description: "《三体》经典语录视觉化呈现",
-    render: { type: "iframe", url: "/tools/三体可视化语�?html" },
+    render: { type: "iframe", url: "/tools/三体可视化语彀html" },
   },
   "book-narcissism": {
     id: "book-narcissism",
@@ -111,7 +111,7 @@ export const APP_REGISTRY: Record<AppId, AppMeta> = {
     color: "text-emerald-300",
     category: "revelation",
     description: "《自伤自恋的精神分析》沉浸式阅读体验",
-    render: { type: "iframe", url: "/tools/书籍体验-自伤自恋的精神分�?html" },
+    render: { type: "iframe", url: "/tools/书籍体验-自伤自恋的精神分枀html" },
   },
 };
 
