@@ -12,7 +12,7 @@ export function DanmakuLayer() {
     const container = layerRef.current;
     if (!container) return;
 
-    // Pre-create a fixed pool of DOM nodes â€?zero create/remove per spawn cycle
+    // Pre-create a fixed pool of DOM nodes â€€zero create/remove per spawn cycle
     const pool: HTMLDivElement[] = [];
     for (let i = 0; i < POOL_SIZE; i++) {
       const el = document.createElement("div");
@@ -35,7 +35,7 @@ export function DanmakuLayer() {
       el.style.animationDuration = `${dur}s`;
       el.style.fontSize = `${Math.random() * 0.6 + 0.9}rem`;
 
-      // Reset CSS animation without triggering layout â€?remove and re-add class
+      // Reset CSS animation without triggering layout â€€remove and re-add class
       el.style.animation = "none";
       el.style.visibility = "hidden";
       // Force a rAF to let the browser flush the "none" state before restarting

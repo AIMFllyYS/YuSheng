@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import type { SectionPaneProps } from "./types";
 
 /**
- * SectionPane â€?lazy-mounts children on first activation.
+ * SectionPane â€€lazy-mounts children on first activation.
  * Sections that are never visited never initialize their JS.
  */
 export function SectionPane({ id, activePage, children, className = "" }: SectionPaneProps) {
-  // Home section is active on first render â€?mount immediately; others defer.
+  // Home section is active on first render â€€mount immediately; others defer.
   const [hasBeenActive, setHasBeenActive] = useState(() => activePage === id);
 
   useEffect(() => {

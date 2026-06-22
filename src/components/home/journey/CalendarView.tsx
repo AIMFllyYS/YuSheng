@@ -25,7 +25,7 @@ export function CalendarView() {
             right: 'dayGridMonth,timeGridWeek'
           }}
           events={[
-            { title: '完成项目规划与架构确�?, date: new Date().toISOString().split('T')[0], color: '#22c55e' },
+            { title: '完成项目规划与架构确讀, date: new Date().toISOString().split('T')[0], color: '#22c55e' },
             { title: '前端重构 (Phase 1 & 2)', start: new Date().toISOString().split('T')[0], end: new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0], color: '#f472b6' }
           ]}
           height="700px"
