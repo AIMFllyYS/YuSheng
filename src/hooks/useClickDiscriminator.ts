@@ -3,10 +3,8 @@
 import { useCallback, useRef } from "react";
 
 /**
- * Distinguishes single-click (select) from double-click (open).
- * Single-click fires IMMEDIATELY for instant visual feedback.
- * Double-click fires on the native dblclick event without delay.
- * Threshold only prevents single-click from firing AGAIN after a double.
+ * Distinguishes single-click (select) from double-click (open)
+ * using a 280ms threshold — matching Windows Explorer behavior.
  */
 export function useClickDiscriminator(
   onSingle: (index: number) => void,
@@ -21,13 +19,13 @@ export function useClickDiscriminator(
 
   const onClick = useCallback(
     (index: number) => {
-      // Fire select immediately  zero perceived latency
-      singleRef.current(index);
-
-      // Set a timer so that a subsequent dblclick can be distinguished
-      if (timerRef.current) clearTimeout(timerRef.current);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
       timerRef.current = setTimeout(() => {
         timerRef.current = null;
+        singleRef.current(index);
       }, delay);
     },
     [delay]

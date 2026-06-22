@@ -13,7 +13,7 @@ type SidebarSection = {
 
 const SIDEBAR_SECTIONS: SidebarSection[] = [
   {
-    label: "此电脀,
+    label: "此电脑",
     items: [
       { kind: "feature", slug: "notes", name: FEATURE_PAGE_CONFIG.notes.title, icon: "fa-book", color: "text-pink-400" },
       { kind: "feature", slug: "memory", name: FEATURE_PAGE_CONFIG.memory.title, icon: "fa-hourglass-half", color: "text-emerald-400" },
@@ -48,7 +48,7 @@ export function FeatureSidebar({ activeSlug, openFeature, onClose }: Props) {
           onClick={onClose}
           className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm flex items-center gap-3 transition-colors"
         >
-          <i className="fas fa-home w-4 text-center text-blue-400" />
+          <i className="fa fa-home w-4 text-center text-blue-400" />
           <span>返回主页</span>
         </button>
       </div>
@@ -67,7 +67,7 @@ export function FeatureSidebar({ activeSlug, openFeature, onClose }: Props) {
                   rel="noopener noreferrer"
                   className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm flex items-center gap-3 transition-colors"
                 >
-                  <i className={`fas ${item.icon} w-4 text-center ${item.color}`} />
+                  <i className={`fa ${item.icon} w-4 text-center ${item.color}`} />
                   <span>{item.name}</span>
                 </a>
               );
@@ -83,7 +83,7 @@ export function FeatureSidebar({ activeSlug, openFeature, onClose }: Props) {
                   isActive ? "bg-white/20 font-bold shadow-inner text-white" : ""
                 }`}
               >
-                <i className={`fas ${item.icon} w-4 text-center ${item.color}`} />
+                <i className={`fa ${item.icon} w-4 text-center ${item.color}`} />
                 <span>{item.name}</span>
               </button>
             );

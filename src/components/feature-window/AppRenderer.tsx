@@ -3,7 +3,7 @@
 import { lazy, Suspense } from "react";
 import type { AppId } from "@/apps/registry";
 
-// Lazy-load each micro-app  only fetched when user actually opens it
+// Lazy-load each micro-app — only fetched when user actually opens it
 const appComponents: Partial<Record<AppId, React.LazyExoticComponent<React.ComponentType>>> = {
   mygpa: lazy(() => import("@/apps/campus/MyGPA")),
 };
@@ -11,8 +11,8 @@ const appComponents: Partial<Record<AppId, React.LazyExoticComponent<React.Compo
 function AppLoadingSpinner() {
   return (
     <div className="flex flex-col items-center justify-center h-full gap-3 text-gray-400">
-      <i className="fas fa-circle-o-notch fa-spin text-2xl" />
-      <span className="text-sm">正在加载应用 </span>
+      <i className="fa fa-circle-o-notch fa-spin text-2xl" />
+      <span className="text-sm">正在加载应用…</span>
     </div>
   );
 }
@@ -20,7 +20,7 @@ function AppLoadingSpinner() {
 function AppNotFound({ id }: { id: string }) {
   return (
     <div className="flex flex-col items-center justify-center h-full gap-3 text-gray-500">
-      <i className="fas fa-question-circle text-3xl" />
+      <i className="fa fa-question-circle text-3xl" />
       <span className="text-sm">未找到应用组件：{id}</span>
     </div>
   );
@@ -31,7 +31,7 @@ type Props = {
 };
 
 /**
- * AppRenderer  renders component-type micro-apps.
+ * AppRenderer — renders component-type micro-apps.
  * Only handles "component" render mode. iframe / external handled by FeatureWindow or fullscreen page.
  */
 export function AppRenderer({ appId }: Props) {

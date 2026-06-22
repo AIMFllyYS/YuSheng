@@ -1,4 +1,4 @@
-/** 占位甀`BackgroundCanvas` 皀mousemove 更新位置；需保留 id 以匹配原牀CSS */
+/** 占位由 `BackgroundCanvas` 的 mousemove 更新位置；需保留 id 以匹配原版 CSS */
 export function CursorGlow() {
   return (
     <>

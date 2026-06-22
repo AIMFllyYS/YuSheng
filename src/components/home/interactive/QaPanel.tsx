@@ -22,7 +22,7 @@ export function QaPanel({ passed, quiz, wrongIdx, correctPick, checkQuiz, adminE
       </div>
       {!passed ? (
         <div id="quiz-step">
-          <p className="text-xs text-gray-400 mb-4">为了防止机器人，请先回答关于我的小问题，通过后即可开启匿名提问箱＀</p>
+          <p className="text-xs text-gray-400 mb-4">为了防止机器人，请先回答关于我的小问题，通过后即可开启匿名提问箱！</p>
           <div className="bg-white/5 p-4 rounded-xl">
             <p className="font-bold mb-3 text-sm" id="quiz-question">{quiz.q}</p>
             <div className="grid grid-cols-2 gap-2" id="quiz-options">
@@ -43,10 +43,10 @@ export function QaPanel({ passed, quiz, wrongIdx, correctPick, checkQuiz, adminE
               </button>
             ))}
           </div>
-          <textarea id="qa-input" value={qaInput} onChange={(e) => setQaInput(e.target.value)} className="w-full bg-black/30 border border-white/15 rounded-xl p-3 text-sm focus:outline-none focus:border-[color:var(--accent-main)] transition-colors" rows={3} placeholder="写下你的问题或想说的诀.." />
+          <textarea id="qa-input" value={qaInput} onChange={(e) => setQaInput(e.target.value)} className="w-full bg-black/30 border border-white/15 rounded-xl p-3 text-sm focus:outline-none focus:border-[color:var(--accent-main)] transition-colors" rows={3} placeholder="写下你的问题或想说的话..." />
           <div className="flex justify-between items-center mt-3">
             <span className="text-[11px] text-gray-500">数据仅保存在本地存储</span>
-            <button type="button" onClick={submitQuestion} className="px-5 py-2 rounded-full font-bold text-sm transition-all hover:scale-105" style={{ background: "var(--accent-main)", color: "#0a0f1a" }}>发退<i className="fas fa-paper-plane ml-1" /></button>
+            <button type="button" onClick={submitQuestion} className="px-5 py-2 rounded-full font-bold text-sm transition-all hover:scale-105" style={{ background: "var(--accent-main)", color: "#0a0f1a" }}>发送 <i className="fas fa-paper-plane ml-1" /></button>
           </div>
           <div className="mt-5 pt-5 border-t border-white/10">
             <h4 className="text-[11px] font-bold text-gray-500 mb-2 uppercase tracking-wider">Recent Messages</h4>

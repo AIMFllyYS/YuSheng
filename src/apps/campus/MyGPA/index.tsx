@@ -40,7 +40,7 @@ const GPA_BANDS = [
   { min: 3.3, label: "良好 Magna Cum Laude",  color: "#F59E0B" },
   { min: 3.0, label: "不错 Cum Laude",         color: "#60A5FA" },
   { min: 2.0, label: "合格 Satisfactory",       color: "#9CA3AF" },
-  { min: 0,   label: "不合栀Unsatisfactory",   color: "#EF4444" },
+  { min: 0,   label: "不合格 Unsatisfactory",   color: "#EF4444" },
 ];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -203,7 +203,7 @@ function CourseRow({
         className="w-9 h-9 rounded flex items-center justify-center text-gray-500 hover:text-red-400 hover:bg-red-500/10 disabled:opacity-20 disabled:cursor-not-allowed transition-all"
         aria-label={`移除课程 ${index + 1}`}
       >
-        <i className="fas fa-times text-xs" />
+        <i className="fa fa-times text-xs" />
       </button>
     </div>
   );
@@ -213,7 +213,7 @@ function CourseRow({
 
 export default function MyGPA() {
   const [courses, setCourses] = useState<Course[]>([newCourse(), newCourse(), newCourse()]);
-  const [semesterLabel, setSemesterLabel] = useState("2024 025 第一学期");
+  const [semesterLabel, setSemesterLabel] = useState("2024—2025 第一学期");
 
   const { gpa, totalCredits } = calcGPA(courses);
   const completedCount = courses.filter((c) => c.grade !== "").length;
@@ -329,11 +329,12 @@ export default function MyGPA() {
             className="w-8 h-8 rounded flex items-center justify-center text-black font-black"
             style={{ background: "var(--gpa-accent)" }}
           >
-            <i className="fas fa-graduation-cap text-sm" />
+            <i className="fa fa-graduation-cap text-sm" />
           </div>
           <div>
             <h1 className="text-sm font-black tracking-wide" style={{ color: "var(--gpa-text)" }}>
-              MyGPA 计算噀            </h1>
+              MyGPA 计算器
+            </h1>
             <input
               id="semester-label"
               type="text"
@@ -351,7 +352,7 @@ export default function MyGPA() {
           onClick={reset}
           className="gpa-btn-ghost text-xs flex items-center gap-1"
         >
-          <i className="fas fa-refresh" /> 重置
+          <i className="fa fa-refresh" /> 重置
         </button>
       </div>
 
@@ -398,7 +399,7 @@ export default function MyGPA() {
             onClick={addCourse}
             className="gpa-btn-ghost flex items-center justify-center gap-2 w-full"
           >
-            <i className="fas fa-plus text-xs" />
+            <i className="fa fa-plus text-xs" />
             添加课程
           </button>
         </div>
@@ -418,7 +419,7 @@ export default function MyGPA() {
           {/* Stat cards */}
           <div className="flex flex-col gap-2">
             <div className="stat-card">
-              <span className="stat-label">总学刀</span>
+              <span className="stat-label">总学分</span>
               <span className="stat-value">{totalCredits.toFixed(1)}</span>
             </div>
             <div className="stat-card">

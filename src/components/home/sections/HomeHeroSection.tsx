@@ -14,23 +14,14 @@ export function HomeHeroSection({ setPage, onAvatarEnter, onAvatarLeave }: Props
         onMouseEnter={onAvatarEnter}
         onMouseLeave={onAvatarLeave}
       >
-        <div className="w-full h-full bg-gradient-to-br from-purple-600 via-indigo-600 to-cyan-500 flex items-center justify-center text-white relative transition-transform duration-500 group-hover:scale-110">
-          <svg className="w-16 h-16 drop-shadow-[0_0_20px_rgba(255,255,255,0.8)] -rotate-12 transition-transform duration-300 hover:rotate-0" viewBox="0 0 512 512" fill="url(#featherGradient)">
-            <defs>
-              <linearGradient id="featherGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#ffffff" />
-                <stop offset="50%" stopColor="#e0e7ff" />
-                <stop offset="100%" stopColor="#a5b4fc" />
-              </linearGradient>
-            </defs>
-            <path d="M512 0c-40 0-149.3 12.8-232 95.6-26.2 26.2-46.7 54.4-61.9 83.2-34-31.5-84.3-33-119.5-3.3l-.6.6-8.9 8.9c-12 12-14.7 30.1-6.6 44.9l80.5 147.2-152 119.7c-13.3 10.5-14.5 30.5-2.2 42.8l10.2 10.2c12.3 12.3 32.3 11 42.8-2.2l119.7-152 147.2 80.5c14.8 8.1 32.9 5.4 44.9-6.6l8.9-8.9.6-.6c29.7-35.3 28.2-85.5-3.3-119.5 28.8-15.1 57-35.7 83.2-61.9C499.2 149.3 512 40 512 0zm-242.4 316.5l-33.9-33.9 84.9-84.9 33.9 33.9-84.9 84.9z"/>
-          </svg>
+        <div className="w-full h-full bg-gradient-to-br from-purple-600 via-indigo-600 to-cyan-500 flex items-center justify-center text-5xl text-white">
+          <i className="fas fa-feather-alt" />
         </div>
       </div>
       <h1 className="text-5xl md:text-7xl font-art mb-5 text-gradient">在下羽升</h1>
       <p className="text-xl md:text-2xl font-light mb-3 tracking-[0.25em] text-gray-200">羽化成蝶 · 升生不息</p>
       <div className="h-px w-20 bg-gradient-to-r from-transparent via-white/50 to-transparent my-6 mx-auto" />
-      <p className="text-lg md:text-xl text-gray-300 italic font-art max-w-xl mx-auto leading-relaxed mb-12">&quot;不问前程，尽管繁荀quot;</p>
+      <p className="text-lg md:text-xl text-gray-300 italic font-art max-w-xl mx-auto leading-relaxed mb-12">&quot;不问前程，尽管繁荣&quot;</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10 text-left">
         <div className="glass-card p-5">
           <h3 className="text-base font-bold mb-4 flex items-center text-pink-300">
@@ -60,7 +51,7 @@ export function HomeHeroSection({ setPage, onAvatarEnter, onAvatarLeave }: Props
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="p-2.5 bg-white/5 rounded-lg border border-white/10 flex items-center gap-2 hover:bg-white/10 transition-colors"><i className="fab fa-weixin text-green-400 w-4" /><span className="select-all">AIMFlly</span></div>
             <div className="p-2.5 bg-white/5 rounded-lg border border-white/10 flex items-center gap-2 hover:bg-white/10 transition-colors"><i className="fab fa-qq text-blue-400 w-4" /><span className="select-all">2158858577</span></div>
-            <div className="p-2.5 bg-white/5 rounded-lg border border-white/10 flex items-center gap-2 hover:bg-white/10 transition-colors"><span className="font-bold text-red-400 text-[10px] w-4 text-center">乀</span><span className="select-all">AIMFlly</span></div>
+            <div className="p-2.5 bg-white/5 rounded-lg border border-white/10 flex items-center gap-2 hover:bg-white/10 transition-colors"><span className="font-bold text-red-400 text-[10px] w-4 text-center">书</span><span className="select-all">AIMFlly</span></div>
             <div className="p-2.5 bg-white/5 rounded-lg border border-white/10 flex items-center gap-2 hover:bg-white/10 transition-colors"><i className="fas fa-fish text-orange-400 w-4" /><span className="select-all">羽升羽升</span></div>
             <div className="col-span-2 p-2.5 bg-white/5 rounded-lg border border-white/10 flex items-center gap-2 hover:bg-white/10 transition-colors"><i className="fas fa-envelope text-yellow-400 w-4" /><span className="select-all text-[11px]">AIMFlly@outlook.com</span></div>
           </div>
@@ -72,7 +63,7 @@ export function HomeHeroSection({ setPage, onAvatarEnter, onAvatarLeave }: Props
         className="glass-card px-8 py-3 hover:bg-white/10 transition-colors text-sm tracking-widest"
         style={{ color: "var(--accent-main)", borderColor: "var(--accent-main)" }}
       >
-        <i className="fas fa-chevron-right mr-2" /> 开启旅稀
+        <i className="fas fa-chevron-right mr-2" /> 开启旅程
       </button>
     </div>
   );

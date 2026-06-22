@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
+import { Noto_Serif_SC } from "next/font/google";
 import "./globals.css";
+
+const noto = Noto_Serif_SC({
+  subsets: ["latin"],
+  variable: "--font-noto",
+});
 
 export const metadata: Metadata = {
   title: "AIMflly - 羽升 | 羽化成蝶 升生不息",
@@ -10,20 +16,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="zh-CN">
       <head>
-        {/* Preconnect: eliminates DNS+TLS latency for external font/icon resources */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
-        {/* Google Fonts — 6 families loaded in one request */}
+        {/* 与源站 HTML 一致的多字体组合；Turbopack 下多 next/font 曾构建失败，故保留外链 */}
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Ma+Shan+Zheng&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600;700&family=ZCOOL+KuaiLe&family=ZCOOL+XiaoWei&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600;700&family=ZCOOL+KuaiLe&family=ZCOOL+XiaoWei&display=swap"
         />
-        {/* Font Awesome 6 — all icons migrated to FA6-native classes */}
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
       </head>
-      <body className="antialiased selection:bg-yellow-400 selection:text-black">{children}</body>
+      <body className={`${noto.variable} antialiased selection:bg-yellow-400 selection:text-black`}>{children}</body>
     </html>
   );
 }

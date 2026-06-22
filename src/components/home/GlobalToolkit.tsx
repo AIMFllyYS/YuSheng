@@ -34,17 +34,17 @@ export function GlobalToolkit({ goPage, toggleTheme, themeLight }: GlobalToolkit
 
   return (
     <>
-      <div className="fixed bottom-6 right-6 z-[1000] flex flex-col items-center gap-2 group">
+      <div className="fixed bottom-8 right-8 z-[1000] flex flex-col items-center gap-3">
         {/* Tooltip hint */}
-        <div className="text-[10px] bg-black/50 text-white/70 px-2 py-0.5 rounded backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none translate-y-1 group-hover:translate-y-0 border border-white/5">
+        <div className="text-[10px] bg-black/40 text-white/80 px-2 py-0.5 rounded backdrop-blur-md opacity-60 pointer-events-none">
           Cmd K
         </div>
         
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={() => setOpen(true)}
-          className="w-9 h-9 md:w-11 md:h-11 bg-white/5 hover:bg-white/10 rounded-full text-white/50 hover:text-white/90 shadow-[0_4px_15px_rgba(0,0,0,0.3)] flex items-center justify-center text-sm md:text-base backdrop-blur-md border border-white/10 transition-all"
+          className="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-[var(--accent-main)] to-[var(--accent-sub)] rounded-full text-white shadow-[0_0_20px_rgba(255,200,100,0.3)] flex items-center justify-center text-lg md:text-xl backdrop-blur-md border border-white/20"
         >
           <i className="fas fa-terminal"></i>
         </motion.button>
@@ -68,13 +68,13 @@ export function GlobalToolkit({ goPage, toggleTheme, themeLight }: GlobalToolkit
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="relative w-full max-w-[600px] glass-card rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden border border-white/10"
+              className="relative w-full max-w-[600px] bg-[var(--bg-color)] border border-[var(--glass-border)] rounded-2xl shadow-2xl overflow-hidden"
             >
               <Command className="w-full bg-transparent" label="Global Command Menu">
                 <div className="flex items-center px-4 py-4 border-b border-[var(--glass-border)]">
                   <i className="fas fa-search text-[var(--accent-main)] mr-3"></i>
                   <Command.Input 
-                    placeholder="搜点什乀.. (路由、工具、设罀" 
+                    placeholder="搜点什么... (路由、工具、设置)" 
                     className="flex-1 bg-transparent border-none outline-none text-[var(--text-color)] placeholder:text-gray-500 text-sm md:text-base"
                     autoFocus
                   />
@@ -83,7 +83,7 @@ export function GlobalToolkit({ goPage, toggleTheme, themeLight }: GlobalToolkit
 
                 <Command.List className="max-h-[350px] overflow-y-auto p-2 outline-none cmdk-list">
                   <Command.Empty className="py-8 text-center text-gray-500 text-sm">
-                    未找到相关功胀..
+                    未找到相关功能...
                   </Command.Empty>
 
                   <Command.Group heading="📌 页面导航" className="text-xs text-gray-500/80 font-semibold mb-1 mt-2 px-3 pt-2">
@@ -93,7 +93,7 @@ export function GlobalToolkit({ goPage, toggleTheme, themeLight }: GlobalToolkit
                     </Command.Item>
                     <Command.Item onSelect={() => runCommand(() => goPage("portal"))} className="cmdk-item">
                       <i className="fas fa-th-large w-6 text-center"></i>
-                      <span>功能聚合顀</span>
+                      <span>功能聚合页</span>
                     </Command.Item>
                     <Command.Item onSelect={() => runCommand(() => goPage("stories"))} className="cmdk-item">
                       <i className="fas fa-book w-6 text-center"></i>

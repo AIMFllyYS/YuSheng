@@ -11,28 +11,28 @@ export type FeaturePageConfig = {
 
 export const FEATURE_PAGE_CONFIG: Record<"memory" | "notes" | "share" | "revelation" | "apps" | "wave", FeaturePageConfig> = {
   memory: {
-    title: "一刻记忀,
-    subtitle: "Memory Moments · 一刻记忀,
+    title: "一刻记忆",
+    subtitle: "Memory Moments · 一刻记忆",
     headerIcon: "fa-camera-retro",
     headerGradientClass: "from-emerald-400 to-cyan-400",
     data: memoryData,
   },
   notes: {
-    title: "个人笔记庀,
+    title: "个人笔记库",
     subtitle: "Personal Knowledge Base",
     headerIcon: "fa-book",
     headerGradientClass: "from-purple-500 to-pink-500",
     data: notesData,
   },
   share: {
-    title: "开源共亀,
+    title: "开源共享",
     subtitle: "Open Source & Sharing",
     headerIcon: "fa-github",
     headerGradientClass: "from-sky-500 to-emerald-400",
     data: shareData,
   },
   revelation: {
-    title: "启示录导舀,
+    title: "启示录导航",
     subtitle: "Revelation · Insight Navigation",
     headerIcon: "fa-lightbulb-o",
     headerGradientClass: "from-indigo-500 to-violet-500",

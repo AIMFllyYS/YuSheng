@@ -48,8 +48,8 @@ export function InteractiveSection({ active }: { active: boolean }) {
   };
 
   const adminExport = () => {
-    const pin = window.prompt("请输入管理口什");
-    if (pin !== SITE_CONFIG.ADMIN_PIN) return pin ? window.alert("口令错误＀) : undefined;
+    const pin = window.prompt("请输入管理口令:");
+    if (pin !== SITE_CONFIG.ADMIN_PIN) return pin ? window.alert("口令错误！") : undefined;
     const blob = new Blob([localStorage.getItem(QA_KEY) || "[]"], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -105,13 +105,13 @@ export function InteractiveSection({ active }: { active: boolean }) {
   return (
     <section id="interactive" className={`page-section pb-20 ${active ? "active" : ""}`}>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-3xl font-art text-gradient">灵犀一劀· 交互空间</h2>
+        <h2 className="text-3xl font-art text-gradient">灵犀一动 · 交互空间</h2>
         <span className="text-[10px] text-gray-500 font-english tracking-widest uppercase">playground</span>
       </div>
       <a href="https://husteread.com/index.php/birthday/" target="_blank" rel="noopener noreferrer" className="block mb-6 group select-none">
         <div className="glass-card relative overflow-hidden rounded-2xl px-5 py-4 md:px-7 md:py-5 flex items-center justify-between border border-amber-300/60 bg-gradient-to-r from-amber-400/25 via-pink-400/18 to-sky-400/20 transition-all duration-500 group-hover:translate-y-[-2px] group-hover:shadow-xl group-hover:shadow-amber-400/40">
-          <div className="flex items-center gap-3 md:gap-4"><div className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-black/20 flex items-center justify-center shadow-inner"><i className="fas fa-birthday-cake text-lg md:text-xl text-amber-300" /></div><div className="flex flex-col"><span className="text-sm md:text-base font-bold tracking-wide">友友们的庆生宀</span><span className="text-[11px] md:text-xs text-gray-200/80">记录每一次「被记得」的生日小小仪式愀🎈</span></div></div>
-          <div className="hidden sm:flex items-center gap-2 text-[11px] md:text-xs text-amber-100"><span>点我前往庆生活动顀</span><i className="fas fa-arrow-right-long text-xs md:text-sm group-hover:translate-x-0.5 transition-transform" /></div>
+          <div className="flex items-center gap-3 md:gap-4"><div className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-black/20 flex items-center justify-center shadow-inner"><i className="fas fa-birthday-cake text-lg md:text-xl text-amber-300" /></div><div className="flex flex-col"><span className="text-sm md:text-base font-bold tracking-wide">友友们的庆生宴</span><span className="text-[11px] md:text-xs text-gray-200/80">记录每一次「被记得」的生日小小仪式感 🎈</span></div></div>
+          <div className="hidden sm:flex items-center gap-2 text-[11px] md:text-xs text-amber-100"><span>点我前往庆生活动页</span><i className="fas fa-arrow-right-long text-xs md:text-sm group-hover:translate-x-0.5 transition-transform" /></div>
           <div className="sm:hidden flex items-center justify-center ml-3 text-amber-100"><i className="fas fa-chevron-right text-sm" /></div>
           <div className="pointer-events-none absolute -right-10 -top-10 w-32 h-32 rounded-full bg-amber-300/25 blur-3xl opacity-70" />
           <div className="pointer-events-none absolute left-1/3 -bottom-10 w-40 h-40 rounded-full bg-pink-400/20 blur-3xl opacity-60" />

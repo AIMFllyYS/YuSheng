@@ -16,10 +16,9 @@ type Props = {
   openJourney: () => void;
   onAvatarEnter: () => void;
   onAvatarLeave: () => void;
-  openFeature: (slug: string) => void;
 };
 
-export function HomePageSections({ page, setPage, openJourney, onAvatarEnter, onAvatarLeave, openFeature }: Props) {
+export function HomePageSections({ page, setPage, openJourney, onAvatarEnter, onAvatarLeave }: Props) {
   return (
     <>
       <SectionPane id="home" activePage={page} className="flex flex-col items-center pt-32">
@@ -29,7 +28,7 @@ export function HomePageSections({ page, setPage, openJourney, onAvatarEnter, on
         <AboutSection openJourney={openJourney} />
       </SectionPane>
       <SectionPane id="portal" activePage={page}>
-        <PortalSection openFeature={openFeature} />
+        <PortalSection />
       </SectionPane>
       <SectionPane id="stories" activePage={page}>
         <StoriesSection />

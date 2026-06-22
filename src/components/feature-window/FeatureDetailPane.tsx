@@ -9,16 +9,16 @@ type Props = {
 };
 
 function getTypeLabel(item: FeatureItem): string {
-  if (item.type === "folder") return "文件夀;
-  if (!item.url || item.url === "#") return "待上纀;
-  if (item.url.startsWith("app://")) return "微应甀;
+  if (item.type === "folder") return "文件夹";
+  if (!item.url || item.url === "#") return "待上线";
+  if (item.url.startsWith("app://")) return "微应用";
   if (item.url.startsWith("http")) return "外部链接";
   return "内嵌页面";
 }
 
 function getProtocol(item: FeatureItem): string {
-  if (item.type === "folder") return " ;
-  if (!item.url || item.url === "#") return " ;
+  if (item.type === "folder") return "—";
+  if (!item.url || item.url === "#") return "—";
   if (item.url.startsWith("app://")) return "app://";
   if (item.url.startsWith("https")) return "HTTPS";
   if (item.url.startsWith("http")) return "HTTP";
@@ -42,7 +42,7 @@ export function FeatureDetailPane({ item, onClose }: Props) {
             onClick={onClose}
             className="w-6 h-6 rounded-full flex items-center justify-center text-gray-500 hover:text-gray-300 hover:bg-white/10 transition-all text-xs"
           >
-            <i className="fas fa-times" />
+            <i className="fa fa-times" />
           </button>
         </div>
 
@@ -55,7 +55,7 @@ export function FeatureDetailPane({ item, onClose }: Props) {
                 : "text-gray-300"
             }`}
           >
-            <i className={`fas ${item.icon || "fa-file"}`} />
+            <i className={`fa ${item.icon || "fa-file"}`} />
           </div>
           <h3 className="text-sm font-bold text-gray-100 text-center leading-snug">
             {item.name}
@@ -77,8 +77,8 @@ export function FeatureDetailPane({ item, onClose }: Props) {
           </div>
           {item.type === "folder" && item.children && (
             <div className="flex justify-between">
-              <span className="text-gray-500">子项敀</span>
-              <span className="text-gray-300">{item.children.length} 一</span>
+              <span className="text-gray-500">子项数</span>
+              <span className="text-gray-300">{item.children.length} 个</span>
             </div>
           )}
           {item.url && item.url !== "#" && (
@@ -112,7 +112,7 @@ export function FeatureDetailPane({ item, onClose }: Props) {
             <div className="h-px bg-white/10 my-4" />
             <div>
               <div className="text-xs text-gray-500 mb-2 flex items-center gap-1.5">
-                <i className="fas fa-info-circle" /> 描述
+                <i className="fa fa-info-circle" /> 描述
               </div>
               <p className="text-xs text-gray-400 leading-relaxed">
                 {item.description}

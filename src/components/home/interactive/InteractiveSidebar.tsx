@@ -30,7 +30,7 @@ export function InteractiveSidebar({
   return (
     <>
       <div className="glass-card p-6">
-        <h3 className="text-xl font-bold mb-3 flex items-center"><i className="fas fa-chart-pie mr-2" style={{ color: "var(--accent-sub)" }} /> 偏好小投祀</h3>
+        <h3 className="text-xl font-bold mb-3 flex items-center"><i className="fas fa-chart-pie mr-2" style={{ color: "var(--accent-sub)" }} /> 偏好小投票</h3>
         <p className="text-[11px] text-gray-400 mb-4">点击选项即可投票，实时查看大家的选择（本地模拟）</p>
         <div id="poll-container" className="space-y-3">
           {pollOps.map((op, idx) => {
@@ -51,7 +51,7 @@ export function InteractiveSidebar({
       <div className="flex flex-col gap-5">
         <div className="glass-card p-5 text-center relative overflow-hidden group flex-1">
           <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-          <h3 className="text-lg font-bold mb-2">今日运势 · 幸运筀</h3>
+          <h3 className="text-lg font-bold mb-2">今日运势 · 幸运签</h3>
           <div id="fortune-display" className="font-art text-xl min-h-[3rem] flex flex-col items-center justify-center my-3 transition-all" style={{ color: "var(--accent-main)" }}>
             {fortuneText ? (<><span className="text-xs block text-gray-400 mb-1">[{fortuneText.type}]</span>{fortuneText.text}</>) : "?"}
           </div>
@@ -67,7 +67,7 @@ export function InteractiveSidebar({
         <div className="glass-card p-5">
           <h3 className="text-sm font-bold mb-3 text-gray-400 uppercase tracking-wider">Tiny Reactions</h3>
           <div className="flex flex-wrap gap-2" id="emoji-container">
-            {(["👍", "✀, "🌲", "📷"] as const).map((emoji) => (
+            {(["👍", "✨", "🌲", "📷"] as const).map((emoji) => (
               <button type="button" key={emoji} className="emoji-btn px-3 py-2 rounded-full bg-white/5 hover:bg-white/10 flex items-center gap-2 text-sm" onClick={() => onBumpEmoji(emoji)}>
                 <span>{emoji}</span>
                 <span className="emoji-count text-[11px] text-gray-400">{emojiData[emoji] ?? 0}</span>

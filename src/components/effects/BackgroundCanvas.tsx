@@ -3,9 +3,11 @@
 import { useEffect, useRef } from "react";
 
 type Feather = { x: number; y: number; vx: number; vy: number; age: number; life: number; size: number; angle: number; va: number };
-type Orb = { x: number; y: number; r: number; vx: number; vy: number; gradient: CanvasGradient; alpha: number };
+type Orb = { x: number; y: number; r: number; vx: number; vy: number; color: string; alpha: number };
 
-const MAX_FEATHERS = 40;
+const MAX_FEATHERS = 56;
+const MIN_SPAWN_STEP = 12;
+const MAX_SPAWN_INTERVAL = 90;
 
 export function BackgroundCanvas() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -23,24 +25,23 @@ export function BackgroundCanvas() {
     const orbColors = ["#4f46e5", "#8b5cf6", "#06b6d4", "#eab308", "#ec4899"];
 
     let width = 0, height = 0, raf = 0, lastTs = 0;
-    let px = 0, py = 0, tx = 0, ty = 0;
-    let lastFeatherTime = 0;
+    let px = 0, py = 0, tx = 0, ty = 0, pvx = 0, pvy = 0, lastSpawn = 0;
 
-    const createFeather = (x: number, y: number) => {
-      const now = performance.now();
-      if (now - lastFeatherTime < 150) return;
-      lastFeatherTime = now;
-      if (feathers.length > MAX_FEATHERS) return;
+    const spawnFeather = (x: number, y: number, speedX: number, speedY: number) => {
+      if (feathers.length >= MAX_FEATHERS) feathers.shift();
+      const speed = Math.hypot(speedX, speedY);
+      const dirX = speed > 0.0001 ? speedX / speed : 0;
+      const dirY = speed > 0.0001 ? speedY / speed : 1;
       feathers.push({
-        x: x + (Math.random() - 0.5) * 10,
-        y: y + (Math.random() - 0.5) * 10,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: 0.1 + Math.random() * 0.15,
+        x: x - dirX * 8 + (Math.random() - 0.5) * 6,
+        y: y - dirY * 8 + (Math.random() - 0.5) * 6,
+        vx: speedX * 0.12 + (Math.random() - 0.5) * 0.25,
+        vy: speedY * 0.12 + 0.1 + Math.random() * 0.12,
         age: 0,
-        life: 100 + Math.floor(Math.random() * 50),
-        size: 10 + Math.random() * 6,
-        angle: (Math.random() - 0.5) * 0.5,
-        va: (Math.random() - 0.5) * 0.01,
+        life: 650 + Math.random() * 350,
+        size: 8 + Math.random() * 7,
+        angle: Math.atan2(speedY || 0.1, speedX || 0.1) + (Math.random() - 0.5) * 0.5,
+        va: (Math.random() - 0.5) * 0.002,
       });
     };
 
@@ -55,42 +56,38 @@ export function BackgroundCanvas() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    // Use pointermove only  it's a superset of mousemove with coalesced events
+    const onMove = (e: MouseEvent) => { tx = e.clientX; ty = e.clientY; };
     const onPointer = (e: PointerEvent) => {
       const events = e.getCoalescedEvents?.() ?? [e];
       const last = events[events.length - 1]!;
       tx = last.clientX;
       ty = last.clientY;
-      createFeather(tx, ty);
     };
 
-    const drawFeathers = () => {
+    const drawFeathers = (dtMs: number) => {
+      const dt = dtMs / 1000;
       for (let i = feathers.length - 1; i >= 0; i--) {
         const f = feathers[i]!;
-        f.age++;
-        f.x += f.vx;
-        f.y += f.vy;
-        f.vy += 0.002;
-        f.angle += f.va;
-
+        f.age += dtMs;
+        if (f.age >= f.life) { feathers.splice(i, 1); continue; }
+        f.vy += 0.45 * dt;
+        f.vx *= 1 - Math.min(0.45 * dt, 0.12);
+        f.vy *= 1 - Math.min(0.28 * dt, 0.08);
+        f.x += f.vx * dtMs * 0.12;
+        f.y += f.vy * dtMs * 0.12;
+        f.angle += f.va * dtMs;
         const t = f.age / f.life;
-        if (t >= 1) { feathers.splice(i, 1); continue; }
-
-        const alpha = (1 - t) * 0.7;
-        const scale = 1 - t * 0.3;
-
+        const alpha = (1 - t) * 0.72;
+        const scale = 1 - t * 0.36;
+        const w = f.size * 2.5 * scale;
+        const h = f.size * 0.82 * scale;
         ctx.save();
         ctx.translate(f.x, f.y + t * 10);
         ctx.rotate(f.angle);
-
-        const w = f.size * 2.5 * scale;
-        const h = f.size * 0.8 * scale;
-
         const grad = ctx.createLinearGradient(-w / 2, 0, w / 2, 0);
-        grad.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.1})`);
-        grad.addColorStop(0.3, `rgba(255, 255, 255, ${alpha})`);
-        grad.addColorStop(1, `rgba(255, 255, 255, 0)`);
-
+        grad.addColorStop(0, `rgba(255,255,255,${alpha * 0.1})`);
+        grad.addColorStop(0.28, `rgba(255,255,255,${alpha})`);
+        grad.addColorStop(1, "rgba(255,255,255,0)");
         ctx.fillStyle = grad;
         ctx.beginPath();
         ctx.moveTo(-w / 2, 0);
@@ -98,14 +95,12 @@ export function BackgroundCanvas() {
         ctx.quadraticCurveTo(0, h, -w / 2, 0);
         ctx.closePath();
         ctx.fill();
-
-        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.3})`;
+        ctx.strokeStyle = `rgba(255,255,255,${alpha * 0.33})`;
         ctx.lineWidth = 0.5;
         ctx.beginPath();
         ctx.moveTo(-w / 2 + 2, 0);
         ctx.lineTo(w / 2 - 2, 0);
         ctx.stroke();
-
         ctx.restore();
       }
     };
@@ -116,12 +111,24 @@ export function BackgroundCanvas() {
       const smooth = Math.min(dtMs / 16.7, 2);
       px += (tx - px) * Math.min(0.35 * smooth, 0.95);
       py += (ty - py) * Math.min(0.35 * smooth, 0.95);
+      pvx = tx - px;
+      pvy = ty - py;
 
-      // Compositor-only cursor update  transform instead of left/top (no layout reflow)
+      const dx = tx - px, dy = ty - py;
+      const dist = Math.hypot(dx, dy);
+      const now = performance.now();
+      if (dist > MIN_SPAWN_STEP || now - lastSpawn > MAX_SPAWN_INTERVAL) {
+        const steps = Math.max(1, Math.floor(dist / MIN_SPAWN_STEP));
+        for (let i = 1; i <= steps; i++) {
+          const r = i / steps;
+          spawnFeather(px + dx * r, py + dy * r, pvx, pvy);
+        }
+        lastSpawn = now;
+      }
+
       if (cursorDot && cursorRing) {
-        const t = `translate(${px}px,${py}px) translate(-50%,-50%)`;
-        cursorDot.style.transform = t;
-        cursorRing.style.transform = t;
+        cursorDot.style.left = `${px}px`; cursorDot.style.top = `${py}px`;
+        cursorRing.style.left = `${px}px`; cursorRing.style.top = `${py}px`;
       }
 
       const shift = (timestamp * 0.04) % (width * 2);
@@ -135,8 +142,6 @@ export function BackgroundCanvas() {
       ctx.fillRect(0, 0, width, height);
       ctx.fillStyle = "rgba(4, 7, 20, 0.45)";
       ctx.fillRect(0, 0, width, height);
-
-      // Orb render with pre-cached gradients  zero createRadialGradient calls per frame
       ctx.globalCompositeOperation = "screen";
       for (const o of orbs) {
         o.x += o.vx; o.y += o.vy;
@@ -144,57 +149,41 @@ export function BackgroundCanvas() {
         if (o.x > width + o.r) o.x = -o.r;
         if (o.y < -o.r) o.y = height + o.r;
         if (o.y > height + o.r) o.y = -o.r;
-        ctx.save();
-        ctx.translate(o.x, o.y);
+        const g = ctx.createRadialGradient(o.x, o.y, 0, o.x, o.y, o.r);
+        g.addColorStop(0, "rgba(255,255,255,0.9)");
+        g.addColorStop(0.3, o.color);
+        g.addColorStop(1, "rgba(0,0,0,0)");
         ctx.globalAlpha = o.alpha;
-        ctx.fillStyle = o.gradient;
+        ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.arc(0, 0, o.r, 0, Math.PI * 2);
+        ctx.arc(o.x, o.y, o.r, 0, Math.PI * 2);
         ctx.fill();
-        ctx.restore();
       }
-
       ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = "lighter";
-      drawFeathers();
+      drawFeathers(dtMs);
       ctx.globalCompositeOperation = "source-over";
       raf = requestAnimationFrame(animate);
-    };
-
-    const createOrbGradient = (r: number, color: string): CanvasGradient => {
-      const g = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
-      g.addColorStop(0, "rgba(255,255,255,0.9)");
-      g.addColorStop(0.3, color);
-      g.addColorStop(1, "rgba(0,0,0,0)");
-      return g;
     };
 
     resize();
     px = tx = width / 2;
     py = ty = height / 2;
-
     for (let i = 0; i < 12; i++) {
-      const r = Math.random() * 180 + 80;
-      const color = orbColors[Math.floor(Math.random() * orbColors.length)]!;
       orbs.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        r,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        gradient: createOrbGradient(r, color),
-        alpha: Math.random() * 0.5 + 0.2,
+        x: Math.random() * width, y: Math.random() * height, r: Math.random() * 180 + 80,
+        vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4, color: orbColors[Math.floor(Math.random() * orbColors.length)]!, alpha: Math.random() * 0.5 + 0.2,
       });
     }
-
     window.addEventListener("resize", resize);
     window.addEventListener("pointermove", onPointer, { passive: true });
+    window.addEventListener("mousemove", onMove, { passive: true });
     raf = requestAnimationFrame(animate);
-
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onPointer);
+      window.removeEventListener("mousemove", onMove);
     };
   }, []);
 
