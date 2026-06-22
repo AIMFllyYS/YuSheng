@@ -71,7 +71,7 @@ export function FeatureToolbar({
         ) : pathStack.length === 0 ? (
           <>
             <i className="fas fa-desktop text-gray-400 text-xs" />
-            <span className="font-bold text-gray-100">此电�?/span>
+            <span className="font-bold text-gray-100">此电脀</span>
           </>
         ) : (
           <>

@@ -13,7 +13,7 @@ type SidebarSection = {
 
 const SIDEBAR_SECTIONS: SidebarSection[] = [
   {
-    label: "此电�?,
+    label: "此电脀,
     items: [
       { kind: "feature", slug: "notes", name: FEATURE_PAGE_CONFIG.notes.title, icon: "fa-book", color: "text-pink-400" },
       { kind: "feature", slug: "memory", name: FEATURE_PAGE_CONFIG.memory.title, icon: "fa-hourglass-half", color: "text-emerald-400" },

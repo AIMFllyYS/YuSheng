@@ -10,18 +10,18 @@ type Props = {
 };
 
 function getTypeLabel(item: FeatureItem): string {
-  if (item.type === "folder") return "文件�?;
-  if (!item.url || item.url === "#") return "待上�?;
-  if (item.url.startsWith("app://")) return "微应�?;
+  if (item.type === "folder") return "文件夀;
+  if (!item.url || item.url === "#") return "待上纀;
+  if (item.url.startsWith("app://")) return "微应甀;
   if (item.url.startsWith("http")) return "外部链接";
   return "内嵌页面";
 }
 
 function getTargetDisplay(item: FeatureItem): string {
   if (item.type === "folder") return `${item.children?.length ?? 0} 个子项`;
-  if (!item.url || item.url === "#") return "�?;
+  if (!item.url || item.url === "#") return " ;
   if (item.url.startsWith("app://")) return item.url;
-  if (item.url.length > 40) return item.url.slice(0, 37) + "�?;
+  if (item.url.length > 40) return item.url.slice(0, 37) + " ;
   return item.url;
 }
 

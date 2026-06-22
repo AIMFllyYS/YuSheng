@@ -9,16 +9,16 @@ type Props = {
 };
 
 function getTypeLabel(item: FeatureItem): string {
-  if (item.type === "folder") return "文件�?;
-  if (!item.url || item.url === "#") return "待上�?;
-  if (item.url.startsWith("app://")) return "微应�?;
+  if (item.type === "folder") return "文件夀;
+  if (!item.url || item.url === "#") return "待上纀;
+  if (item.url.startsWith("app://")) return "微应甀;
   if (item.url.startsWith("http")) return "外部链接";
   return "内嵌页面";
 }
 
 function getProtocol(item: FeatureItem): string {
-  if (item.type === "folder") return "�?;
-  if (!item.url || item.url === "#") return "�?;
+  if (item.type === "folder") return " ;
+  if (!item.url || item.url === "#") return " ;
   if (item.url.startsWith("app://")) return "app://";
   if (item.url.startsWith("https")) return "HTTPS";
   if (item.url.startsWith("http")) return "HTTP";
@@ -77,8 +77,8 @@ export function FeatureDetailPane({ item, onClose }: Props) {
           </div>
           {item.type === "folder" && item.children && (
             <div className="flex justify-between">
-              <span className="text-gray-500">子项�?/span>
-              <span className="text-gray-300">{item.children.length} �?/span>
+              <span className="text-gray-500">子项敀</span>
+              <span className="text-gray-300">{item.children.length} 一</span>
             </div>
           )}
           {item.url && item.url !== "#" && (

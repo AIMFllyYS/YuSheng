@@ -64,7 +64,7 @@ export function FeatureWindow({
   // Compute current directory items
   const current = useMemo(() => {
     let cursor = data;
-    let currentTitle = "此电�?;
+    let currentTitle = "此电脀;
     for (const idx of pathStack) {
       currentTitle = cursor[idx]?.name || currentTitle;
       cursor = cursor[idx]?.children || [];
@@ -155,11 +155,11 @@ export function FeatureWindow({
         return;
       }
       if (!item.url || item.url === "#") {
-        setToast("内容即将上线，敬请期�?);
+        setToast("内容即将上线，敬请期往);
         setTimeout(() => setToast(""), 2000);
         return;
       }
-      // app:// protocol �?micro-app
+      // app:// protocol ↀmicro-app
       const appMeta = resolveAppUrl(item.url);
       if (appMeta && appMeta.render.type === "component") {
         setActiveApp({ id: appMeta.id, title: appMeta.name, slug: item.slug });
@@ -222,7 +222,7 @@ export function FeatureWindow({
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={closeWindow} />
 
-      {/* Window �?top-aligned, expanded */}
+      {/* Window  top-aligned, expanded */}
       <div
         id="main-window"
         ref={windowRef}
@@ -241,7 +241,7 @@ export function FeatureWindow({
             id="feature-close-btn"
             onClick={closeWindow}
             className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
-            title="退�?
+            title="退净
           >
             <i className="fas fa-times" />
           </button>
@@ -303,7 +303,7 @@ export function FeatureWindow({
 
                   {/* Footer / Status bar */}
                   <div className="h-7 bg-white/3 dark:bg-black/20 flex items-center justify-between px-6 text-[11px] text-gray-500 shrink-0 border-t border-white/5">
-                    <span>{current.items.length} 个项�?/span>
+                    <span>{current.items.length} 个项盀</span>
                     <span>{subtitle}</span>
                   </div>
                 </div>
